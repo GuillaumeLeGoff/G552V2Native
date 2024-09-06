@@ -1,0 +1,21 @@
+meta {
+  name: createButton
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/button
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name":"test"
+  }
+}

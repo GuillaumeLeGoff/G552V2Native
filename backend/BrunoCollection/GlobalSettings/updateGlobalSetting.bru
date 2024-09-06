@@ -1,0 +1,24 @@
+meta {
+  name: updateGlobalSetting
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/global-setting/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "standby": false,
+    "standby_start_time": 10,
+    "standby_end_time": 16,
+    "restart_at": 2
+  }
+}

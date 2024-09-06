@@ -1,0 +1,15 @@
+meta {
+  name: getScoringById
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/api/scoring/1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

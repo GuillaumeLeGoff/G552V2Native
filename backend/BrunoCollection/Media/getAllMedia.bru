@@ -1,0 +1,15 @@
+meta {
+  name: getAllMedia
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/media
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

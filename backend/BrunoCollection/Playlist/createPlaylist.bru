@@ -1,0 +1,21 @@
+meta {
+  name: createPlaylist
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/playlist
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name":"test"
+  }
+}

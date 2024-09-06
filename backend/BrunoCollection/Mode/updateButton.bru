@@ -1,0 +1,29 @@
+meta {
+  name: updateButton
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/data/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "data_string_1": "Update Example String 1",
+    "data_string_2": "Update Example String 2",
+    "data_string_3": "Update Example String 3",
+    "data_int_1": 100,
+    "data_int_2": 124,
+    "data_int_3": 0,
+    "data_boolean_1": false,
+    "data_boolean_2": false,
+    "data_boolean_3": false
+  }
+}

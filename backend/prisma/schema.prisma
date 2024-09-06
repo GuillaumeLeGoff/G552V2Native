@@ -1,0 +1,137 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ActiveSession {
+  id            Int       @id @default(autoincrement())
+  user_id       Int?
+  active_token  String?
+  last_activity DateTime?
+  user          User?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model PlaylistMedia {
+  id                    Int      @id @default(autoincrement())
+  media_id              Int
+  playlist_id           Int
+  media_dur_in_playlist Int      @default(1)
+  media_pos_in_playlist Int      @default(1)
+  media                 Media    @relation(fields: [media_id], references: [id], onDelete: Cascade)
+  playlist              Playlist @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+}
+
+model Playlist {
+  id      Int             @id @default(autoincrement())
+  name    String
+  user_id Int
+  user    User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  media   PlaylistMedia[]
+  macros  Macro[]
+  modes   Mode[]
+}
+
+model Macro {
+  playlist_id Int?
+  button_id   Int
+  user_id     Int
+  playlist    Playlist? @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+  button      Button    @relation(fields: [button_id], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([button_id, user_id])
+}
+
+model Button {
+  id     Int     @id @default(autoincrement())
+  name   String
+  macros Macro[]
+}
+
+model Folder {
+  id         Int      @id @default(autoincrement())
+  name       String
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  media      Media[]
+  parent     Folder?  @relation("FolderToSubFolder", fields: [parent_id], references: [id], onDelete: Cascade)
+  parent_id  Int?
+  subFolders Folder[] @relation("FolderToSubFolder")
+  updated_at DateTime @updatedAt
+  folderId   Int?
+}
+
+model Media {
+  id                 Int             @id @default(autoincrement())
+  original_file_name String
+  file_name          String
+  path               String
+  format             String
+  type               String
+  thumbnail_path     String?
+  thumbnail_name     String?
+  size               Int
+  uploaded_at        DateTime        @updatedAt()
+  user_id            Int
+  folder_id          Int?
+  user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  Playlist_media     PlaylistMedia[]
+  folder             Folder?         @relation(fields: [folder_id], references: [id], onDelete: Cascade)
+}
+
+model Mode {
+  id          Int       @id @default(autoincrement())
+  name        String?
+  playlist_id Int?
+  playlist    Playlist? @relation(fields: [playlist_id], references: [id], onDelete: Cascade)
+}
+
+model Scoring {
+  id          Int     @id @default(autoincrement())
+  user_id     Int
+  timer       Int?
+  score_team1 Int?
+  score_team2 Int?
+  faute_team1 Int?
+  faute_team2 Int?
+  nom_team1   String?
+  nom_team2   String?
+  option1     Int?
+  option2     Int?
+  option3     Int?
+  option4     Int?
+  option5     Int?
+  option6     Int?
+  option7     String?
+  option8     String?
+  user        User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  username       String          @unique
+  password       String
+  role           String          @default("USER") //Role: USER, ADMIN
+  first_login    Boolean
+  active_token   String?
+  event_auto     Boolean         @default(false)
+  language       String?
+  activeSessions ActiveSession[]
+  playlists      Playlist[]
+  macros         Macro[]
+  medias         Media[]
+  scorings       Scoring[]
+  folder         Folder[]
+}
+
+model GlobalSetting {
+  id                 Int     @id @default(autoincrement())
+  standby            Boolean
+  standby_start_time Int
+  standby_end_time   Int
+  restart_at         Int
+}

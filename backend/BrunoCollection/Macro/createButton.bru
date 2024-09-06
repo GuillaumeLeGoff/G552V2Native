@@ -1,0 +1,23 @@
+meta {
+  name: createButton
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/macro
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "playlist_id":1,
+    "button_id":1,
+    "user_id":7
+  }
+}

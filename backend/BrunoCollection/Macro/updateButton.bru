@@ -1,0 +1,21 @@
+meta {
+  name: updateButton
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/macro/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "button_id":1
+  }
+}

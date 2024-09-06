@@ -1,0 +1,25 @@
+meta {
+  name: uploadFile
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/media
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name":"test"
+  }
+}
+
+body:multipart-form {
+  file: @file(C:\Users\stage2\Videos\Chats rigolos garantis pour vous faire rire.mp4)
+}

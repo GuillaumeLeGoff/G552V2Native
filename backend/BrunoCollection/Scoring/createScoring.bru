@@ -1,0 +1,37 @@
+meta {
+  name: createScoring
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/api/scoring
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "id": 1,
+    "user_id": 5,
+    "timer": 120,
+    "score_team1": 10,
+    "score_team2": 8,
+    "faute_team1": 2,
+    "faute_team2": 3,
+    "nom_team1": "Team 1",
+    "nom_team2": "Team 2",
+    "option1": 1,
+    "option2": 2,
+    "option3": 3,
+    "option4": 4,
+    "option5": 5,
+    "option6": 6,
+    "option7": "Option 7",
+    "option8": "Option 8"
+  }
+}

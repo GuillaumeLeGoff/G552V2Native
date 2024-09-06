@@ -1,0 +1,15 @@
+meta {
+  name: getAllFolders
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/folder
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
