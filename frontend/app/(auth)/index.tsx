@@ -1,25 +1,22 @@
 import React from "react";
-import { View, TextInput, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { useAuthStore } from "~/store/authStore";
 import { router } from "expo-router";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"; // Ajout des imports nécessaires
-import {
-  Select,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectLabel,
-} from "~/components/ui/select"; // Ajout des imports nécessaires
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent, SelectGroup } from "~/components/ui/select";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { useUsers } from "~/hooks/useState";
+import { Drawer } from "~/components/drawer";
+import ForgotPassword from "./drawer/@forgotPassword";
 
 export default function Login() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const handleClose = () => setIsOpen(false);
   const { users } = useUsers();
   const handleSignIn = async () => {
     if (username && password) {
@@ -39,30 +36,26 @@ export default function Login() {
           <View className="flex flex-col gap-2">
             <Text>Username</Text>
             <Select
-              defaultValue={{ value: "", label: "Sélectionnez un utilisateur" }}
+              defaultValue={{ value: '', label: 'Select user' }}
               onValueChange={(users) => setUsername(users?.value || "")}
             >
               <SelectTrigger>
                 <SelectValue
-                  className="text-foreground text-sm native:text-lg"
-                  placeholder="Sélectionnez un utilisateur"
+                  className="text-foreground text-lg bg-background"
+                  placeholder="Select user"
                 />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {users?.map(
-                    (
-                      user // Remplacement des SelectItem par un map sur users
-                    ) => (
-                      <SelectItem
-                        key={user.id}
-                        label={user.username}
-                        value={user.username}
-                      >
-                        {user.username}
-                      </SelectItem>
-                    )
-                  )}
+                  {users?.map((user) => (
+                    <SelectItem
+                      key={user.id}
+                      label={user.username}
+                      value={user.username}
+                    >
+                      {user.username}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -80,7 +73,7 @@ export default function Login() {
             <Button
               variant="link"
               className="p-0"
-              /* onPress={() => router.push("/(auth)/reset-password")} */
+              onPress={() => setIsOpen(true)}
             >
               <Text size="sm">Lost password</Text>
             </Button>
@@ -90,6 +83,10 @@ export default function Login() {
           </Button>
         </CardContent>
       </Card>
+
+      <Drawer isOpen={isOpen} onClose={handleClose}>
+        <ForgotPassword />
+      </Drawer>
     </View>
   );
 }

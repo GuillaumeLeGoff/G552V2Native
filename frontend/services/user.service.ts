@@ -12,6 +12,7 @@ export class UserService {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const result = await response.json();
       const user = result.data;
       return user;

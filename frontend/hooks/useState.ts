@@ -7,8 +7,9 @@ export const useUsers = () => {
 
   const getAllUsers = useCallback(async () => {
     const users = await UserService.getUsers();
-    console.log(users);
-    setUsers(users);
+    if (users) {
+      setUsers(users);
+    }
   }, [setUsers]);
 
   useEffect(() => {

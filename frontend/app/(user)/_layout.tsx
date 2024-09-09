@@ -1,14 +1,34 @@
-import { Slot, Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import { Folder } from "~/lib/icons/Folder";
+import { Settings } from "~/lib/icons/Settings";
+import { Image } from "~/lib/icons/Image";
+import { Keyboard } from "~/lib/icons/Keyboard";
+import { cn } from "~/lib/utils"; // Import cn
 
 export default function UserLayout() {
+
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "gray",
+      screenOptions={({ route }) => ({
+        tabBarActiveTintColor: cn('text-secondary'), // Use cn with Tailwind color
+        tabBarInactiveTintColor: cn('text-primary'), // Use cn with Tailwind color
         headerShown: false,
-      }}
+        tabBarIcon: ({ focused }) => {
+          let iconColor = focused ? cn('text-foreground') : cn('text-primary'); // Use cn with Tailwind color
+          switch (route.name) {
+            case "playlists/index":
+              return <Folder size={24} className={iconColor} />;
+            case "medias/[folderId]/index":
+              return <Image size={24} className={iconColor} />;
+            case "macros/index":
+              return <Keyboard size={24} className={iconColor} />;
+            case "settings/index":
+              return <Settings size={24} className={iconColor} />;
+            default:
+              return null;
+          }
+        },
+      })}
     >
       <Tabs.Screen
         name="index"

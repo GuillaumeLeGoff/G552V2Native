@@ -1,52 +1,52 @@
-import "../global.css";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Theme, ThemeProvider } from "@react-navigation/native";
 import { Redirect, Slot, SplashScreen } from "expo-router";
 import * as React from "react";
-import { Platform, View } from "react-native";
-import { PortalHost } from "@rn-primitives/portal";
-import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Text } from "~/components/ui/text";
 import { useAuthStore } from "~/store/authStore";
-import { API_URL, PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
+import "../global.css";
 
 export { ErrorBoundary } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const { initializeAuth, isInitialized, session } = useAuthStore();
+const RootLayout: React.FC = () => {
+  const { initializeAuth, isInitialized } = useAuthStore();
 
-  /*   React.useEffect(() => {
-    const initialize = async () => {
-      try {
-        await initializeAuth();
-      } catch (error) {
-        console.error("Erreur lors de l'initialisation:", error);
-      } finally {
-        SplashScreen.hideAsync();
-      }
-    };
+  const initialize = React.useCallback(async () => {
+    try {
+      await initializeAuth();
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation:", error);
+    } finally {
+      SplashScreen.hideAsync();
+    }
+  }, [initializeAuth]);
 
+  React.useEffect(() => {
     initialize();
-  }, []); */
-  /* 
+  }, [initialize]);
+
   if (!isInitialized) {
     return (
       <View className="flex-1 justify-center items-center">
         <Text>Chargement...</Text>
       </View>
     );
-  } */
+  }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      {false ? (
-        <Redirect href="/(user)/playlists" />
-      ) : (
-        <Redirect href="/(auth)" />
-      )}
-      <Slot />
-    </SafeAreaView>
+
+      <SafeAreaView style={{ flex: 1 }}>
+        { false ? (
+          <Redirect href="/(user)/playlists" />
+        ) : (
+          <Redirect href="/(auth)" />
+        )}
+        <Slot />
+      </SafeAreaView>
+
   );
-}
+};
+
+export default RootLayout;
