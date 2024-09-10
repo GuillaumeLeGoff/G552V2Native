@@ -1,9 +1,9 @@
 import { PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
 export class UserService {
+  static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/user`;
   static async getUsers() {
     try {
-      const apiUrl = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/user`;
-      const response = await fetch(apiUrl, {
+      const response = await fetch(this.API_URL, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

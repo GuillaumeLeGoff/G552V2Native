@@ -3,10 +3,17 @@ const { hairlineWidth } = require('nativewind/theme');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  content: ['./app/**/*.tsx', './components/**/*.tsx', './index.js', './global.css', './app/_layout.tsx'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        'sans': ['Avenir-Regular'],
+        'avenir-black': ['Avenir-Black'],
+        'avenir-book': ['Avenir-Book'],
+        'avenir-heavy': ['Avenir-Heavy'],
+        'avenir-light': ['Avenir-Light'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

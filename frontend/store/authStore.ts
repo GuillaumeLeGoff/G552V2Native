@@ -1,45 +1,25 @@
 // ~/store/authStore.ts
-
 import { create } from "zustand";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface AuthState {
-  users: User[] | null;
-  session: string | null;
-  isLoading: boolean;
-  isInitialized: boolean;
-  signIn: (token: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  initializeAuth: () => Promise<void>;
-  setUsers: (users: User[]) => void;
-}
+type AuthState = {
+  token: string | null;
+};
 
-export const useAuthStore = create<AuthState>((set) => ({
+type AuthActions = {
+  setToken: (token: string) => void;
+  signOut: () => void;
+};
+
+export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   users: [],
-  session: null,
-  isLoading: true,
-  isInitialized: false,
+  token: null,
 
-  setUsers: (users: User[]) => {
-    set({ users });
-  },
 
-  signIn: async (token: string) => {
-    console.log("Connexion avec le token:", token);
-    await AsyncStorage.setItem("userToken", token);
-    set({ session: token, isLoading: false });
+  setToken: (token: string) => {
+    set({ token });
   },
 
   signOut: async () => {
-    console.log("Déconnexion");
-    await AsyncStorage.removeItem("userToken");
-    set({ session: null, isLoading: false });
-  },
-
-  initializeAuth: async () => {
-    console.log("Initialisation de l'authentification");
-    const token = await AsyncStorage.getItem("userToken");
-    console.log("Token récupéré:", token);
-    set({ session: token, isLoading: false, isInitialized: true });
+    set({ token: null });
   },
 }));
