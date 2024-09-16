@@ -65,7 +65,7 @@ const CardContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof View>
 >(({ className, ...props }, ref) => (
   <TextClassContext.Provider value="text-card-foreground">
-    <View ref={ref} className={cn("p-6 pt-0 gap-4", className)} {...props} />
+    <View ref={ref} className={cn("p-8 pt-0 gap-4", className)} {...props} />
   </TextClassContext.Provider>
 ));
 CardContent.displayName = "CardContent";

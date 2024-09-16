@@ -1,26 +1,28 @@
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 import { Text } from "~/components/ui/text";
-import { useAuthStore } from "~/store/authStore";
+import { useAuth } from "~/hooks/useAuth";
 import { router } from "expo-router";
+import { Button } from "~/components/ui/button";
 
 export default function Settings() {
-  const { session, signOut } = useAuthStore();
+  const { token, logout } = useAuth();
 
   const handleSignOut = async () => {
-    await signOut();
+    await logout();
     router.replace("/(auth)");
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Bienvenue, {session}</Text>
-      <TouchableOpacity
+    <View className="flex-1 items-center justify-center bg-background">
+      <Text className="text-xl font-bold mb-8">Paramètres</Text>
+      <Button
+        variant="destructive"
         onPress={handleSignOut}
-        style={{ marginTop: 20, backgroundColor: "red", padding: 10 }}
+        className="px-4 py-2"
       >
-        <Text style={{ color: "white" }}>Se déconnecter</Text>
-      </TouchableOpacity>
+        <Text className="text-white">Se déconnecter</Text>
+      </Button>
     </View>
   );
 }
