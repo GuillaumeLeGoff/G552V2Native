@@ -1,13 +1,21 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "types": ["nativewind/types", "react-native-dotenv"],
+    "types": [
+      "nativewind/types",
+      "react-native-dotenv"
+    ],
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["*"]
+      "~/*": [
+        "*"
+      ]
     },
-    "typeRoots": ["./node_modules/@types", "./types"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
   },
   "include": [
     "**/*.ts",
@@ -15,6 +23,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "types/env.d.ts",
-    "services/**/*.ts"
+    "services/**/*.ts",
+    "nativewind-env.d.ts"
   ]
 }

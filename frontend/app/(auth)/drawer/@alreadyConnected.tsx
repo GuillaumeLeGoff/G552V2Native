@@ -22,9 +22,9 @@ export default function AlreadyConnected({ isOpen, onClose, onDisconnect }: Alre
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>User Already Connected</DialogTitle>
-         {/*  <DialogDescription>
+          <DialogDescription>
             This user is already connected on another device. Do you want to disconnect them and log in here?
-          </DialogDescription> */}
+          </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onPress={onClose}>

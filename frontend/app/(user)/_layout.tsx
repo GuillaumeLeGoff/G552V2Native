@@ -4,6 +4,7 @@ import { Settings } from "~/lib/icons/Settings";
 import { Image } from "~/lib/icons/Image";
 import { Keyboard } from "~/lib/icons/Keyboard";
 import { cn } from "~/lib/utils"; // Import cn
+import { Sheet } from "~/lib/icons/Sheet";
 
 export default function UserLayout() {
 
@@ -24,6 +25,8 @@ export default function UserLayout() {
               return <Keyboard size={24} className={iconColor} />;
             case "settings/index":
               return <Settings size={24} className={iconColor} />;
+            case "scoreboard/index":
+              return <Sheet size={24} className={iconColor} />;
             default:
               return null;
           }

@@ -12,8 +12,8 @@ export const useAuth = () => {
   const [error, setError] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [isShaking, setIsShaking] = useState(false);
   const [isAlreadyConnected, setIsAlreadyConnected] = useState(false);
+  const [shakeKey, setShakeKey] = useState(0);
 
   const getAllUsers = useCallback(async () => {
     const users = await UserService.getUsers();
@@ -67,11 +67,10 @@ export const useAuth = () => {
     }
 
     if (hasError) {
-      setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 820); // Durée de l'animation
-      return false; // Indique un échec de validation
+      setShakeKey(prev => prev + 1); 
+      return false; 
     } else {
-      return await login(); // Retourne le résultat de login
+      return await login();
     }
   }, [password, userSelected, login, setPasswordError, setUsernameError]);
 
@@ -106,10 +105,10 @@ export const useAuth = () => {
     setUsernameError,
     passwordError,
     setPasswordError,
-    isShaking,
     isAlreadyConnected,
     setIsAlreadyConnected,
     disconnectUser,
-    token
+    token,
+    shakeKey
   };
 };
