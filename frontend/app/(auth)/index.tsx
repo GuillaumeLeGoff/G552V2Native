@@ -127,7 +127,7 @@ export default function Login() {
               >
                 <SelectTrigger error={usernameError}>
                   <SelectValue
-                    className="text-primary-foreground text-lg bg-background"
+                    className="text-foreground opacity-50 text-lg bg-background"
                     placeholder="Select user"
                   />
                 </SelectTrigger>
@@ -154,7 +154,7 @@ export default function Login() {
             <Animated.View style={inputAnimatedStyle}>
               <Input
                 className="text-foreground bg-background flex-1 text-sm"
-                placeholder="Password"
+                placeholder=""
                 value={password || ""}
                 secureTextEntry={!showPassword}
                 onChangeText={(text) => {
@@ -167,9 +167,9 @@ export default function Login() {
                   onPress={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="text-foreground .opacity-50" />
+                    <EyeOff className="text-foreground opacity-50" />
                   ) : (
-                    <Eye className="text-foreground" />
+                    <Eye className="text-foreground opacity-50" />
                   )}
                 </TouchableOpacity>
               </Input>
@@ -181,7 +181,7 @@ export default function Login() {
             className="p-0 h-0"
             onPress={() => setIsOpen(true)}
           >
-            <Text className=" text-primary-foreground" size="sm">
+            <Text className=" text-foreground " size="sm">
               Lost password
             </Text>
           </Button>

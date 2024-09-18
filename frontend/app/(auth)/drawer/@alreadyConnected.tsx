@@ -30,7 +30,7 @@ export default function AlreadyConnected({ isOpen, onClose, onDisconnect }: Alre
           <Button variant="outline" onPress={onClose}>
             <Text>Cancel</Text>
           </Button>
-          <Button onPress={onDisconnect}>
+          <Button variant="secondary" onPress={onDisconnect}>
             <Text>Disconnect and Log In</Text>
           </Button>
         </DialogFooter>

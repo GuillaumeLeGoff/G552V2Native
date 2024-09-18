@@ -33,7 +33,6 @@ const SelectTrigger = React.forwardRef<
   >
     <>{children}</>
     <ChevronDown
-      size={16}
       aria-hidden={true}
       className="text-foreground opacity-50"
     />
@@ -158,7 +157,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative web:group flex flex-row w-full web:cursor-default web:select-none items-center rounded-xl py-1.5 native:py-2 pl-8 native:pl-10 pr-2 web:hover:bg-secondary/50 active:bg-secondary web:outline-none web:focus:bg-secondary",
+      "relative web:group flex flex-row w-full web:cursor-default web:select-none items-center rounded-md py-1.5 native:py-2 pl-8 native:pl-10 pr-2 web:hover:bg-secondary/50 active:bg-secondary web:outline-none web:focus:bg-secondary",
       props.disabled && "web:pointer-events-none opacity-50",
       className
     )}
@@ -166,7 +165,7 @@ const SelectItem = React.forwardRef<
   >
     <View className="absolute left-2 native:left-3.5 flex h-3.5 native:pt-px w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check size={16} strokeWidth={3} className="text-popover-foreground" />
+        <Check size={16} strokeWidth={3} className="text-foreground " />
       </SelectPrimitive.ItemIndicator>
     </View>
     <SelectPrimitive.ItemText className="text-sm native:text-lg text-foreground native:text-base web:group-focus:text-accent-foreground" />

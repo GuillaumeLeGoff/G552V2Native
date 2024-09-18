@@ -11,11 +11,34 @@ export default function UserLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: cn("text-secondary"), // Use cn with Tailwind color
-        tabBarInactiveTintColor: cn("text-primary"), // Use cn with Tailwind color
+        tabBarActiveTintColor: "#D06C6C",
+        tabBarInactiveTintColor: "#3D3636",
+        tabBarActiveBackgroundColor: "#E9CCCB",
+        tabBarIconStyle: {
+          color: "red",
+        },
         headerShown: false,
+        tabBarItemStyle: {
+          paddingTop: 5,
+          paddingBottom: 5,
+          borderRadius: 18,
+          marginLeft: 10,
+          marginRight: 10,
+        },
+        tabBarStyle: {
+          height: 70,
+          paddingTop: 8,
+          paddingBottom: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: "bold",
+          fontFamily: "Avenir-Heavy",
+        },
         tabBarIcon: ({ focused }) => {
-          let iconColor = focused ? cn("text-foreground") : cn("text-primary"); // Use cn with Tailwind color
+          let iconColor = focused
+            ? cn("text-secondary-foreground")
+            : cn("text-primary"); // Use cn with Tailwind color
           switch (route.name) {
             case "playlists/index":
               return <Folder size={24} className={iconColor} />;
