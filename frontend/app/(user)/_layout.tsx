@@ -5,17 +5,17 @@ import { Image } from "~/lib/icons/Image";
 import { Keyboard } from "~/lib/icons/Keyboard";
 import { cn } from "~/lib/utils"; // Import cn
 import { Sheet } from "~/lib/icons/Sheet";
+import { View } from "react-native";
 
 export default function UserLayout() {
-
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: cn('text-secondary'), // Use cn with Tailwind color
-        tabBarInactiveTintColor: cn('text-primary'), // Use cn with Tailwind color
+        tabBarActiveTintColor: cn("text-secondary"), // Use cn with Tailwind color
+        tabBarInactiveTintColor: cn("text-primary"), // Use cn with Tailwind color
         headerShown: false,
         tabBarIcon: ({ focused }) => {
-          let iconColor = focused ? cn('text-foreground') : cn('text-primary'); // Use cn with Tailwind color
+          let iconColor = focused ? cn("text-foreground") : cn("text-primary"); // Use cn with Tailwind color
           switch (route.name) {
             case "playlists/index":
               return <Folder size={24} className={iconColor} />;

@@ -11,7 +11,7 @@ const Card = React.forwardRef<
   <View
     ref={ref}
     className={cn(
-      "rounded-2xl bg-card shadow-sm shadow-foreground/10",
+      "rounded-lg  bg-card shadow-sm shadow-foreground/10",
       className
     )}
     {...props}

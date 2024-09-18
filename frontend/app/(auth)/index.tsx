@@ -1,6 +1,11 @@
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming } from 'react-native-reanimated';
+import { ActivityIndicator, View, TouchableOpacity } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { Drawer } from "~/components/drawer";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardFooter } from "~/components/ui/card";
@@ -18,16 +23,21 @@ import { useAuth } from "~/hooks/useAuth";
 import { Lock } from "~/lib/icons/Lock";
 import ForgotPassword from "./drawer/@forgotPassword";
 import AlreadyConnected from "./drawer/@alreadyConnected";
+import { Eye } from "~/lib/icons/Eye";
+import { EyeOff } from "~/lib/icons/EyeOff";
+import { Header } from "~/components/ui/header";
+import { ChevronDown } from "~/lib/icons/ChevronDown";
 
 export default function Login() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
   const handleClose = () => setIsOpen(false);
 
   const {
     users,
     handleLogin,
-    userSelected,  // Ajoutez cette ligne
+    userSelected, // Ajoutez cette ligne
     setUserSelected,
     password,
     setPassword,
@@ -40,7 +50,7 @@ export default function Login() {
     setPasswordError,
     isAlreadyConnected,
     setIsAlreadyConnected,
-    disconnectUser
+    disconnectUser,
   } = useAuth();
 
   const selectShakeAnimation = useSharedValue(0);
@@ -54,14 +64,17 @@ export default function Login() {
     transform: [{ translateX: inputShakeAnimation.value }],
   }));
 
-  const triggerShake = React.useCallback((animation: Animated.SharedValue<number>) => {
-    animation.value = withSequence(
-      withTiming(10, { duration: 50 }),
-      withTiming(-10, { duration: 100 }),
-      withTiming(10, { duration: 100 }),
-      withTiming(0, { duration: 50 })
-    );
-  }, []);
+  const triggerShake = React.useCallback(
+    (animation: Animated.SharedValue<number>) => {
+      animation.value = withSequence(
+        withTiming(10, { duration: 50 }),
+        withTiming(-10, { duration: 100 }),
+        withTiming(10, { duration: 100 }),
+        withTiming(0, { duration: 50 })
+      );
+    },
+    []
+  );
 
   React.useEffect(() => {
     if (shakeKey > 0) {
@@ -72,7 +85,14 @@ export default function Login() {
         triggerShake(inputShakeAnimation);
       }
     }
-  }, [shakeKey, triggerShake, userSelected, password, selectShakeAnimation, inputShakeAnimation]);
+  }, [
+    shakeKey,
+    triggerShake,
+    userSelected,
+    password,
+    selectShakeAnimation,
+    inputShakeAnimation,
+  ]);
 
   const onLogin = async () => {
     setIsLoading(true);
@@ -92,7 +112,9 @@ export default function Login() {
       <Card className="w-[320px]">
         <CardContent className="pb-0">
           <View className="flex flex-col gap-2 pt-8">
-            <Text className="font-avenir-heavy text-1xl">Username</Text>
+            <Text className="font-avenir-heavy text-xl text-primary">
+              Username
+            </Text>
             <Animated.View style={selectAnimatedStyle}>
               <Select
                 defaultValue={{ value: "", label: "Select user" }}
@@ -105,7 +127,7 @@ export default function Login() {
               >
                 <SelectTrigger error={usernameError}>
                   <SelectValue
-                    className="text-foreground text-lg bg-background"
+                    className="text-primary-foreground text-lg bg-background"
                     placeholder="Select user"
                   />
                 </SelectTrigger>
@@ -126,26 +148,42 @@ export default function Login() {
             </Animated.View>
           </View>
           <View className="flex flex-col gap-2">
-            <Text className="font-avenir-heavy text-1xl">Password</Text>
+            <Text className="font-avenir-heavy text-xl text-primary">
+              Password
+            </Text>
             <Animated.View style={inputAnimatedStyle}>
               <Input
-                placeholder="Mot de passe"
+                className="text-foreground bg-background flex-1 text-sm"
+                placeholder="Password"
                 value={password || ""}
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 onChangeText={(text) => {
                   setPassword(text);
                   setPasswordError(false);
                 }}
                 error={passwordError}
-              />
+              >
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="text-foreground .opacity-50" />
+                  ) : (
+                    <Eye className="text-foreground" />
+                  )}
+                </TouchableOpacity>
+              </Input>
             </Animated.View>
           </View>
           <Button
             variant="link"
+            size="sm"
             className="p-0 h-0"
             onPress={() => setIsOpen(true)}
           >
-            <Text size="sm">Lost password</Text>
+            <Text className=" text-primary-foreground" size="sm">
+              Lost password
+            </Text>
           </Button>
           <View className="h-6 justify-center pb-2">
             <Text className="text-red-500 text-sm text-center">
@@ -159,9 +197,13 @@ export default function Login() {
               {isLoading ? (
                 <ActivityIndicator size="small" color="#000000" />
               ) : (
-                <Lock size={16} strokeWidth={3} className="text-foreground" />
+                <Lock
+                  size={16}
+                  strokeWidth={3}
+                  className="text-secondary-foreground"
+                />
               )}
-              <Text className="text-foreground ml-2">
+              <Text className="text-secondary-foreground ml-2">
                 {isLoading ? "Logging in..." : "Login"}
               </Text>
             </View>
@@ -171,7 +213,7 @@ export default function Login() {
       <Drawer isOpen={isOpen} onClose={handleClose}>
         <ForgotPassword />
       </Drawer>
-      <AlreadyConnected 
+      <AlreadyConnected
         isOpen={isAlreadyConnected}
         onClose={() => setIsAlreadyConnected(false)}
         onDisconnect={handleDisconnect}
