@@ -1,76 +1,52 @@
 import React, { useRef, useState } from 'react';
 import {
   Animated,
-  Text,
   View,
   StatusBar,
-  TouchableOpacity,
   Platform,
-  Dimensions,
 } from 'react-native';
 import { ChevronDown } from 'lucide-react-native';
 import { ItemList } from '~/components/ItemList';
-import { Header } from '~/components/ui/header'; // Assurez-vous que le chemin est correct
-import { Modal } from 'react-native'; // {{ edit_1 }}
+import { Header } from '~/components/ui/header';
+import { router } from 'expo-router';
+import { usePlaylists } from '~/hooks/usePlaylists'; // {{ edit_1 }}
+import { Playlist } from '~/types/Playlist'; // Assurez-vous que le chemin est correct
+import { CreateButton } from '~/components/createButton';
+import { Drawer } from '~/components/drawer';
+import CreatePlaylist from './drawer/@createPlaylist';
 
-// Définir l'interface de Playlist
-interface Playlist {
-  id: number;
-  name: string;
-}
-
-// Définir la liste des playlists
-const PLAYLISTS: Playlist[] = [
-  { id: 1, name: 'Playlist Rock' },
-  { id: 2, name: 'Playlist Jazz' },
-  { id: 3, name: 'Playlist Pop' },
-  { id: 4, name: 'Playlist Électro' },
-  { id: 5, name: 'Playlist Hip-Hop' },
-  { id: 6, name: 'Playlist Classique' },
-  { id: 7, name: 'Playlist Reggae' },
-  { id: 8, name: 'Playlist Metal' },
-];
-
-// Constantes pour le calcul de l'en-tête
-const HEADER_MAX_HEIGHT = 16; // Approximation de 64px (en Tailwind, h-16)
+const HEADER_MAX_HEIGHT = 16; 
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-// Obtenir la hauteur de la barre d'état
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight || 24;
 
-// Créer des composants animés avec nativewind
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-const PlaylistsScreen: React.FC = () => {
-  // Valeur animée pour suivre le défilement
+function PlaylistsScreen() {
+  const [isOpen, setIsOpen] = React.useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const { playlists, selectPlaylist } = usePlaylists(); // {{ edit_2 }}
 
-  // Interpolation pour la translation de l'en-tête
   const headerTranslate = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
     outputRange: [0, -HEADER_SCROLL_DISTANCE],
     extrapolate: 'clamp',
   });
 
-  // Interpolation pour l'opacité de l'en-tête
   const headerOpacity = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
     outputRange: [1, 0.5, 0],
     extrapolate: 'clamp',
   });
 
-  // États pour la gestion de la modal
-  const [modalVisible, setModalVisible] = useState(false); // {{ edit_2 }}
-  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null); // {{ edit_3 }}
-
-  const handleItemPress = (playlist: Playlist) => { // {{ edit_4 }}
-    setSelectedPlaylist(playlist);
-    setModalVisible(true);
+  const handleItemPress = (playlist: Playlist) => {
+    selectPlaylist(playlist);
+    router.push(`/playlists/${playlist.id}`);
   };
 
   return (
-    <View className="flex-1 ">
+    <View className="flex-1">
       {/* En-tête Animé */}
       <AnimatedView
         style={{
@@ -84,7 +60,7 @@ const PlaylistsScreen: React.FC = () => {
           icon={<ChevronDown size={24} />}
           onIconPress={() => {
             // Action lors de l'appui sur l'icône
-            console.log('ChevronDown pressed');
+            console.log("ChevronDown pressed");
           }}
         />
       </AnimatedView>
@@ -102,26 +78,25 @@ const PlaylistsScreen: React.FC = () => {
         className="flex-1"
       >
         <View className="px-8 py-8 space-y-4">
-          {PLAYLISTS.map((item) => (
-            <ItemList key={item.id} title={item.name} onPress={() => handleItemPress(item)} /> // {{ edit_5 }}
-          ))}
+          {playlists && playlists.length > 0 &&
+            playlists.map(
+              (
+                item // {{ edit_5 }}
+              ) => (
+                <ItemList
+                  key={item.id}
+                  title={item.name}
+                  onPress={() => handleItemPress(item)}
+                />
+              )
+            )}
+          <CreateButton onPress={() => setIsOpen(true)} />
         </View>
+        <View className="px-8 py-8"></View>
       </Animated.ScrollView>
-
-      {/* Modal */}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        {/* Contenu de la modal */}
-        <View className="flex-1 justify-center items-center">
-          <Text>{selectedPlaylist?.name}</Text>
-          <TouchableOpacity onPress={() => setModalVisible(false)}>
-            <Text>Fermer</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+      <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <CreatePlaylist />
+      </Drawer>
     </View>
   );
 };

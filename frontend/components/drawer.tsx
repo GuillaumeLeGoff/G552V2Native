@@ -6,7 +6,7 @@ import {
   Modal,
   StyleSheet,
   Dimensions,
-  BackHandler, // Importez BackHandler
+  BackHandler,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -15,7 +15,11 @@ import Animated, {
   Easing,
   runOnJS,
 } from "react-native-reanimated";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
 import { cn } from "~/lib/utils";
 import { TextRef, ViewRef } from "@rn-primitives/types";
 import { createContext, useContext } from "react";
@@ -59,16 +63,20 @@ const Drawer = React.forwardRef<View, DrawerProps>(
           easing: Easing.in(Easing.cubic),
         });
       }
-    }, [isOpen]);
+    }, [isOpen, translateY]);
 
-    const handleClose = () => {
-      translateY.value = withTiming(DRAWER_HEIGHT, {
-        duration: 300,
-        easing: Easing.in(Easing.cubic),
-      }, () => {
-        runOnJS(onClose)();
-      });
-    };
+    const handleClose = React.useCallback(() => {
+      translateY.value = withTiming(
+        DRAWER_HEIGHT,
+        {
+          duration: 300,
+          easing: Easing.in(Easing.cubic),
+        },
+        () => {
+          runOnJS(onClose)();
+        }
+      );
+    }, [onClose, translateY]);
 
     const rStyle = useAnimatedStyle(() => {
       return {
@@ -76,25 +84,46 @@ const Drawer = React.forwardRef<View, DrawerProps>(
       };
     });
 
+    // Gestion du BackHandler pour fermer le Drawer avec le bouton de retour Android
+    React.useEffect(() => {
+      const onBackPress = () => {
+        if (isOpen) {
+          handleClose();
+          return true; // Empêche le comportement par défaut
+        }
+        return false; // Laisse le comportement par défaut
+      };
+
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [isOpen, handleClose]);
+
     return (
       <DrawerContext.Provider value={{ isOpen, onClose }}>
         <Modal
           visible={isOpen}
           transparent
           animationType="none"
-          onRequestClose={handleClose} // Utilisez onRequestClose pour gérer le bouton de retour
+          onRequestClose={handleClose} // Gère le bouton de retour
         >
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <TouchableOpacity
-              style={styles.overlay}
-              activeOpacity={1}
-              onPress={handleClose} // Utilisez handleClose pour animer la fermeture
-            > 
-              <Animated.View className="flex-1 justify-end" style={[rStyle, style]} {...props} ref={ref}>
-               
+            <View style={styles.drawerContainer}>
+              {/* Overlay */}
+              <TouchableOpacity
+                style={styles.overlay}
+                activeOpacity={1}
+                onPress={handleClose}
+              />
+              {/* Drawer */}
+              <Animated.View
+                style={[rStyle, styles.content, style]}
+                {...props}
+                ref={ref}
+              >
                 {children}
               </Animated.View>
-            </TouchableOpacity>
+            </View>
           </GestureHandlerRootView>
         </Modal>
       </DrawerContext.Provider>
@@ -107,85 +136,85 @@ const DrawerTrigger = TouchableOpacity;
 
 const DrawerClose = TouchableOpacity;
 
-
 interface DrawerContentProps
   extends React.ComponentPropsWithoutRef<typeof Animated.View> {
   onClose: () => void;
   isOpen: boolean;
 }
 
-const DrawerContent = React.forwardRef<Animated.View, Omit<DrawerContentProps, "isOpen" | "onClose">>(
-  ({ className, style, children, ...props }, ref) => {
-    const { isOpen, onClose } = useDrawer();
-    
-    const translateY = useSharedValue(DRAWER_HEIGHT);
+const DrawerContent = React.forwardRef<
+  Animated.View,
+  Omit<DrawerContentProps, "isOpen" | "onClose">
+>(({ className, style, children, ...props }, ref) => {
+  const { isOpen, onClose } = useDrawer();
 
-    React.useEffect(() => {
-      if (isOpen) {
+  const translateY = useSharedValue(DRAWER_HEIGHT);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      translateY.value = withTiming(0, {
+        duration: 300,
+        easing: Easing.out(Easing.cubic),
+      });
+    } else {
+      translateY.value = withTiming(DRAWER_HEIGHT, {
+        duration: 300,
+        easing: Easing.in(Easing.cubic),
+      });
+    }
+  }, [isOpen, translateY]);
+
+  const gesture = Gesture.Pan()
+    .onUpdate((event) => {
+      const newTranslateY = Math.max(
+        0,
+        Math.min(event.translationY, DRAWER_HEIGHT)
+      );
+      translateY.value = newTranslateY;
+    })
+    .onEnd(() => {
+      if (translateY.value > DRAWER_HEIGHT / 2) {
+        translateY.value = withTiming(
+          DRAWER_HEIGHT,
+          {
+            duration: 300,
+            easing: Easing.in(Easing.cubic),
+          },
+          () => {
+            runOnJS(onClose)();
+          }
+        );
+      } else {
         translateY.value = withTiming(0, {
           duration: 300,
           easing: Easing.out(Easing.cubic),
         });
-      } else {
-        translateY.value = withTiming(DRAWER_HEIGHT, {
-          duration: 300,
-          easing: Easing.in(Easing.cubic),
-        });
       }
-    }, [isOpen]);
-
-    const gesture = Gesture.Pan()
-      .onUpdate((event) => {
-        const newTranslateY = Math.max(
-          0,
-          Math.min(event.translationY, DRAWER_HEIGHT)
-        );
-        translateY.value = newTranslateY;
-      })
-      .onEnd(() => {
-        if (translateY.value > DRAWER_HEIGHT / 2) {
-          translateY.value = withTiming(
-            DRAWER_HEIGHT,
-            {
-              duration: 300,
-              easing: Easing.in(Easing.cubic),
-            },
-            () => {
-              runOnJS(onClose)();
-            }
-          );
-        } else {
-          translateY.value = withTiming(0, {
-            duration: 300,
-            easing: Easing.out(Easing.cubic),
-          });
-        }
-      });
-
-    const rStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ translateY: translateY.value }],
-      };
     });
 
-    return (
-      <GestureDetector gesture={gesture}>
-        <Animated.View
-          ref={ref}
-          className={cn(
-            "absolute left-0 right-0 bottom-0 bg-white border-t-muted rounded-t-lg p-4",
-            className
-          )}
-          style={[rStyle, style]}
-          {...props}
-        >
-          <View className="w-10 h-1 bg-muted rounded-full self-center mb-4" />
-          {children as React.ReactNode}
-        </Animated.View>
-      </GestureDetector>
-    );
-  }
-);
+  const rStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+    };
+  });
+
+  return (
+    <GestureDetector gesture={gesture}>
+      <Animated.View
+        ref={ref}
+        className={cn(
+          "absolute left-0 right-0 bottom-0 bg-white border-t-muted rounded-t-lg p-4",
+          className
+        )}
+        style={[rStyle, style]}
+        {...props}
+      >
+        <View style={styles.handle} />
+        {children as React.ReactNode}
+      </Animated.View>
+    </GestureDetector>
+  );
+});
 DrawerContent.displayName = "DrawerContent";
 
 const DrawerHeader = React.forwardRef<
@@ -194,7 +223,7 @@ const DrawerHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <View
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    className={cn("flex flex-col space-y-1.5 px-6 py-4", className)}
     {...props}
   />
 ));
@@ -206,7 +235,7 @@ const DrawerFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <View
     ref={ref}
-    className={cn("flex flex-row items-center p-6 pt-0", className)}
+    className={cn(" p-6 pt-0", className)}
     {...props}
   />
 ));
@@ -221,7 +250,7 @@ const DrawerTitle = React.forwardRef<
     aria-level={3}
     ref={ref}
     className={cn(
-      "text-2xl text-card-foreground font-semibold leading-none tracking-tight",
+      "font-avenir-heavy text-2xl text-primary font-semibold ",
       className
     )}
     {...props}
@@ -235,7 +264,7 @@ const DrawerDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Text
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("font-avenir-book text-sm text-muted-foreground", className)}
     {...props}
   />
 ));
@@ -248,19 +277,17 @@ const styles = StyleSheet.create({
   },
   drawerContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   content: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
+    // Styles additionnels pour le Drawer, si nécessaire
+    // Vous pouvez ajuster ces styles selon vos besoins
     backgroundColor: "white",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingTop: 20,
     paddingHorizontal: 20,
-    height: DRAWER_HEIGHT,
+    
   },
   handle: {
     width: 40,

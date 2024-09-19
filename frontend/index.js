@@ -4,6 +4,7 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Empêche le SplashScreen de se cacher automatiquement
 SplashScreen.preventAutoHideAsync();
@@ -43,7 +44,11 @@ function Root() {
 }
 
 export function App() {
-  return <Root />;
+  return (
+   
+      <Root />
+ 
+  );
 }
 
 registerRootComponent(App);

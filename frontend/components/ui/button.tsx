@@ -64,22 +64,23 @@ type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
 const Button = React.forwardRef<
   React.ElementRef<typeof Pressable>,
   ButtonProps
->(({ className, variant, size, ...props }, ref) => {
+>(({ className, variant, size, disabled, ...props }, ref) => {
   return (
     <TextClassContext.Provider
       value={cn(
-        props.disabled && "web:pointer-events-none",
+        disabled && "web:pointer-events-none",
         buttonTextVariants({ variant, size })
       )}
     >
       <Pressable
         className={cn(
-          props.disabled && "opacity-100 web:pointer-events-none",
+          disabled && "opacity-50 web:pointer-events-none", // Ajout de l'opacité réduite pour le bouton désactivé
           buttonVariants({ variant, size, className }),
           "w-auto"
         )}
         ref={ref}
         role="button"
+        disabled={disabled} // Ajout de la propriété disabled
         {...props}
       />
     </TextClassContext.Provider>

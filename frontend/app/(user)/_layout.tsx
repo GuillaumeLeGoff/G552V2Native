@@ -5,7 +5,6 @@ import { Image } from "~/lib/icons/Image";
 import { Keyboard } from "~/lib/icons/Keyboard";
 import { cn } from "~/lib/utils"; // Import cn
 import { Sheet } from "~/lib/icons/Sheet";
-import { View } from "react-native";
 
 export default function UserLayout() {
   return (
@@ -40,7 +39,7 @@ export default function UserLayout() {
             ? cn("text-secondary-foreground")
             : cn("text-primary"); // Use cn with Tailwind color
           switch (route.name) {
-            case "playlists/index":
+            case "playlists":
               return <Folder size={24} className={iconColor} />;
             case "medias/[folderId]/index":
               return <Image size={24} className={iconColor} />;
@@ -57,14 +56,7 @@ export default function UserLayout() {
       })}
     >
       <Tabs.Screen
-        name="index"
-        options={{
-          tabBarLabel: "Home",
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="playlists/index"
+        name="playlists"
         options={{
           tabBarLabel: "Playlist",
         }}

@@ -4,6 +4,7 @@ import { Inject, Service } from "typedi";
 import { PlaylistService } from "./playlist.service";
 import { CreatePlaylistDto, UpdatePlaylistDto } from "./playlist.validation";
 import { UserType } from "../../types/user.type";
+import { log } from "console";
 
 interface CustomRequest extends Request {
   user?: UserType;
@@ -19,7 +20,9 @@ export class PlaylistController {
     res: Response,
     next: NextFunction
   ) => {
+          
     try {
+      console.log("createPlaylist", req.body);  
       const playlistData: CreatePlaylistDto = req.body;
       const newPlaylist: Playlist = await this.playlistService.createPlaylist(
         playlistData,
@@ -56,6 +59,8 @@ export class PlaylistController {
     next: NextFunction
   ) => {
     try {
+
+      
       const playlists: Playlist[] = await this.playlistService.getAllPlaylists(
         req.user
       );

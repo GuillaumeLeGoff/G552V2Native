@@ -18,4 +18,5 @@ export const useAuthStore = create(
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
+  
 )

@@ -3,10 +3,11 @@ import { UserService } from "../services/user.service";
 import { AuthService } from "../services/auth.service";
 import { useAuthStore } from "../store/authStore";
 import { useUserStore } from "~/store/userStore";
+import { router } from "expo-router";
 
 export const useAuth = () => {
   const { token, setToken } = useAuthStore();
-  const { setUser, user, setUsers, users } = useUserStore();
+  const { setUser, setUsers, users } = useUserStore();
   const [userSelected, setUserSelected] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -14,6 +15,7 @@ export const useAuth = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [isAlreadyConnected, setIsAlreadyConnected] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
+  
 
   const getAllUsers = useCallback(async () => {
     const users = await UserService.getUsers();
@@ -34,7 +36,7 @@ export const useAuth = () => {
         setToken(newToken);
         setError(null);
         setIsAlreadyConnected(false);
-        console.log(message);
+        router.push("/playlists");
         return true;
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -85,6 +87,7 @@ export const useAuth = () => {
     }
   }, [userSelected]);
 
+
   useEffect(() => {
     getAllUsers();
   }, [getAllUsers]);
@@ -109,6 +112,6 @@ export const useAuth = () => {
     setIsAlreadyConnected,
     disconnectUser,
     token,
-    shakeKey
+    shakeKey,
   };
 };

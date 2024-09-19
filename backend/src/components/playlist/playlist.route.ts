@@ -9,7 +9,7 @@ const router = Router();
 
 const playlistController = Container.get(PlaylistController);
 
-router.post("/", authMiddleware, validateDto(CreatePlaylistDto), (req, res, next) =>
+router.post("/", authMiddleware, /* validateDto(CreatePlaylistDto), */ (req, res, next) =>
   playlistController.createPlaylist(req, res, next)
 );
 

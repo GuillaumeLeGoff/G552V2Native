@@ -1,4 +1,4 @@
-import { Redirect, Slot, SplashScreen } from "expo-router";
+import { Redirect, Slot, SplashScreen, Stack } from "expo-router";
 import * as React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
@@ -12,21 +12,15 @@ const RootLayout: React.FC = () => {
   const { token } = useAuthStore();
 
   if (token === undefined) {
-    return null; // ou un écran de chargement
-  }
-
-  return (
-
-      <SafeAreaView style={{ flex: 1 }}>
-        {token ? (
-        <Redirect href="/(user)/playlists" />
-      ) : (
-        <Redirect href="/(auth)" />
-      )}
+    return <Redirect href="/(auth)" />
+  } else {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
         <Slot />
+        <Redirect href="/(user)/playlists" />
       </SafeAreaView>
-
-  );
+    );
+  }
 };
 
 export default RootLayout;
