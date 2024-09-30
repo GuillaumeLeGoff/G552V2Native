@@ -16,11 +16,7 @@ export class MediaController {
     @Inject(() => UploadService) private uploadService: UploadService
   ) {}
 
-  uploadFile = async (
-    req: CustomRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
+  uploadFile = async (req: any, res: Response, next: NextFunction) => {
     try {
       await this.uploadService.handleUpload(req, res, async () => {
         await this.mediaService.createMedia(req, res, () => {

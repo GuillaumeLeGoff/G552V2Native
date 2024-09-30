@@ -47,7 +47,6 @@ export class UploadService {
 
   public handleUpload = async (req: any, res: any, next: NextFunction) => {
     try {
-
       const uploadDir = path.resolve(
         __dirname,
         `../../../${process.env.UPLOAD_DIR}/${req.user.username}`
