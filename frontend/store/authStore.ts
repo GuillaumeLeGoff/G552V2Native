@@ -20,3 +20,20 @@ export const useAuthStore = create(
   )
   
 )
+
+export async function fetchWithAuth(url: string, options: RequestInit = {}) {
+  const { token } = useAuthStore.getState();
+  if (!token) {
+    throw new Error("No token available");
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response;
+};

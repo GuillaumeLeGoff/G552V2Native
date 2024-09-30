@@ -1,5 +1,5 @@
 import { PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
-import { fetchWithAuth } from "../lib/fetchWithAuth";
+import { fetchWithAuth } from "../store/authStore";
 
 export interface Playlist {
   id: number;
