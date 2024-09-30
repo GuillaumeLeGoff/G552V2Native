@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { LogOut } from 'lucide-react-native'
 
 interface AuthState {
   token: string | null
@@ -34,6 +35,11 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
       Authorization: `Bearer ${token}`,
     },
   });
+  if (!response.ok) {
+    useAuthStore.getState().setToken(null);
+    throw new Error("Failed to fetch");
+
+  }
 
   return response;
 };

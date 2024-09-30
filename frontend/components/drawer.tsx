@@ -264,7 +264,7 @@ const DrawerDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Text
     ref={ref}
-    className={cn("font-avenir-book text-sm text-muted-foreground", className)}
+    className={cn("font-avenir-book text-lg text-muted-foreground", className)}
     {...props}
   />
 ));

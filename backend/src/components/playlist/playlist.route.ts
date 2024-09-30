@@ -25,8 +25,8 @@ router.put("/:playlistId", authMiddleware, validateDto(UpdatePlaylistDto), (req,
   playlistController.updatePlaylist(req, res, next)
 );
 
-router.delete("/:playlistId", authMiddleware, (req, res, next) =>
-  playlistController.deletePlaylist(req, res, next)
+router.delete("/", authMiddleware, (req, res, next) =>
+  playlistController.deletePlaylists(req, res, next)
 );
 
 export default router;

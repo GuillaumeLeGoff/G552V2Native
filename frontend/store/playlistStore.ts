@@ -1,20 +1,20 @@
 import { create } from 'zustand'
+import { Playlist } from '~/types/Playlist';
 
-interface Playlist {
-  id: number;
-  name: string;
+interface selectedPlaylist{
+  playlist: Playlist[];
+  index: number;
 }
-
 interface PlaylistStore {
   playlists: Playlist[];
-  selectedPlaylist: Playlist | null;
+  selectedPlaylist: Playlist[] | null;
   setPlaylists: (playlists: Playlist[]) => void;
-  selectPlaylist: (playlist: Playlist) => void;
+  setSelectPlaylist: (playlists: Playlist[]) => void;
 }
 
 export const usePlaylistStore = create<PlaylistStore>((set) => ({
   playlists: [],
   selectedPlaylist: null,
-  setPlaylists: (playlists) => set({ playlists }),
-  selectPlaylist: (playlist) => set({ selectedPlaylist: playlist }),
+  setPlaylists: (playlists: Playlist[]) => set({ playlists: playlists }), // Ajout du type Playlist[]
+  setSelectPlaylist: (playlists: Playlist[]) => set({ selectedPlaylist: playlists }),
 }));

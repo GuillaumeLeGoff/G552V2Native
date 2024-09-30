@@ -10,9 +10,17 @@ SplashScreen.preventAutoHideAsync();
 
 const RootLayout: React.FC = () => {
   const { token } = useAuthStore();
+  React.useEffect(() => {
+    console.log(token);
+  }, [token]);
 
-  if (token === undefined) {
-    return <Redirect href="/(auth)" />
+  if (token === undefined || token === null) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>
+        <Slot />
+        <Redirect href="/(auth)" />
+      </SafeAreaView>
+    );
   } else {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>

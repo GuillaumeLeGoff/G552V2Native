@@ -153,7 +153,7 @@ export default function Login() {
             </Text>
             <Animated.View style={inputAnimatedStyle}>
               <Input
-                className="text-foreground bg-background flex-1 text-sm"
+                className="text-foreground bg-background flex-1 text-lg"
                 placeholder=""
                 value={password || ""}
                 secureTextEntry={!showPassword}
@@ -174,17 +174,11 @@ export default function Login() {
                 </TouchableOpacity>
               </Input>
             </Animated.View>
+            <Button variant="link" size="sm" onPress={() => setIsOpen(true)}>
+              <Text className=" text-foreground text-sm">Lost password</Text>
+            </Button>
           </View>
-          <Button
-            variant="link"
-            size="sm"
-            className="p-0 h-0"
-            onPress={() => setIsOpen(true)}
-          >
-            <Text className=" text-foreground " size="sm">
-              Lost password
-            </Text>
-          </Button>
+
           <View className="h-6 justify-center pb-2">
             <Text className="text-red-500 text-sm text-center">
               {error ? error : ""}

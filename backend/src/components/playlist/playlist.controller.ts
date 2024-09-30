@@ -86,16 +86,16 @@ export class PlaylistController {
     }
   };
 
-  deletePlaylist = async (req: Request, res: Response, next: NextFunction) => {
+  deletePlaylists = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const playlistId: number = parseInt(req.params.playlistId);
-      const deletedPlaylist: Playlist | null =
-        await this.playlistService.deletePlaylist(playlistId);
-      if (!deletedPlaylist) {
-        res.status(404).json({ message: "Playlist not found" });
-      } else {
-        res.status(200).json({ message: "deleted" });
-      }
+      console.log("deletePlaylists", req.body);
+      const playlistIds: number[] = req.body.ids;
+      await this.playlistService.deletePlaylists(playlistIds);
+      res.status(200).json({ message: "Playlists supprimées" });
     } catch (error) {
       next(error);
     }

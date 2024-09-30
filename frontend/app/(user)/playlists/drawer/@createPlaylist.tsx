@@ -20,7 +20,7 @@ export default function CreatePlaylist() {
     <DrawerContent>
       <DrawerHeader>
         <DrawerTitle>Create a new playlist</DrawerTitle>
-        <DrawerDescription>Enter the name of th new playlist</DrawerDescription>
+        <DrawerDescription>Enter the name of the new playlist</DrawerDescription>
       </DrawerHeader>
 
       <View className="p-4 px-8 ">

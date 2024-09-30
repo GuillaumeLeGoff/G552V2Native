@@ -49,10 +49,12 @@ export class PlaylistService {
     return playlist;
   }
 
-  async deletePlaylist(id: number): Promise<Playlist | null> {
-    const playlist = await prisma.playlist.delete({
-      where: { id },
+
+  async deletePlaylists(ids: number[]): Promise<void> {
+    await prisma.playlist.deleteMany({
+      where: {
+        id: { in: ids },
+      },
     });
-    return playlist;
   }
 }

@@ -33,4 +33,20 @@ export class PlaylistService {
     const result = await response.json();
     return result.data; 
   }
+
+  static async deletePlaylists(ids: number[]): Promise<void> {
+    const response = await fetchWithAuth(this.API_URL, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ids }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete playlists');
+    }
+    const result = await response.json();
+    console.log("result", result);
+    return result.data; 
+  }
 }
