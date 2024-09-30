@@ -16,7 +16,11 @@ export class MediaController {
     @Inject(() => UploadService) private uploadService: UploadService
   ) {}
 
-  uploadFile = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  uploadFile = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       await this.uploadService.handleUpload(req, res, async () => {
         await this.mediaService.createMedia(req, res, () => {
@@ -28,7 +32,11 @@ export class MediaController {
     }
   };
 
-  getAllMedia = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  getAllMedia = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const media = await this.mediaService.findAllMedias(req.user);
       res.status(200).json({ data: media, message: "findAll" });
@@ -47,6 +55,23 @@ export class MediaController {
     }
   };
 
+  getMediaByFolderId = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { folder_id } = req.params;
+      const media = await this.mediaService.findMediaByFolderId(
+        parseInt(folder_id),
+        req.user
+      );
+      res.status(200).json({ data: media, message: "findAll" });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateMedia = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const media_id = req.params.media_id;
@@ -54,7 +79,6 @@ export class MediaController {
       const updatedMedia = await this.mediaService.updateMedia(
         parseInt(media_id),
         mediaData
-
       );
       res.status(200).json({ data: updatedMedia, message: "updated" });
     } catch (error) {

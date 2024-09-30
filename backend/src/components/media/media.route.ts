@@ -8,18 +8,30 @@ import { CreateMediaDto, UpdateMediaDto } from "./media.validation";
 const router = Router();
 const mediaController = Container.get(MediaController);
 
-router.post("/", authMiddleware, validateDto(CreateMediaDto) ,mediaController.uploadFile);
+router.post(
+  "/",
+  authMiddleware,
+  validateDto(CreateMediaDto),
+  mediaController.uploadFile
+);
 
 router.get("/", authMiddleware, mediaController.getAllMedia);
 
 router.get("/:media_id", authMiddleware, mediaController.getMediaById);
 
-router.put("/:media_id", validateDto(UpdateMediaDto), authMiddleware, mediaController.updateMedia);
-
-router.delete(
-  "/:media_id",
+router.get(
+  "/folder/:folder_id",
   authMiddleware,
-  mediaController.deleteMedia
+  mediaController.getMediaByFolderId
 );
+
+router.put(
+  "/:media_id",
+  validateDto(UpdateMediaDto),
+  authMiddleware,
+  mediaController.updateMedia
+);
+
+router.delete("/:media_id", authMiddleware, mediaController.deleteMedia);
 
 export default router;

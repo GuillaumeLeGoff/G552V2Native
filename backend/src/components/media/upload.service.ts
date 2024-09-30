@@ -28,7 +28,11 @@ export class UploadService {
     });
   }
 
-  private generateThumbnail(filePath: string, thumbnailPath: string, captureTime: number): Promise<void> {
+  private generateThumbnail(
+    filePath: string,
+    thumbnailPath: string,
+    captureTime: number
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       const command = `ffmpeg -i ${filePath} -ss ${captureTime} -vframes 1 ${thumbnailPath}`;
       exec(command, (error) => {
@@ -43,7 +47,11 @@ export class UploadService {
 
   public handleUpload = async (req: any, res: any, next: NextFunction) => {
     try {
-      const uploadDir = path.resolve(__dirname, process.env.UPLOAD_DIR, req.user.username);
+
+      const uploadDir = path.resolve(
+        __dirname,
+        `../../../${process.env.UPLOAD_DIR}/${req.user.username}`
+      );
       const upload = multer({
         storage: multer.diskStorage({
           destination: (req, file, cb) => {
@@ -62,14 +70,17 @@ export class UploadService {
           console.log(err);
           throw new HttpException(500, "Cannot upload file");
         }
-
         if (req.file.mimetype.startsWith("video/")) {
           const thumbnailName = `${uuidv4()}.png`;
           const thumbnailPath = path.join(uploadDir, thumbnailName);
           try {
             const duration = await this.getVideoDuration(req.file.path);
             const captureTime = duration / 2;
-            await this.generateThumbnail(req.file.path, thumbnailPath, captureTime);
+            await this.generateThumbnail(
+              req.file.path,
+              thumbnailPath,
+              captureTime
+            );
             req.file.thumbnail_path = thumbnailPath;
             req.file.thumbnail_name = thumbnailName;
           } catch (error) {

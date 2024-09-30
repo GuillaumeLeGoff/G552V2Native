@@ -25,7 +25,7 @@ export class MediaService {
       thumbnail_name: file.thumbnail_name || null, // Added thumbnail_name
     };
     try {
-      const newMedia = await prisma.media.create({
+      await prisma.media.create({
         data: media,
       });
       next();
@@ -53,7 +53,20 @@ export class MediaService {
     return media;
   }
 
-  async updateMedia(mediaId: number, data: UpdateMediaDto): Promise<UpdateMediaDto> {
+  async findMediaByFolderId(
+    folderId: number,
+    user: UserType
+  ): Promise<Media[]> {
+    const media = await prisma.media.findMany({
+      where: { folder_id: folderId, user_id: user.id },
+    });
+    return media;
+  }
+
+  async updateMedia(
+    mediaId: number,
+    data: UpdateMediaDto
+  ): Promise<UpdateMediaDto> {
     console.log(data);
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
