@@ -1,10 +1,7 @@
-
-import { router } from 'expo-router';
-import { Modal, Text, TouchableOpacity } from 'react-native';
+import { router } from "expo-router";
+import { Modal, Text, TouchableOpacity } from "react-native";
 
 export default function Playlist() {
-
-
   return (
     <Modal className="flex-1 justify-center items-center">
       <Text>test</Text>
@@ -13,6 +10,4 @@ export default function Playlist() {
       </TouchableOpacity>
     </Modal>
   );
-};
-
-
+}

@@ -14,6 +14,7 @@ const RootLayout: React.FC = () => {
     console.log(token);
   }, [token]);
 
+  const [isLoading, setIsLoading] = React.useState(true);
   if (token === undefined || token === null) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>
@@ -23,7 +24,7 @@ const RootLayout: React.FC = () => {
     );
   } else {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>
         <Slot />
         <Redirect href="/(user)/playlists" />
       </SafeAreaView>

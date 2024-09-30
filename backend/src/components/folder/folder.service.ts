@@ -9,11 +9,12 @@ export class FolderService {
   async getAllFolders(user_id: number): Promise<Folder[]> {
     const folders = await prisma.folder.findMany({
       where: { user_id, parent_id: null },
+      include: { media: true, subFolders: true },
     });
     return folders;
   }
 
-  async getFolderById(id: number ,): Promise<Folder | null> {
+  async getFolderById(id: number): Promise<Folder | null> {
     const folder = await prisma.folder.findUnique({
       where: { id },
       include: { media: true, subFolders: true },
@@ -21,7 +22,10 @@ export class FolderService {
     return folder;
   }
 
-  async createFolder(folderData: CreateFolderDto, user_id: number): Promise<Folder> {
+  async createFolder(
+    folderData: CreateFolderDto,
+    user_id: number
+  ): Promise<Folder> {
     const folder = await prisma.folder.create({
       data: {
         name: folderData.name,
