@@ -4,6 +4,7 @@ import { Inject, Service } from "typedi";
 import { FolderService } from "./folder.service";
 import { CreateFolderDto } from "./folder.validation";
 import { UserType } from "../../types/user.type";
+import { log } from "console";
 
 interface CustomRequest extends Request {
   user?: UserType;
@@ -14,12 +15,18 @@ export class FolderController {
     @Inject(() => FolderService) private folderService: FolderService
   ) {}
 
-  createFolder = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  createFolder = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
+      console.log("createFolder", req.body);
       const folder: CreateFolderDto = req.body;
       const user_id = req.user.id;
       const newFolder: Folder = await this.folderService.createFolder(
-        folder, user_id
+        folder,
+        user_id
       );
       res.status(201).json({ data: newFolder, message: "created" });
     } catch (error) {
@@ -46,11 +53,15 @@ export class FolderController {
     }
   };
 
-  getAllFolders = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  getAllFolders = async (
+    req: CustomRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const user_id = req.user.id;
       console.log(user_id);
-      
+
       const folders: Folder[] = await this.folderService.getAllFolders(user_id);
       res.status(200).json({ data: folders, message: "found" });
     } catch (error) {
@@ -76,14 +87,10 @@ export class FolderController {
 
   deleteFolder = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const folderId: number = parseInt(req.params.folder_id);
-      const deletedFolder: Folder | null =
-        await this.folderService.deleteFolder(folderId);
-      if (!deletedFolder) {
-        res.status(404).json({ message: "Folder not found" });
-      } else {
-        res.status(200).json({ message: "deleted" });
-      }
+      const folderIds: number[] = req.body.folderIds;
+      console.log(folderIds);
+      await this.folderService.deleteFolder(folderIds);
+      res.status(200).json({ message: "deleted" });
     } catch (error) {
       next(error);
     }

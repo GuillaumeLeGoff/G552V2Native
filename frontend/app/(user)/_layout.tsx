@@ -41,7 +41,7 @@ export default function UserLayout() {
           switch (route.name) {
             case "playlists":
               return <Folder size={24} className={iconColor} />;
-            case "medias/[folderId]/index":
+            case "medias":
               return <Image size={24} className={iconColor} />;
             case "macros/index":
               return <Keyboard size={24} className={iconColor} />;
@@ -62,7 +62,7 @@ export default function UserLayout() {
         }}
       />
       <Tabs.Screen
-        name="medias/[folderId]/index"
+        name="medias"
         options={{
           tabBarLabel: "Media",
         }}

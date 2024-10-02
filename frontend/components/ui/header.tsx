@@ -10,8 +10,11 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, icon, onIconPress }) => {
   return (
-    <View className="flex flex-row items-center justify-between p-2 ">
-      <Text className=" font-avenir-heavy text-primary flex-1 text-4xl font-bold">
+    <View className="flex flex-row items-center justify-between z-50 ">
+      <Text
+        className="font-avenir-heavy text-primary flex-1 text-4xl font-bold"
+        style={{ width: 200 }}
+      >
         {title}
       </Text>
       {icon && (

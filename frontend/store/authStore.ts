@@ -1,11 +1,11 @@
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { LogOut } from 'lucide-react-native'
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LogOut } from "lucide-react-native";
 
 interface AuthState {
-  token: string | null
-  setToken: (token: string | null) => void
+  token: string | null;
+  setToken: (token: string | null) => void;
 }
 
 export const useAuthStore = create(
@@ -15,12 +15,11 @@ export const useAuthStore = create(
       setToken: (token) => set({ token }),
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
-  
-)
+);
 
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const { token } = useAuthStore.getState();
@@ -36,10 +35,10 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     },
   });
   if (!response.ok) {
-    useAuthStore.getState().setToken(null);
+    console.log("response", response);
+    /*  useAuthStore.getState().setToken(null); */
     throw new Error("Failed to fetch");
-
   }
 
   return response;
-};
+}

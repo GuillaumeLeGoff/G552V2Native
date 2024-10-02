@@ -28,7 +28,21 @@ async function main() {
       password: "password",
     };
 
-    await authService.register(userData);
+    const newUser = await authService.register(userData);
+
+    // Création d'un dossier pour l'utilisateur
+    const folderData = {
+      name: "Home",
+      parent_id: null, // ou un ID de dossier parent si nécessaire
+    };
+
+    await prisma.folder.create({
+      data: {
+        name: folderData.name,
+        user_id: newUser.id, // Assurez-vous que newUser a un ID
+        parent_id: folderData.parent_id,
+      },
+    });
   }
 
   const existingSession = await prisma.activeSession.findFirst();

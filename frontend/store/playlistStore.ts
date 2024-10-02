@@ -1,7 +1,7 @@
-import { create } from 'zustand'
-import { Playlist } from '~/types/Playlist';
+import { create } from "zustand";
+import { Playlist } from "~/types/Playlist";
 
-interface selectedPlaylist{
+interface selectedPlaylist {
   playlist: Playlist[];
   index: number;
 }
@@ -16,5 +16,6 @@ export const usePlaylistStore = create<PlaylistStore>((set) => ({
   playlists: [],
   selectedPlaylist: null,
   setPlaylists: (playlists: Playlist[]) => set({ playlists: playlists }), // Ajout du type Playlist[]
-  setSelectPlaylist: (playlists: Playlist[]) => set({ selectedPlaylist: playlists }),
+  setSelectPlaylist: (playlists: Playlist[]) =>
+    set({ selectedPlaylist: playlists }),
 }));

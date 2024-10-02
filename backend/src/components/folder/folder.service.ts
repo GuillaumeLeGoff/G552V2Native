@@ -52,10 +52,10 @@ export class FolderService {
     return folder;
   }
 
-  async deleteFolder(id: number): Promise<Folder | null> {
-    const folder = await prisma.folder.delete({
-      where: { id },
+  async deleteFolder(ids: number[]): Promise<Folder | null> {
+    const folder = await prisma.folder.deleteMany({
+      where: { id: { in: ids } },
     });
-    return folder;
+    return null;
   }
 }

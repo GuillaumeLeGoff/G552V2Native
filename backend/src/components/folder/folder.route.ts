@@ -6,19 +6,33 @@ import { extractUser } from "../../middlewares/extractUser.middleware";
 import { validateDto } from "../../middlewares/validation.middleware";
 import { CreateFolderDto } from "./folder.validation";
 
-
-
 const router = Router();
 const folderController = Container.get(FolderController);
 
-router.post("/", authMiddleware, validateDto(CreateFolderDto), folderController.createFolder);
+router.post(
+  "/",
+  authMiddleware,
+  /* validateDto(CreateFolderDto), */
+  (req, res, next) => folderController.createFolder(req, res, next)
+);
 
-router.get("/", extractUser, authMiddleware, folderController.getAllFolders);
+router.get("/", extractUser, authMiddleware, (req, res, next) =>
+  folderController.getAllFolders(req, res, next)
+);
 
-router.get("/:folder_id", authMiddleware, folderController.getFolderById);
+router.get("/:folder_id", authMiddleware, (req, res, next) =>
+  folderController.getFolderById(req, res, next)
+);
 
-router.put("/:folder_id", authMiddleware ,validateDto(CreateFolderDto), folderController.updateFolder);
+router.put(
+  "/:folder_id",
+  authMiddleware,
+  validateDto(CreateFolderDto),
+  (req, res, next) => folderController.updateFolder(req, res, next)
+);
 
-router.delete("/:folder_id", authMiddleware, folderController.deleteFolder);
+router.delete("/", authMiddleware, (req, res, next) =>
+  folderController.deleteFolder(req, res, next)
+);
 
 export default router;
