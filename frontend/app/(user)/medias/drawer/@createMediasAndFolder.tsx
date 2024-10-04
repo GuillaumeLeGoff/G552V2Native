@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Platform, Alert } from "react-native";
 import {
   Drawer,
   DrawerHeader,
@@ -11,10 +11,12 @@ import {
 import { Separator } from "~/components/ui/separator";
 import { FolderPlus } from "~/lib/icons/FolderPlus";
 import { Upload } from "~/lib/icons/Upload";
-import { TextInput } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useFolder } from "~/hooks/useFolder";
+import { useMedia } from "~/hooks/useMedia";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 interface CreateMediasAndFolderDrawerProps {
   isOpen: boolean;
@@ -27,11 +29,76 @@ const CreateMediasAndFolderDrawer: React.FC<
   const [showInput, setShowInput] = useState(false);
   const [folderName, setFolderName] = useState("");
   const { createFolder, currentFolderId } = useFolder();
+  const { uploadMedia } = useMedia();
 
   const closeDrawer = () => {
     setShowInput(false);
     setFolderName("");
     onClose();
+  };
+
+  useEffect(() => {
+    const requestMediaLibraryPermissions = async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permissions Required",
+            "Sorry, we need media library permissions to make this work!"
+          );
+        }
+      }
+    };
+
+    requestMediaLibraryPermissions();
+  }, []);
+
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        const { uri } = asset;
+
+        const filename = asset.fileName || uri.split("/").pop() || "photo.jpg";
+
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image`;
+
+        const formData = new FormData();
+
+        if (Platform.OS === "web") {
+          const response = await fetch(uri);
+          const blob = await response.blob();
+          formData.append("file", blob, filename);
+        } else {
+          formData.append("file", {
+            uri,
+            name: filename,
+            type,
+            folderId: currentFolderId,
+          } as any);
+        }
+
+        // Ajout de l'identifiant du dossier courant
+        formData.append(
+          "folderId",
+          currentFolderId !== null ? currentFolderId.toString() : ""
+        );
+        await uploadMedia(formData);
+
+        closeDrawer();
+      }
+    } catch (error) {
+      console.error("Error picking or uploading image:", error);
+      Alert.alert("Upload Failed", "Failed to upload image");
+    }
   };
 
   return (
@@ -41,11 +108,11 @@ const CreateMediasAndFolderDrawer: React.FC<
           {!showInput ? (
             <>
               <TouchableOpacity
-                className="p-4  border-gray-300 gap-2 flex flex-row items-center justify-center"
-                onPress={() => console.log("Upload pressed")}
+                className="p-4 border-gray-300 gap-2 flex flex-row items-center justify-center"
+                onPress={pickImage}
               >
                 <Upload size={24} className="mr-2 text-primary" />
-                <Text className="font-avenir-book text-lg ">Upload Media</Text>
+                <Text className="font-avenir-book text-lg">Upload Media</Text>
               </TouchableOpacity>
               <Separator
                 orientation="horizontal"
@@ -66,7 +133,7 @@ const CreateMediasAndFolderDrawer: React.FC<
                 <DrawerDescription>Enter Name of the folder</DrawerDescription>
               </DrawerHeader>
 
-              <View className="p-4 px-8 ">
+              <View className="p-4 px-8">
                 <Input
                   className="w-full"
                   placeholder="name"
@@ -81,7 +148,6 @@ const CreateMediasAndFolderDrawer: React.FC<
                     className="mt-4 bg-secondary"
                     onPress={() => {
                       createFolder(folderName, currentFolderId);
-
                       closeDrawer();
                     }}
                     disabled={!folderName}

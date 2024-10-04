@@ -14,6 +14,15 @@ export class FolderService {
     return result.data;
   }
 
+  static async getFolderById(folderId: number): Promise<Folder> {
+    const response = await fetchWithAuth(`${this.API_URL}/${folderId}`, {
+      method: "GET",
+    });
+
+    const result = await response.json();
+    return result.data;
+  }
+
   static async createFolder(
     name: string,
     parent_id: number | null

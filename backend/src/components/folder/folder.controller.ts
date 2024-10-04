@@ -60,8 +60,6 @@ export class FolderController {
   ) => {
     try {
       const user_id = req.user.id;
-      console.log(user_id);
-
       const folders: Folder[] = await this.folderService.getAllFolders(user_id);
       res.status(200).json({ data: folders, message: "found" });
     } catch (error) {

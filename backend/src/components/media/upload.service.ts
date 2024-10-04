@@ -46,6 +46,7 @@ export class UploadService {
   }
 
   public handleUpload = async (req: any, res: any, next: NextFunction) => {
+    console.log("Request Body:", req.body);
     try {
       const uploadDir = path.resolve(
         __dirname,
@@ -65,6 +66,7 @@ export class UploadService {
       });
 
       upload.single("file")(req, res, async (err) => {
+        console.log("req.file", req.file);
         if (err) {
           console.log(err);
           throw new HttpException(500, "Cannot upload file");
@@ -108,5 +110,16 @@ export class UploadService {
 
       throw new HttpException(500, "Cannot delete media");
     }
+  };
+
+  uploadMediaService = async (file: Express.Multer.File, folderId: string) => {
+    // Utilisez folderId pour stocker le fichier dans le bon dossier
+    // Logique d'upload ici, par exemple, en utilisant un service de stockage cloud
+
+    // Exemple de logique fictive
+    const storagePath = `uploads/${folderId}/${file.originalname}`;
+    // Code pour sauvegarder le fichier à storagePath
+
+    return { message: "File uploaded successfully", path: storagePath };
   };
 }

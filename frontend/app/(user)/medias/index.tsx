@@ -9,6 +9,7 @@ import CreateMediasAndFolderDrawer from "./drawer/@createMediasAndFolder";
 import ActionHeader from "~/components/ActionHeader";
 import { Trash } from "~/lib/icons/Trash";
 import { X } from "~/lib/icons/X";
+import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { Text } from "~/components/ui/text";
 
 function HeaderAction() {
@@ -63,12 +64,14 @@ function HeaderAction() {
           }}
         />
       )}
-      <View className="flex-1">
-        <TouchableOpacity onPress={handleBackPress}>
-          <X size={24} className="text-primary" />
-        </TouchableOpacity>
-        <Text>{getFolderPath()}</Text>
-      </View>
+      {getFolderPath() !== "Home" ? (
+        <View className="flex-1 flex-row items-center gap-2">
+          <TouchableOpacity onPress={handleBackPress}>
+            <ArrowLeft size={24} className="text-primary" />
+          </TouchableOpacity>
+          <Text className="text-primary">{getFolderPath()}</Text>
+        </View>
+      ) : null}
     </>
   );
 }
@@ -80,6 +83,7 @@ function MediasScreen() {
     selectedFolder,
     currentFolderId,
     setCurrentFolderId,
+    handleItemPress,
   } = useFolder();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -100,6 +104,7 @@ function MediasScreen() {
                   if (selectedFolder && selectedFolder.length > 0) {
                     handleItemLongPress(folder);
                   } else {
+                    handleItemPress(folder);
                     setCurrentFolderId(folder.id);
                   }
                 }}

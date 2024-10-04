@@ -11,7 +11,8 @@ const prisma = new PrismaClient();
 export class MediaService {
   async createMedia(req: any, res: any, next: any) {
     const file = req.file;
-    const folder_id = parseInt(req.body.folder_id, 10);
+    const folderId = parseInt(req.body.folderId, 10);
+
     const media = {
       original_file_name: file.originalname,
       file_name: file.filename,
@@ -21,7 +22,7 @@ export class MediaService {
       size: file.size,
       uploaded_at: new Date(),
       user_id: parseInt(req.user.id, 10),
-      folder_id: folder_id,
+      folder_id: folderId,
       thumbnail_path: file.thumbnail_path || null,
       thumbnail_name: file.thumbnail_name || null,
     };

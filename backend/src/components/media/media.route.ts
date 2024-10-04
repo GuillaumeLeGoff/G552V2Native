@@ -4,6 +4,9 @@ import { MediaController } from "./media.controller";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 import { validateDto } from "../../middlewares/validation.middleware";
 import { CreateMediaDto, UpdateMediaDto } from "./media.validation";
+import multer from "multer";
+
+const upload = multer({ dest: "uploads/" }); // Configurez multer pour gérer les fichiers
 
 const router = Router();
 const mediaController = Container.get(MediaController);
@@ -33,5 +36,7 @@ router.put(
 );
 
 router.delete("/:media_id", authMiddleware, mediaController.deleteMedia);
+
+router.post("/upload", upload.single("file"), mediaController.uploadFile);
 
 export default router;

@@ -16,9 +16,8 @@ export const useFolder = () => {
   const getFolders = useCallback(async () => {
     const folders = await FolderService.getFolders();
     console.log("folders", folders);
-    setFolders(folders);
+    setFolders(folders[0]?.subFolders || []);
 
-    // Définir le dossier "home" comme dossier courant
     const homeFolder = folders.find(
       (folder) => folder.name === "Home" && folder.parent_id === null
     );
@@ -26,6 +25,12 @@ export const useFolder = () => {
       setCurrentFolderId(homeFolder.id);
     }
   }, [setFolders, setCurrentFolderId]);
+
+  const getFolderById = useCallback(async (folderId: number) => {
+    const folder = await FolderService.getFolderById(folderId);
+    console.log("folder", folder);
+    setFolders(folder.subFolders || []);
+  }, []);
 
   const createFolder = useCallback(
     async (folderName: string, parent_id: number | null) => {
@@ -46,7 +51,8 @@ export const useFolder = () => {
   };
 
   const handleItemPress = (folder: Folder) => {
-    // Logique pour gérer la pression simple sur un dossier
+    console.log("folder", folder);
+    getFolderById(folder.id);
   };
 
   const deleteFolders = async (selectedFolder: Folder[]) => {
