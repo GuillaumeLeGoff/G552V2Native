@@ -35,7 +35,7 @@ router.put(
   mediaController.updateMedia
 );
 
-router.delete("/:media_id", authMiddleware, mediaController.deleteMedia);
+router.delete("/", authMiddleware, mediaController.deleteMedia);
 
 router.post("/upload", upload.single("file"), mediaController.uploadFile);
 

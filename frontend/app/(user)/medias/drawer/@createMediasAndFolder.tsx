@@ -28,7 +28,7 @@ const CreateMediasAndFolderDrawer: React.FC<
 > = ({ isOpen, onClose }) => {
   const [showInput, setShowInput] = useState(false);
   const [folderName, setFolderName] = useState("");
-  const { createFolder, currentFolderId } = useFolder();
+  const { createFolder, folder } = useFolder();
   const { uploadMedia } = useMedia();
 
   const closeDrawer = () => {
@@ -82,15 +82,10 @@ const CreateMediasAndFolderDrawer: React.FC<
             uri,
             name: filename,
             type,
-            folderId: currentFolderId,
+            folderId: folder?.id,
           } as any);
         }
-
-        // Ajout de l'identifiant du dossier courant
-        formData.append(
-          "folderId",
-          currentFolderId !== null ? currentFolderId.toString() : ""
-        );
+        formData.append("folderId", folder?.id.toString() || "");
         await uploadMedia(formData);
 
         closeDrawer();
@@ -147,7 +142,7 @@ const CreateMediasAndFolderDrawer: React.FC<
                   <Button
                     className="mt-4 bg-secondary"
                     onPress={() => {
-                      createFolder(folderName, currentFolderId);
+                      createFolder(folderName, folder?.id || null);
                       closeDrawer();
                     }}
                     disabled={!folderName}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Animated, TouchableOpacity, View } from "react-native";
+import { Animated, Image, TouchableOpacity, View } from "react-native";
 import { CreateButton } from "~/components/createButton";
 import { ItemFolder } from "~/components/ItemFolder";
 import { Header } from "~/components/ui/header";
@@ -7,109 +7,109 @@ import { useFolder } from "~/hooks/useFolder";
 import CreateMediasAndFolderDrawer from "./drawer/@createMediasAndFolder";
 
 import ActionHeader from "~/components/ActionHeader";
+import { Text } from "~/components/ui/text";
+import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { Trash } from "~/lib/icons/Trash";
 import { X } from "~/lib/icons/X";
-import { ArrowLeft } from "~/lib/icons/ArrowLeft";
-import { Text } from "~/components/ui/text";
+import { useAuth } from "~/hooks/useAuth";
+import { ItemMedias } from "~/components/ItemMedias";
 
 function HeaderAction() {
-  const {
-    selectedFolder,
-    setSelectFolder,
-    deleteFolders,
-    currentFolderId,
-    setCurrentFolderId,
-    getFolderPath,
-    folders,
-  } = useFolder();
+  const { selectedItems, setSelectItems, deleteItems, handleBack, folder } =
+    useFolder();
 
   const handleBackPress = () => {
-    if (currentFolderId) {
-      const currentFolder = folders.find((f) => f.id === currentFolderId);
-      if (currentFolder?.parent_id !== null) {
-        setCurrentFolderId(currentFolder?.parent_id || null);
-      }
-    }
+    handleBack();
   };
 
   return (
     <>
-      {selectedFolder && selectedFolder.length > 0 ? (
+      {selectedItems && selectedItems.length > 0 ? (
         <ActionHeader
-          text={`${selectedFolder.length} sélectionné(s)`}
+          text={`${selectedItems.length} sélectionné(s)`}
           actionsBeforeText={[
             {
               icon: X,
-              onPress: () => setSelectFolder([]),
+              onPress: () => setSelectItems([]),
               size: 24,
             },
           ]}
           actionsAfterText={[
             {
               icon: Trash,
-              onPress: () => deleteFolders(selectedFolder),
+              onPress: () => deleteItems(selectedItems),
               size: 20,
             },
           ]}
         />
       ) : (
         <Header
-          title={`Medias `}
-          onIconPress={() => {
-            if (currentFolderId) {
-              setCurrentFolderId(null);
-            } else {
-              console.log("ChevronDown pressed");
-            }
-          }}
+          title={`Medias`}
+          onIconPress={handleBackPress} // Utilisation de handleBackPress
         />
       )}
-      {getFolderPath() !== "Home" ? (
-        <View className="flex-1 flex-row items-center gap-2">
-          <TouchableOpacity onPress={handleBackPress}>
-            <ArrowLeft size={24} className="text-primary" />
-          </TouchableOpacity>
-          <Text className="text-primary">{getFolderPath()}</Text>
-        </View>
-      ) : null}
+
+      <View className="flex-1 flex-row items-center gap-2">
+        <TouchableOpacity
+          onPress={handleBackPress}
+          style={{ opacity: folder?.parent_id ? 1 : 0 }}
+        >
+          <ArrowLeft size={24} className="text-primary " />
+        </TouchableOpacity>
+        <Text className="text-primary">{folder?.path}</Text>
+      </View>
     </>
   );
 }
 
 function MediasScreen() {
   const {
-    folders,
-    handleItemLongPress,
-    selectedFolder,
-    currentFolderId,
-    setCurrentFolderId,
-    handleItemPress,
+    folder,
+    handleItemSelect,
+    selectedItems,
+    handleItemFolderPress,
+    handleItemMediaPress,
   } = useFolder();
   const [isOpen, setIsOpen] = React.useState(false);
-
-  const filteredFolders = folders.filter(
-    (folder) => folder.parent_id === currentFolderId
-  );
 
   return (
     <View className="flex-1">
       <Animated.ScrollView className="px-8 py-8" scrollEventThrottle={16}>
         <HeaderAction />
         <View className="flex-row flex-wrap">
-          {filteredFolders?.map((folder, index) => (
+          {folder?.subFolders?.map((subFolder, index) => (
             <View key={index} style={{ width: "50%", padding: 8 }}>
               <ItemFolder
-                title={folder.name}
+                title={subFolder.name}
                 onPress={() => {
-                  if (selectedFolder && selectedFolder.length > 0) {
-                    handleItemLongPress(folder);
+                  if (selectedItems && selectedItems.length > 0) {
+                    handleItemSelect(subFolder);
                   } else {
-                    handleItemPress(folder);
-                    setCurrentFolderId(folder.id);
+                    handleItemFolderPress(subFolder);
                   }
                 }}
-                onLongPress={() => handleItemLongPress(folder)}
-                isSelected={selectedFolder?.some((f) => f.id === folder.id)}
+                onLongPress={() => handleItemSelect(subFolder)}
+                isSelected={selectedItems?.some(
+                  (item) => item.id === subFolder.id && item.type === "folder"
+                )}
+              />
+            </View>
+          ))}
+          {folder?.media?.map((media, index) => (
+            <View key={index} style={{ width: "50%", padding: 8 }}>
+              <ItemMedias
+                media={media}
+                onPress={() => {
+                  if (selectedItems && selectedItems.length > 0) {
+                    handleItemSelect(media);
+                  } else {
+                    handleItemMediaPress(media);
+                  }
+                }}
+                onLongPress={() => handleItemSelect(media)}
+                isSelected={selectedItems?.some(
+                  (item) => item.id === media.id && item.type === "media"
+                )}
               />
             </View>
           ))}

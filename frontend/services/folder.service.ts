@@ -5,16 +5,16 @@ import { Folder } from "~/types/Folder";
 export class FolderService {
   static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/folder`;
 
-  static async getFolders(): Promise<Folder[]> {
+  static async getRoot(): Promise<Folder | null> {
     const response = await fetchWithAuth(this.API_URL, {
       method: "GET",
     });
 
     const result = await response.json();
-    return result.data;
+    return result.data[0];
   }
 
-  static async getFolderById(folderId: number): Promise<Folder> {
+  static async getFolderById(folderId: number | null): Promise<Folder | null> {
     const response = await fetchWithAuth(`${this.API_URL}/${folderId}`, {
       method: "GET",
     });
@@ -42,7 +42,6 @@ export class FolderService {
   }
 
   static async deleteFolders(folderIds: number[]): Promise<void> {
-    console.log("folderIds");
     const response = await fetchWithAuth(this.API_URL, {
       method: "DELETE",
       headers: {

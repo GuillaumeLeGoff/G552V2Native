@@ -17,7 +17,7 @@ router.post(
 );
 
 router.get("/", extractUser, authMiddleware, (req, res, next) =>
-  folderController.getAllFolders(req, res, next)
+  folderController.getRoot(req, res, next)
 );
 
 router.get("/:folder_id", authMiddleware, (req, res, next) =>
@@ -32,7 +32,7 @@ router.put(
 );
 
 router.delete("/", authMiddleware, (req, res, next) =>
-  folderController.deleteFolder(req, res, next)
+  folderController.deleteFolderAndMedias(req, res, next)
 );
 
 export default router;

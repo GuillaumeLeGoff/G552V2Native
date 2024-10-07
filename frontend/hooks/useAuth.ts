@@ -7,7 +7,7 @@ import { router } from "expo-router";
 
 export const useAuth = () => {
   const { token, setToken } = useAuthStore();
-  const { setUser, setUsers, users } = useUserStore();
+  const { setUser, setUsers, users, user } = useUserStore();
   const [userSelected, setUserSelected] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +15,6 @@ export const useAuth = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [isAlreadyConnected, setIsAlreadyConnected] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
-  
 
   const getAllUsers = useCallback(async () => {
     const users = await UserService.getUsers();
@@ -32,10 +31,14 @@ export const useAuth = () => {
   const login = useCallback(async () => {
     if (userSelected && password) {
       try {
-        const { token: newToken, message } = await AuthService.login(userSelected, password);
+        const { token: newToken } = await AuthService.login(
+          userSelected,
+          password
+        );
         setToken(newToken);
         setError(null);
         setIsAlreadyConnected(false);
+        setUser(userSelected);
         router.push("/playlists");
         return true;
       } catch (error: unknown) {
@@ -69,8 +72,8 @@ export const useAuth = () => {
     }
 
     if (hasError) {
-      setShakeKey(prev => prev + 1); 
-      return false; 
+      setShakeKey((prev) => prev + 1);
+      return false;
     } else {
       return await login();
     }
@@ -79,14 +82,13 @@ export const useAuth = () => {
   const disconnectUser = useCallback(async () => {
     try {
       await AuthService.logout();
-      setUserSelected(null);
+      /* setUserSelected(null); */
       setPassword(null);
     } catch (error) {
       console.error("Failed to disconnect user:", error);
       setError("Failed to disconnect user. Please try again.");
     }
   }, [userSelected]);
-
 
   useEffect(() => {
     getAllUsers();
@@ -108,6 +110,7 @@ export const useAuth = () => {
     setUsernameError,
     passwordError,
     setPasswordError,
+    user,
     isAlreadyConnected,
     setIsAlreadyConnected,
     disconnectUser,

@@ -1,92 +1,146 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { FolderService } from "~/services/folder.service";
+import { MediaService } from "~/services/media.service";
 import { useFolderStore } from "~/store/folderStore";
 import { Folder } from "~/types/Folder";
+import { Media } from "~/types/Media";
+
+// Fonction utilitaire pour assigner le type "folder"
+const assignFolderType = (folder: Folder): Folder => ({
+  ...folder,
+  type: "folder",
+  subFolders: folder.subFolders
+    ? folder.subFolders.map(assignFolderType)
+    : undefined,
+  media: folder.media ? folder.media.map(assignMediaType) : undefined,
+});
+
+// Fonction utilitaire pour assigner le type "media"
+const assignMediaType = (media: Media): Media => ({
+  ...media,
+  type: "media",
+});
 
 export const useFolder = () => {
-  const {
-    folders,
-    setFolders,
-    currentFolderId,
-    setCurrentFolderId,
-    selectedFolder,
-    setSelectFolder,
-  } = useFolderStore();
+  const { folder, setFolder, selectedItems, setSelectItems } =
+    useFolderStore();
 
-  const getFolders = useCallback(async () => {
-    const folders = await FolderService.getFolders();
-    console.log("folders", folders);
-    setFolders(folders[0]?.subFolders || []);
-
-    const homeFolder = folders.find(
-      (folder) => folder.name === "Home" && folder.parent_id === null
-    );
-    if (homeFolder) {
-      setCurrentFolderId(homeFolder.id);
+  const getRootFolder = useCallback(async () => {
+    const rootFolder = await FolderService.getRoot();
+    if (rootFolder) {
+      const typedFolder = assignFolderType(rootFolder); // Assignation du type
+      setFolder(typedFolder);
     }
-  }, [setFolders, setCurrentFolderId]);
+  }, [setFolder]);
 
-  const getFolderById = useCallback(async (folderId: number) => {
-    const folder = await FolderService.getFolderById(folderId);
-    console.log("folder", folder);
-    setFolders(folder.subFolders || []);
-  }, []);
+  const getFolderById = useCallback(
+    async (folderId: number | null) => {
+      const folder = await FolderService.getFolderById(folderId);
+      if (folder) {
+        const typedFolder = assignFolderType(folder); // Assignation du type
+        setFolder(typedFolder);
+      }
+    },
+    [setFolder]
+  );
 
   const createFolder = useCallback(
     async (folderName: string, parent_id: number | null) => {
       const folder = await FolderService.createFolder(folderName, parent_id);
-      setFolders([...folders, folder]);
+      if (folder && folder) {
+        const typedFolder = assignFolderType(folder); // Assignation du type
+        const updatedSubFolders = [...(folder.subFolders || []), typedFolder];
+        setFolder({ ...folder, subFolders: updatedSubFolders });
+      }
     },
-    [folders, setFolders]
+    [folder, setFolder]
   );
 
-  const handleItemLongPress = (item: Folder) => {
-    if (selectedFolder?.some((f) => f.id === item.id)) {
-      setSelectFolder(selectedFolder.filter((f) => f.id !== item.id));
+  const handleItemFolderPress = (item: Folder) => {
+    getFolderById(item.id);
+  };
+
+  const handleItemMediaPress = (item: Media) => {
+    console.log(item);
+  };
+
+  const handleItemSelect = (item: Folder | Media) => {
+    if (selectedItems.some((f) => f.id === item.id && f.type === item.type)) {
+      setSelectItems(
+        selectedItems.filter((f) => !(f.id === item.id && f.type === item.type))
+      );
     } else {
-      setSelectFolder([...(selectedFolder || []), item]);
+      setSelectItems([...selectedItems, item]);
     }
-    console.log("item", item);
-    console.log("selectedFolder", selectedFolder);
   };
 
-  const handleItemPress = (folder: Folder) => {
-    console.log("folder", folder);
-    getFolderById(folder.id);
+  const handleBack = () => {
+    getFolderById(folder?.parent_id || null);
   };
 
-  const deleteFolders = async (selectedFolder: Folder[]) => {
-    await FolderService.deleteFolders(selectedFolder.map((f) => f.id));
-    setFolders(folders.filter((f) => !selectedFolder.includes(f)));
-    setSelectFolder([]);
-  };
+  const deleteItems = async (selectedItems: (Folder | Media)[]) => {
+    const folderIds: number[] = [];
+    const mediaIds: number[] = [];
 
-  const getFolderPath = () => {
-    if (!currentFolderId) return "";
-    const path = [];
-    let folder = folders.find((f) => f.id === currentFolderId);
-    while (folder) {
-      path.unshift(folder.name);
-      folder = folders.find((f) => f.id === folder?.parent_id);
+    selectedItems.forEach((item) => {
+      if ("subFolders" in item) {
+        folderIds.push(item.id);
+      } else {
+        mediaIds.push(item.id);
+      }
+    });
+
+    if (folderIds.length > 0) {
+      console.log(folderIds);
+      await FolderService.deleteFolders(folderIds);
     }
-    return path.join(" / ");
+
+    if (mediaIds.length > 0) {
+      console.log(mediaIds);
+      await MediaService.deleteMedia(mediaIds);
+    }
+
+    if (folder) {
+      const updatedSubFolders =
+        folder.subFolders?.filter(
+          (f) =>
+            !selectedItems.some(
+              (item) => "subFolders" in item && item.id === f.id
+            )
+        ) || [];
+
+      const updatedMedia =
+        folder.media?.filter(
+          (m) =>
+            !selectedItems.some(
+              (item) => !("subFolders" in item) && item.id === m.id
+            )
+        ) || [];
+
+      setFolder({
+        ...folder,
+        subFolders: updatedSubFolders,
+        media: updatedMedia,
+      });
+    }
+
+    setSelectItems([]);
   };
 
   useEffect(() => {
-    getFolders();
-  }, [getFolders]);
+    getRootFolder();
+  }, [getRootFolder, getFolderById]);
 
   return {
-    folders,
-    getFolders,
+    folder,
+    setFolder,
     createFolder,
-    currentFolderId,
-    setSelectFolder,
-    setCurrentFolderId,
-    selectedFolder,
-    handleItemPress,
-    handleItemLongPress,
-    deleteFolders,
-    getFolderPath,
+    setSelectItems,
+    selectedItems,
+    handleItemFolderPress,
+    handleItemMediaPress,
+    handleItemSelect,
+    deleteItems,
+    handleBack,
   };
 };

@@ -3,12 +3,12 @@ import { User } from '../types/User';
 
 type UserState = {
   users: User[] | null;
-  user: User | null;
+  user: string | null;
 };
 
 type UserActions = {
   setUsers: (users: User[]) => void;
-  setUser: (user: User) => void;
+  setUser: (user: string) => void;
 };
 
 export const useUserStore = create<UserState & UserActions>((set) => ({
@@ -17,7 +17,7 @@ export const useUserStore = create<UserState & UserActions>((set) => ({
   setUsers: (users: User[]) => {
     set({ users });
   },
-  setUser: (user: User) => {
-    set({ user });
+  setUser: (user: string) => {
+    set({ user });    
   },
 }));

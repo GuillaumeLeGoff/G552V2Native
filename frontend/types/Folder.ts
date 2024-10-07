@@ -1,5 +1,5 @@
-import { User } from './User';
-import { Media } from './Media';
+import { User } from "./User";
+import { Media } from "./Media";
 
 export interface Folder {
   id: number;
@@ -9,7 +9,9 @@ export interface Folder {
   media?: Media[];
   parent?: Folder | null;
   parent_id: number | null;
-  subFolders?: Folder[];
+  subFolders?: Folder[] | null;
+  path: string | null;
   updated_at: Date;
   folderId: number | null;
+  type: "folder"; // Doit être strictement 'folder'
 }

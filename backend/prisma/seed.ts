@@ -32,8 +32,9 @@ async function main() {
 
     // Création d'un dossier pour l'utilisateur
     const folderData = {
-      name: "Home",
+      name: "root",
       parent_id: null, // ou un ID de dossier parent si nécessaire
+      path: "root",
     };
 
     await prisma.folder.create({
@@ -41,6 +42,7 @@ async function main() {
         name: folderData.name,
         user_id: newUser.id, // Assurez-vous que newUser a un ID
         parent_id: folderData.parent_id,
+        path: folderData.path,
       },
     });
   }

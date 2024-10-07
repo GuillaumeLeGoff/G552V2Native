@@ -82,13 +82,17 @@ export class MediaService {
     return result.data;
   }
 
-  static async deleteMedia(mediaId: number): Promise<void> {
-    const response = await fetchWithAuth(`${this.API_URL}/${mediaId}`, {
+  static async deleteMedia(mediaIds: number[]): Promise<void> {
+    const response = await fetchWithAuth(this.API_URL, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ mediaIds }),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to delete media with ID ${mediaId}`);
+      throw new Error(`Failed to delete media with ID ${mediaIds}`);
     }
   }
 }

@@ -119,8 +119,8 @@ export default function Login() {
               <Select
                 defaultValue={{ value: "", label: "Select user" }}
                 onValueChange={(selectedUser) => {
-                  if (selectedUser && selectedUser.value) {
-                    setUserSelected(selectedUser.value);
+                  if (selectedUser?.value) {
+                    setUserSelected(selectedUser?.value);
                     setUsernameError(false);
                   }
                 }}

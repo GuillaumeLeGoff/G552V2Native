@@ -63,6 +63,7 @@ model Folder {
   subFolders Folder[] @relation("FolderToSubFolder")
   updated_at DateTime @updatedAt
   folderId   Int?
+  path       String?
 }
 
 model Media {

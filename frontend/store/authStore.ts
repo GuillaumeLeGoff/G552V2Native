@@ -1,18 +1,21 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { LogOut } from "lucide-react-native";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface AuthState {
   token: string | null;
+  user: string | null;
   setToken: (token: string | null) => void;
+  setUser: (user: string | null) => void;
 }
 
 export const useAuthStore = create(
   persist<AuthState>(
     (set) => ({
       token: null,
+      user: null,
       setToken: (token) => set({ token }),
+      setUser: (user) => set({ user }),
     }),
     {
       name: "auth-storage",

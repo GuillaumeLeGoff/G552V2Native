@@ -1,6 +1,6 @@
-import { User } from './User';
-import { PlaylistMedia } from './PlaylistMedia';
-import { Folder } from './Folder';
+import { User } from "./User";
+import { PlaylistMedia } from "./PlaylistMedia";
+import { Folder } from "./Folder";
 
 export interface Media {
   id: number;
@@ -8,7 +8,7 @@ export interface Media {
   file_name: string;
   path: string;
   format: string;
-  type: string;
+  type: "media"; // Doit être strictement 'media'
   thumbnail_path: string | null;
   thumbnail_name: string | null;
   size: number;

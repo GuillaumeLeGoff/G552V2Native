@@ -45,7 +45,7 @@ export class MediaController {
   getMediaById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { media_id } = req.params;
-      const media = await this.mediaService.findMedia(parseInt(media_id));
+      const media = await this.mediaService.findMedia([parseInt(media_id)]);
       res.status(200).json({ data: media, message: "findOne" });
     } catch (error) {
       next(error);
@@ -85,10 +85,11 @@ export class MediaController {
 
   deleteMedia = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { media_id } = req.params;
-      const media = await this.mediaService.findMedia(parseInt(media_id));
-      await this.mediaService.deleteMedia(parseInt(media_id)).then(() => {
-        this.uploadService.deleteMedia(media);
+      console.log("deleteMedia", req.body);
+      const { mediaIds } = req.body;
+      const medias: Media[] = await this.mediaService.findMedia(mediaIds);
+      await this.uploadService.deleteMedias(medias).then(() => {
+        this.mediaService.deleteMedias(mediaIds);
         res.status(200).json({ message: "deleted" });
       });
     } catch (error) {

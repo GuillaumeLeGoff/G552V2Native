@@ -1,13 +1,14 @@
+import { Media, PrismaClient } from "@prisma/client";
+import { exec } from "child_process"; // Ajout de l'import pour exécuter des commandes shell
 import { NextFunction } from "express";
 import { unlinkSync } from "fs";
 import multer from "multer";
-import { Inject, Service } from "typedi";
+import path from "path";
+import { Service } from "typedi";
 import { v4 as uuidv4 } from "uuid";
 import { HttpException } from "../../exceptions/HttpException";
-import { Media } from "@prisma/client";
-import path from "path";
-import { exec } from "child_process"; // Ajout de l'import pour exécuter des commandes shell
 
+const prisma = new PrismaClient();
 @Service()
 export class UploadService {
   private getExtension(mimetype: string) {
@@ -97,18 +98,41 @@ export class UploadService {
     }
   };
 
-  public deleteMedia = async (media: Media): Promise<void> => {
+  public deleteMedias = async (medias: Media[]): Promise<void> => {
     try {
-      console.log(media);
 
-      unlinkSync(media.path);
-      if (media.thumbnail_path) {
-        unlinkSync(media.thumbnail_path); // Supprime également la vignette
+      for (const media of medias) {
+        unlinkSync(media.path);
+        if (media.thumbnail_path) {
+          unlinkSync(media.thumbnail_path);
+        }
       }
     } catch (error) {
       console.log(error);
-
       throw new HttpException(500, "Cannot delete media");
+    }
+  };
+
+  public deleteAllMedia = async (): Promise<void> => {
+    try {
+      // Récupérer tous les médias
+      const medias: Media[] = await prisma.media.findMany();
+
+      for (const media of medias) {
+        // Supprimer le fichier principal
+        unlinkSync(media.path);
+
+        // Supprimer la vignette si elle existe
+        if (media.thumbnail_path) {
+          unlinkSync(media.thumbnail_path);
+        }
+      }
+
+      // Supprimer tous les enregistrements média de la base de données
+      await prisma.media.deleteMany();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(500, "Impossible de supprimer tous les médias");
     }
   };
 

@@ -41,7 +41,6 @@ export class PlaylistService {
       throw new Error("Failed to delete playlists");
     }
     const result = await response.json();
-    console.log("result", result);
     return result.data;
   }
 }

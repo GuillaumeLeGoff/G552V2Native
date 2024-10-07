@@ -45,12 +45,12 @@ export class MediaService {
     });
   }
 
-  async findMedia(mediaId: number): Promise<Media> {
-    const media = await prisma.media.findUnique({
-      where: { id: mediaId },
+  async findMedia(mediaIds: number[]): Promise<Media[]> {
+    const media = await prisma.media.findMany({
+      where: { id: { in: mediaIds } },
     });
     if (!media) {
-      throw new HttpException(404, `Media with ID ${mediaId} doesn't exist.`);
+      throw new HttpException(404, `Media with ID ${mediaIds} doesn't exist.`);
     }
     return media;
   }
@@ -82,15 +82,12 @@ export class MediaService {
     });
   }
 
-  async deleteMedia(mediaId: number): Promise<Media> {
-    const media = await prisma.media.findUnique({
-      where: { id: mediaId },
+  async deleteMedias(mediaIds: number[]): Promise<null> {
+    await prisma.media.deleteMany({
+      where: { id: { in: mediaIds } },
     });
-    if (!media) {
-      throw new HttpException(404, `Media with ID ${mediaId} doesn't exist.`);
-    }
-    return prisma.media.delete({
-      where: { id: mediaId },
-    });
+
+    return null;
   }
+ 
 }
