@@ -1,10 +1,6 @@
 import { create } from "zustand";
 import { Playlist } from "~/types/Playlist";
 
-interface selectedPlaylist {
-  playlist: Playlist[];
-  index: number;
-}
 interface PlaylistStore {
   playlists: Playlist[];
   selectedPlaylist: Playlist[] | null;
