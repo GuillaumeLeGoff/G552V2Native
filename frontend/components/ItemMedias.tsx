@@ -16,7 +16,6 @@ export function ItemMedias({
   isSelected,
   media,
 }: ItemMedias) {
-  const { user } = useAuth();
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -27,10 +26,9 @@ export function ItemMedias({
       }`}
       style={{ flex: 1 }}
     >
-
       <Image
         source={{
-          uri: `http://192.168.100.161:4000/uploads/${user}/${media.file_name}`,
+          uri: `http://192.168.1.78:4000/uploads/admin/${media.file_name}`,
         }}
         style={{ width: 150, height: 150 }}
       />

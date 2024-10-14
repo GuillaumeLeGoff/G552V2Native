@@ -1,17 +1,23 @@
-import { router } from 'expo-router';
-import { useEffect } from 'react';
-import { useAuth } from '~/hooks/useAuth';
-import { PlaylistService } from '~/services/playlist.service';
-import { usePlaylistStore } from '~/store/playlistStore';
-import { Playlist } from '~/types/Playlist';
+import { router } from "expo-router";
+import { useEffect } from "react";
+import { useAuth } from "~/hooks/useAuth";
+import { PlaylistService } from "~/services/playlist.service";
+import { usePlaylistStore } from "~/store/playlistStore";
+import { Playlist } from "~/types/Playlist";
 
 export const usePlaylists = () => {
-  const { playlists, setPlaylists, setSelectPlaylist , selectedPlaylist } = usePlaylistStore();
+  const {
+    playlists,
+    setPlaylists,
+    setSelectPlaylist,
+    selectedPlaylist,
+    setPlaylist,
+  } = usePlaylistStore();
   const { token } = useAuth();
 
   const getPlaylists = async () => {
     try {
-      const data = await PlaylistService.getPlaylists();      
+      const data = await PlaylistService.getPlaylists();
       setPlaylists(data);
     } catch (error) {
       console.error("Failed to fetch playlists", error);
@@ -23,13 +29,13 @@ export const usePlaylists = () => {
       const newPlaylist = await PlaylistService.createPlaylist(name);
       setPlaylists([...playlists, newPlaylist]);
     } catch (error) {
-      console.error('Failed to create playlist', error);
+      console.error("Failed to create playlist", error);
     }
   };
 
   const handleItemLongPress = (item: Playlist) => {
-    if (selectedPlaylist?.some(p => p.id === item.id)) {
-      setSelectPlaylist(selectedPlaylist.filter(p => p.id !== item.id));
+    if (selectedPlaylist?.some((p) => p.id === item.id)) {
+      setSelectPlaylist(selectedPlaylist.filter((p) => p.id !== item.id));
     } else {
       setSelectPlaylist([...(selectedPlaylist || []), item]);
     }
@@ -38,22 +44,22 @@ export const usePlaylists = () => {
   };
 
   const deletePlaylists = async (selectedPlaylist: Playlist[]) => {
-   await PlaylistService.deletePlaylists(selectedPlaylist.map(p => p.id));
-    setPlaylists(playlists.filter(p => !selectedPlaylist.includes(p)));
+    await PlaylistService.deletePlaylists(selectedPlaylist.map((p) => p.id));
+    setPlaylists(playlists.filter((p) => !selectedPlaylist.includes(p)));
     setSelectPlaylist([]);
   };
 
   const handleItemPress = (playlist: Playlist) => {
-  router.push(`/playlists/${playlist.id}`);
+    setPlaylist(playlist);
+    router.push(`/playlists/${playlist.id}`);
   };
 
   useEffect(() => {
-      if (token) {
-        console.log("token useEffect", token);
-        getPlaylists();
-        setSelectPlaylist([]);
-      }
-    
+    if (token) {
+      console.log("token useEffect", token);
+      getPlaylists();
+      setSelectPlaylist([]);
+    }
   }, []);
   return {
     playlists,

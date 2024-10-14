@@ -5,7 +5,6 @@ import { useFolderStore } from "~/store/folderStore";
 import { Folder } from "~/types/Folder";
 import { Media } from "~/types/Media";
 
-// Fonction utilitaire pour assigner le type "folder"
 const assignFolderType = (folder: Folder): Folder => ({
   ...folder,
   type: "folder",
@@ -15,18 +14,17 @@ const assignFolderType = (folder: Folder): Folder => ({
   media: folder.media ? folder.media.map(assignMediaType) : undefined,
 });
 
-// Fonction utilitaire pour assigner le type "media"
 const assignMediaType = (media: Media): Media => ({
   ...media,
   type: "media",
 });
 
 export const useFolder = () => {
-  const { folder, setFolder, selectedItems, setSelectItems } =
-    useFolderStore();
+  const { folder, setFolder, selectedItems, setSelectItems } = useFolderStore();
 
   const getRootFolder = useCallback(async () => {
     const rootFolder = await FolderService.getRoot();
+    console.log("rootFolder", rootFolder);
     if (rootFolder) {
       const typedFolder = assignFolderType(rootFolder); // Assignation du type
       setFolder(typedFolder);
@@ -61,10 +59,11 @@ export const useFolder = () => {
   };
 
   const handleItemMediaPress = (item: Media) => {
-    console.log(item);
+    console.log("item", item);
   };
 
   const handleItemSelect = (item: Folder | Media) => {
+    console.log("item", selectedItems);
     if (selectedItems.some((f) => f.id === item.id && f.type === item.type)) {
       setSelectItems(
         selectedItems.filter((f) => !(f.id === item.id && f.type === item.type))

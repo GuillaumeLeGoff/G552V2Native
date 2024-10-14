@@ -1,7 +1,7 @@
 import { Media, PrismaClient } from "@prisma/client";
 import { exec } from "child_process"; // Ajout de l'import pour exécuter des commandes shell
 import { NextFunction } from "express";
-import { unlinkSync } from "fs";
+import { unlinkSync, existsSync } from "fs";
 import multer from "multer";
 import path from "path";
 import { Service } from "typedi";
@@ -100,11 +100,19 @@ export class UploadService {
 
   public deleteMedias = async (medias: Media[]): Promise<void> => {
     try {
-
       for (const media of medias) {
-        unlinkSync(media.path);
+        if (existsSync(media.path)) {
+          unlinkSync(media.path);
+        } else {
+          console.log(`File not found: ${media.path}`);
+        }
+
         if (media.thumbnail_path) {
-          unlinkSync(media.thumbnail_path);
+          if (existsSync(media.thumbnail_path)) {
+            unlinkSync(media.thumbnail_path);
+          } else {
+            console.log(`Thumbnail not found: ${media.thumbnail_path}`);
+          }
         }
       }
     } catch (error) {

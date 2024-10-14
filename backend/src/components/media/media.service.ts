@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 
 @Service()
 export class MediaService {
-  async createMedia(req: any, res: any, next: any) {
+  async createMedia(req: any, res: any, next: any): Promise<Media> {
     const file = req.file;
     const folderId = parseInt(req.body.folderId, 10);
 
@@ -27,10 +27,10 @@ export class MediaService {
       thumbnail_name: file.thumbnail_name || null,
     };
     try {
-      await prisma.media.create({
+      const createdMedia = await prisma.media.create({
         data: media,
       });
-      next();
+      return createdMedia; // Retourne le média créé
     } catch (error) {
       console.log(error);
       throw new HttpException(500, "Cannot create media");
@@ -89,5 +89,4 @@ export class MediaService {
 
     return null;
   }
- 
 }

@@ -18,10 +18,6 @@ function HeaderAction() {
   const { selectedItems, setSelectItems, deleteItems, handleBack, folder } =
     useFolder();
 
-  const handleBackPress = () => {
-    handleBack();
-  };
-
   return (
     <>
       {selectedItems && selectedItems.length > 0 ? (
@@ -45,13 +41,13 @@ function HeaderAction() {
       ) : (
         <Header
           title={`Medias`}
-          onIconPress={handleBackPress} // Utilisation de handleBackPress
+          onIconPress={handleBack} // Utilisation de handleBackPress
         />
       )}
 
       <View className="flex-1 flex-row items-center gap-2">
         <TouchableOpacity
-          onPress={handleBackPress}
+          onPress={handleBack}
           style={{ opacity: folder?.parent_id ? 1 : 0 }}
         >
           <ArrowLeft size={24} className="text-primary " />
@@ -107,9 +103,7 @@ function MediasScreen() {
                   }
                 }}
                 onLongPress={() => handleItemSelect(media)}
-                isSelected={selectedItems?.some(
-                  (item) => item.id === media.id && item.type === "media"
-                )}
+                isSelected={selectedItems?.some((item) => item.id === media.id)}
               />
             </View>
           ))}

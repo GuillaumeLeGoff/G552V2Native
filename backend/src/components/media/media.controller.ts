@@ -20,9 +20,12 @@ export class MediaController {
     console.log("Request Body:", req.body);
     try {
       await this.uploadService.handleUpload(req, res, async () => {
-        await this.mediaService.createMedia(req, res, () => {
-          res.status(201).json({ data: req.file, message: "created" });
-        });
+        const createdMedia = await this.mediaService.createMedia(
+          req,
+          res,
+          () => {}
+        );
+        res.status(201).json({ data: createdMedia, message: "created" });
       });
     } catch (error) {
       next(error);
