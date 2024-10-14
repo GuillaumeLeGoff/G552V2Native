@@ -13,6 +13,7 @@ import { Trash } from "~/lib/icons/Trash";
 import { X } from "~/lib/icons/X";
 import { useAuth } from "~/hooks/useAuth";
 import { ItemMedias } from "~/components/ItemMedias";
+import AnimatedScrollView from "~/components/common/AnimatedScrollView";
 
 function HeaderAction() {
   const { selectedItems, setSelectItems, deleteItems, handleBack, folder } =
@@ -69,8 +70,8 @@ function MediasScreen() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <View className="flex-1">
-      <Animated.ScrollView className="px-8 py-8" scrollEventThrottle={16}>
+    <>
+      <AnimatedScrollView>
         <HeaderAction />
         <View className="flex-row flex-wrap">
           {folder?.subFolders?.map((subFolder, index) => (
@@ -109,12 +110,12 @@ function MediasScreen() {
           ))}
         </View>
         <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
-      </Animated.ScrollView>
+      </AnimatedScrollView>
       <CreateMediasAndFolderDrawer
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       />
-    </View>
+    </>
   );
 }
 

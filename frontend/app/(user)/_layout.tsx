@@ -5,9 +5,11 @@ import { Image } from "~/lib/icons/Image";
 import { Keyboard } from "~/lib/icons/Keyboard";
 import { cn } from "~/lib/utils"; // Import cn
 import { Sheet } from "~/lib/icons/Sheet";
+import { PortalHost } from "@rn-primitives/portal";
 
 export default function UserLayout() {
-  return (
+  return (  
+    <>
     <Tabs
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: "#D06C6C",
@@ -85,6 +87,9 @@ export default function UserLayout() {
           tabBarLabel: "Setting",
         }}
       />
+
     </Tabs>
+    <PortalHost />
+    </>
   );
 }

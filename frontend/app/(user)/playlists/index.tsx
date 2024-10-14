@@ -8,6 +8,7 @@ import { ItemPlaylist } from "~/components/ItemPlaylist";
 import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists"; // {{ edit_1 }}
 import CreatePlaylist from "./drawer/@createPlaylist";
+import AnimatedScrollView from "~/components/common/AnimatedScrollView";
 
 function HeaderAction() {
   const { selectedPlaylist, setSelectPlaylist, deletePlaylists } =
@@ -52,11 +53,8 @@ function PlaylistsScreen() {
     usePlaylists();
 
   return (
-    <View className="flex-1">
-      <Animated.ScrollView
-        className="px-8 py-8 space-y-4"
-        scrollEventThrottle={16}
-      >
+    <>
+      <AnimatedScrollView title="Playlists">
         <HeaderAction />
         <View>
           {playlists &&
@@ -76,11 +74,11 @@ function PlaylistsScreen() {
             ))}
           <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
         </View>
-      </Animated.ScrollView>
+      </AnimatedScrollView>
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <CreatePlaylist />
       </Drawer>
-    </View>
+    </>
   );
 }
 

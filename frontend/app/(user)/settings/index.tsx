@@ -4,6 +4,8 @@ import { Text } from "~/components/ui/text";
 import { useAuth } from "~/hooks/useAuth";
 import { router } from "expo-router";
 import { Button } from "~/components/ui/button";
+import AnimatedScrollView from "~/components/common/AnimatedScrollView";
+import { Header } from "~/components/ui/header";
 
 export default function Settings() {
   const { token, logout } = useAuth();
@@ -14,8 +16,8 @@ export default function Settings() {
   };
 
   return (
-    <View className="flex-1 items-center justify-center bg-background">
-      <Text className="text-xl font-bold mb-8">Paramètres</Text>
+    <AnimatedScrollView>
+      <Header title="Settings" />
       <Button
         variant="destructive"
         onPress={handleSignOut}
@@ -23,6 +25,6 @@ export default function Settings() {
       >
         <Text className="text-white">Se déconnecter</Text>
       </Button>
-    </View>
+    </AnimatedScrollView>
   );
 }
