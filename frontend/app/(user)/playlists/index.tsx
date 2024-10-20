@@ -8,7 +8,6 @@ import { ItemPlaylist } from "~/components/ItemPlaylist";
 import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists"; // {{ edit_1 }}
 import CreatePlaylist from "./drawer/@createPlaylist";
-import AnimatedScrollView from "~/components/common/AnimatedScrollView";
 
 function HeaderAction() {
   const { selectedPlaylist, setSelectPlaylist, deletePlaylists } =
@@ -49,12 +48,16 @@ function HeaderAction() {
 function PlaylistsScreen() {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const { playlists, handleItemLongPress, selectedPlaylist, handleItemPress } =
-    usePlaylists();
+  const {
+    playlists,
+    handlePressPlaylist,
+    selectedPlaylist,
+    handleSelectPlaylist,
+  } = usePlaylists();
 
   return (
     <>
-      <AnimatedScrollView title="Playlists">
+      <Animated.ScrollView>
         <HeaderAction />
         <View>
           {playlists &&
@@ -65,16 +68,16 @@ function PlaylistsScreen() {
                 title={item.name}
                 onPress={() => {
                   selectedPlaylist && selectedPlaylist.length > 0
-                    ? handleItemLongPress(item)
-                    : handleItemPress(item);
+                    ? handleSelectPlaylist(item)
+                    : handlePressPlaylist(item);
                 }}
-                onLongPress={() => handleItemLongPress(item)}
+                onLongPress={() => handleSelectPlaylist(item)}
                 isSelected={selectedPlaylist?.some((p) => p.id === item.id)}
               />
             ))}
           <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
         </View>
-      </AnimatedScrollView>
+      </Animated.ScrollView>
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <CreatePlaylist />
       </Drawer>

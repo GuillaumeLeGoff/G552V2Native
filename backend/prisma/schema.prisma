@@ -30,7 +30,7 @@ model Playlist {
   name    String
   user_id Int
   user    User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  media   PlaylistMedia[]
+  medias  PlaylistMedia[]
   macros  Macro[]
   modes   Mode[]
 }

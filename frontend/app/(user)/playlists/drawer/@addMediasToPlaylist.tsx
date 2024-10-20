@@ -13,17 +13,17 @@ import { ItemMedias } from "~/components/ItemMedias";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useFolder } from "~/hooks/useFolder";
+import { usePlaylists } from "~/hooks/usePlaylists";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 export default function AddMediasToPlaylist() {
   const { folder, handleItemSelect, selectedItems, handleItemFolderPress } =
     useFolder();
+
+  const { addMediasToPlaylist } = usePlaylists();
   return (
     <DrawerContent>
       <DrawerHeader>
         <DrawerTitle>Add medias to playlist</DrawerTitle>
-        <DrawerDescription>
-          Select the medias you want to add to the playlist
-        </DrawerDescription>
       </DrawerHeader>
       <HeaderAction />
       <View className="flex-row flex-wrap">
@@ -31,6 +31,7 @@ export default function AddMediasToPlaylist() {
           <View key={index} style={{ width: "50%", padding: 8 }}>
             <ItemFolder
               title={subFolder.name}
+              selectMode={false}
               onPress={() => {
                 handleItemFolderPress(subFolder);
               }}
@@ -40,13 +41,17 @@ export default function AddMediasToPlaylist() {
             />
           </View>
         ))}
+      </View>
+      <View className="flex-row flex-wrap">
         {folder?.media?.map((media, index) => (
           <View key={index} style={{ width: "50%", padding: 8 }}>
             <ItemMedias
+              selectMode={selectedItems?.length > 0}
               media={media}
               onPress={() => {
                 handleItemSelect(media);
               }}
+              onLongPress={() => handleItemSelect(media)}
               isSelected={selectedItems?.some((item) => item.id === media.id)}
             />
           </View>
@@ -55,7 +60,12 @@ export default function AddMediasToPlaylist() {
 
       <DrawerFooter>
         <View className="flex-row justify-end">
-          <Button className="mt-4 bg-secondary" onPress={() => {}}>
+          <Button
+            className="mt-4 bg-secondary"
+            onPress={() => {
+              addMediasToPlaylist();
+            }}
+          >
             <Text className="text-secondary-foreground">Add</Text>
           </Button>
         </View>

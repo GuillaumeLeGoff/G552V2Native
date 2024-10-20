@@ -14,6 +14,14 @@ export class PlaylistService {
     return result.data;
   }
 
+  static async getPlaylist(id: number): Promise<Playlist> {
+    const response = await fetchWithAuth(`${this.API_URL}/${id}`, {
+      method: "GET",
+    });
+    const result = await response.json();
+    return result.data;
+  }
+
   static async createPlaylist(name: string): Promise<Playlist> {
     const response = await fetchWithAuth(this.API_URL, {
       method: "POST",

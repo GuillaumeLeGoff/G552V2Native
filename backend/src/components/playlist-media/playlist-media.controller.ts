@@ -2,7 +2,10 @@ import { PlaylistMedia } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
 import { PlaylistMediaService } from "./playlist-media.service";
-import { CreatePlaylistMediaDto, UpdatePlaylistMediaDto } from "./playlistMedia.validation";
+import {
+  CreatePlaylistMediaDto,
+  UpdatePlaylistMediaDto,
+} from "./playlistMedia.validation";
 import { UserType } from "../../types/user.type";
 
 interface CustomRequest extends Request {
@@ -21,11 +24,14 @@ export class PlaylistMediaController {
     next: NextFunction
   ) => {
     try {
-      const playlistMediaData: CreatePlaylistMediaDto = req.body
-      const newPlaylistMedia: PlaylistMedia =
-        await this.playlistMediaService.createPlaylistMedia(playlistMediaData);
-      res.status(201).json({ data: newPlaylistMedia, message: "created" });
+      const playlistMediaDataArray: CreatePlaylistMediaDto[] = req.body;
+      const newPlaylistMedias =
+        await this.playlistMediaService.createPlaylistMedia(
+          playlistMediaDataArray
+        );
+      res.status(201).json({ data: newPlaylistMedias, message: "created" });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   };
@@ -70,7 +76,7 @@ export class PlaylistMediaController {
   ) => {
     try {
       const playlistMediaId: number = parseInt(req.params.playlistMediaId);
-      const playlistMediaData: UpdatePlaylistMediaDto = req.body
+      const playlistMediaData: UpdatePlaylistMediaDto = req.body;
       const updatedPlaylistMedia: PlaylistMedia | null =
         await this.playlistMediaService.updatePlaylistMedia(
           playlistMediaId,

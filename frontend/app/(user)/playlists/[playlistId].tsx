@@ -1,13 +1,12 @@
 import { router } from "expo-router";
-import { View } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { Animated, Modal } from "react-native";
 import ActionHeader from "~/components/ActionHeader";
-import { usePlaylistStore } from "~/store/playlistStore";
-import { ArrowLeft } from "~/lib/icons/ArrowLeft";
-import { useEffect, useState } from "react";
-import { CreateButton } from "~/components/createButton";
-import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
 import { Drawer } from "~/components/drawer";
+import { ItemMediasPlaylist } from "~/components/ItemMediasPlaylist";
+import { ArrowLeft } from "~/lib/icons/ArrowLeft";
+import { usePlaylistStore } from "~/store/playlistStore";
+import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
 
 export default function Playlist() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,43 +16,12 @@ export default function Playlist() {
   }, [playlist]);
   return (
     <Modal className="flex-1 justify-center items-center">
-      <HeaderAction />
-      <CreateButton
-        className="mt-4"
-        onPress={() => {
-          setIsOpen(true);
-        }}
-      />
-      <View className="flex-1">
-        <Animated.ScrollView
-          className="px-8 py-8 space-y-4"
-          scrollEventThrottle={16}
-        >
-          <View>
-            {/*  {playlists &&
-              playlists.length > 0 &&
-              playlists.map((item) => (
-                <ItemPlaylist
-                  key={item.id}
-                  title={item.name}
-                  onPress={() => {
-                    selectedPlaylist && selectedPlaylist.length > 0
-                      ? handleItemLongPress(item)
-                      : handleItemPress(item);
-                  }}
-                  onLongPress={() => handleItemLongPress(item)}
-                  isSelected={selectedPlaylist?.some((p) => p.id === item.id)}
-                />
-              ))} */}
-            <CreateButton
-              className="mt-4"
-              onPress={() => {
-                console.log("create");
-              }}
-            />
-          </View>
-        </Animated.ScrollView>
-      </View>
+      <Animated.ScrollView scrollEventThrottle={16}>
+        <HeaderAction />
+        {playlist?.medias.map((media: any, index: number) => (
+          <ItemMediasPlaylist key={media.id} media={media} />
+        ))}
+      </Animated.ScrollView>
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <AddMediasToPlaylist />
       </Drawer>

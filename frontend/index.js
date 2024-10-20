@@ -1,10 +1,9 @@
 import { registerRootComponent } from 'expo';
-import { ExpoRoot } from 'expo-router';
 import * as Font from 'expo-font';
+import { ExpoRoot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Empêche le SplashScreen de se cacher automatiquement
 SplashScreen.preventAutoHideAsync();
@@ -45,9 +44,9 @@ function Root() {
 
 export function App() {
   return (
-   
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <Root />
- 
+    </GestureHandlerRootView>
   );
 }
 

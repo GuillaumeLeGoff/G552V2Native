@@ -16,7 +16,7 @@ const assignFolderType = (folder: Folder): Folder => ({
 
 const assignMediaType = (media: Media): Media => ({
   ...media,
-  type: "media",
+  type: media.type,
 });
 
 export const useFolder = () => {

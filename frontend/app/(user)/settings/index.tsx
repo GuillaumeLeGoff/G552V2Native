@@ -1,10 +1,9 @@
 import React from "react";
-import { View } from "react-native";
+import { Animated } from "react-native";
 import { Text } from "~/components/ui/text";
 import { useAuth } from "~/hooks/useAuth";
 import { router } from "expo-router";
 import { Button } from "~/components/ui/button";
-import AnimatedScrollView from "~/components/common/AnimatedScrollView";
 import { Header } from "~/components/ui/header";
 
 export default function Settings() {
@@ -16,7 +15,7 @@ export default function Settings() {
   };
 
   return (
-    <AnimatedScrollView>
+    <Animated.ScrollView>
       <Header title="Settings" />
       <Button
         variant="destructive"
@@ -25,6 +24,6 @@ export default function Settings() {
       >
         <Text className="text-white">Se déconnecter</Text>
       </Button>
-    </AnimatedScrollView>
+    </Animated.ScrollView>
   );
 }

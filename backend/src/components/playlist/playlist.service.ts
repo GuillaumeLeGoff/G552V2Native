@@ -19,6 +19,13 @@ export class PlaylistService {
   async getPlaylistById(id: number): Promise<Playlist | null> {
     const playlist = await prisma.playlist.findUnique({
       where: { id },
+      include: {
+        medias: {
+          include: {
+            media: true, // Assurez-vous que le modèle Prisma inclut une relation 'media'
+          },
+        },
+      },
     });
     return playlist;
   }
@@ -48,7 +55,6 @@ export class PlaylistService {
     });
     return playlist;
   }
-
 
   async deletePlaylists(ids: number[]): Promise<void> {
     await prisma.playlist.deleteMany({
