@@ -10,11 +10,9 @@ SplashScreen.preventAutoHideAsync();
 
 function Root() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
-
-  useEffect(() => {
-    async function loadFonts() {
-      try {
-        await Font.loadAsync({
+  async function loadFonts() {
+    try {
+      await Font.loadAsync({
           'Avenir-Black': require('./assets/fonts/Avenir Black.ttf'),
           'Avenir-Book': require('./assets/fonts/Avenir Book.ttf'),
           'Avenir-Heavy': require('./assets/fonts/Avenir Heavy.ttf'),
@@ -25,10 +23,10 @@ function Root() {
       } catch (e) {
         console.warn(e);
       } finally {
-        // Cache le SplashScreen une fois que les polices sont chargées ou en cas d'erreur
         await SplashScreen.hideAsync();
-      }
     }
+  } 
+  useEffect(() => {
 
     loadFonts();
   }, []);

@@ -22,14 +22,14 @@ const assignMediaType = (media: Media): Media => ({
 export const useFolder = () => {
   const { folder, setFolder, selectedItems, setSelectItems } = useFolderStore();
 
-  const getRootFolder = useCallback(async () => {
+  const getRootFolder = async () => {
+
     const rootFolder = await FolderService.getRoot();
-    console.log("rootFolder", rootFolder);
     if (rootFolder) {
       const typedFolder = assignFolderType(rootFolder); // Assignation du type
       setFolder(typedFolder);
     }
-  }, [setFolder]);
+  };
 
   const getFolderById = useCallback(
     async (folderId: number | null) => {
@@ -44,9 +44,9 @@ export const useFolder = () => {
 
   const createFolder = useCallback(
     async (folderName: string, parent_id: number | null) => {
-      const folder = await FolderService.createFolder(folderName, parent_id);
-      if (folder && folder) {
-        const typedFolder = assignFolderType(folder); // Assignation du type
+      const newFolder = await FolderService.createFolder(folderName, parent_id);
+      if (folder && newFolder) {
+        const typedFolder = assignFolderType(newFolder); 
         const updatedSubFolders = [...(folder.subFolders || []), typedFolder];
         setFolder({ ...folder, subFolders: updatedSubFolders });
       }
@@ -55,6 +55,7 @@ export const useFolder = () => {
   );
 
   const handleItemFolderPress = (item: Folder) => {
+    console.log("item", folder);
     getFolderById(item.id);
   };
 
@@ -126,9 +127,6 @@ export const useFolder = () => {
     setSelectItems([]);
   };
 
-  useEffect(() => {
-    getRootFolder();
-  }, [getRootFolder, getFolderById]);
 
   return {
     folder,
@@ -141,5 +139,6 @@ export const useFolder = () => {
     handleItemSelect,
     deleteItems,
     handleBack,
+    getRootFolder,
   };
 };

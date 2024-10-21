@@ -1,5 +1,5 @@
 import { Trash, X } from "lucide-react-native"; // {{ edit_1 }}
-import React from "react";
+import React, { useEffect } from "react";
 import { Animated, View } from "react-native";
 import ActionHeader from "~/components/ActionHeader"; // {{ edit_2 }}
 import { CreateButton } from "~/components/createButton";
@@ -53,7 +53,15 @@ function PlaylistsScreen() {
     handlePressPlaylist,
     selectedPlaylist,
     handleSelectPlaylist,
+    getPlaylists,
+    setSelectPlaylist,
   } = usePlaylists();
+
+  
+  useEffect(() => {
+      getPlaylists();
+      setSelectPlaylist([]);
+  }, []);
 
   return (
     <>

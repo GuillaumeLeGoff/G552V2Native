@@ -78,13 +78,7 @@ export const usePlaylists = () => {
     console.log("selectedPlaylist", selectedPlaylist);
   };
 
-  useEffect(() => {
-    if (token) {
-      console.log("token useEffect", token);
-      getPlaylists();
-      setSelectPlaylist([]);
-    }
-  }, []);
+
   return {
     playlists,
     selectedPlaylist,
@@ -94,5 +88,6 @@ export const usePlaylists = () => {
     deletePlaylists,
     createPlaylist,
     handleSelectPlaylist,
+    getPlaylists,
   };
 };

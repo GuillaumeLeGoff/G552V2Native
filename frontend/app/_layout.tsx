@@ -1,4 +1,4 @@
-import { Redirect, Slot, SplashScreen, Stack } from "expo-router";
+import { Redirect, Slot, SplashScreen } from "expo-router";
 import * as React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../global.css";
@@ -10,11 +10,6 @@ SplashScreen.preventAutoHideAsync();
 
 const RootLayout: React.FC = () => {
   const { token } = useAuthStore();
-  React.useEffect(() => {
-    console.log(token);
-  }, [token]);
-
-  const [isLoading, setIsLoading] = React.useState(true);
   if (token === undefined || token === null) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>

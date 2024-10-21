@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Animated, TouchableOpacity, View } from "react-native";
 import ActionHeader from "~/components/ActionHeader";
 import { CreateButton } from "~/components/createButton";
@@ -78,8 +78,13 @@ function MediasScreen() {
     selectedItems,
     handleItemFolderPress,
     handleItemMediaPress,
+    getRootFolder,
   } = useFolder();
   const [isOpen, setIsOpen] = React.useState(false);
+
+  useEffect(() => {
+    getRootFolder();
+  }, []);
 
   return (
     <>
@@ -120,7 +125,12 @@ function MediasScreen() {
                   }
                 }}
                 onLongPress={() => handleItemSelect(media)}
-                isSelected={selectedItems?.some((item) => item.id === media.id)}
+                isSelected={selectedItems?.some(
+                  (item) =>
+                    item.id === media.id &&
+                    item.type === "image" ||
+                    item.type === "video"
+                )}
               />
             </View>
           ))}

@@ -66,6 +66,5 @@ module.exports = {
         'lg': "var(--radius)",
       },
     },
-  },
-  plugins: [require('tailwindcss-animate')],
+  }
 };

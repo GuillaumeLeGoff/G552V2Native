@@ -6,12 +6,11 @@ import { Header } from "~/components/ui/header";
 import { useMacros } from "~/hooks/useMacro";
 
 const Macros = () => {
-  // Déterminez la classe en fonction de la valeur de scrollY
+  const { macros, getMacros } = useMacros();
 
-  const { macros } = useMacros();
   useEffect(() => {
-    console.log(macros);
-  }, [macros]);
+    getMacros();
+    }, []);
   return (
     <Animated.ScrollView // Changement de View à Animated.View
       className="flex-1 pb-12"

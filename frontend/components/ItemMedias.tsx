@@ -57,7 +57,7 @@ export function ItemMedias({
       <Image
         className="rounded-lg"
         source={{
-          uri: `http://192.168.1.78:4000/uploads/admin/${media.file_name}`,
+          uri: `http://192.168.100.158:4000/uploads/admin/${media.file_name}`,
         }}
         style={{ width: "100%", height: (250 * 9) / 16 }} // Ajuste la hauteur pour un ratio 16:9
       />

@@ -24,11 +24,10 @@ export const useMacros = () => {
     }
   };
   
-  useEffect(() => {
-    getMacros();
-    
-  }, []);
+
+
   return {
+    getMacros,
     macros,
   };
 };

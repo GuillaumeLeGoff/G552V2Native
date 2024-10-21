@@ -29,7 +29,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   if (!token) {
     throw new Error("No token available");
   }
-
+  console.log("token", url);
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -38,7 +38,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     },
   });
   if (!response.ok) {
-    console.log("response", response);
+   /*  console.log("response", response); */
     /*  useAuthStore.getState().setToken(null); */
     throw new Error("Failed to fetch");
   }

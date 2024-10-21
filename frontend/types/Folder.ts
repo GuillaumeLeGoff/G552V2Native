@@ -13,5 +13,5 @@ export interface Folder {
   path: string | null;
   updated_at: Date;
   folderId: number | null;
-  type: "folder"; // Doit être strictement 'folder'
+  type: "folder" | "image" | "video"; // Doit être strictement 'folder'
 }
