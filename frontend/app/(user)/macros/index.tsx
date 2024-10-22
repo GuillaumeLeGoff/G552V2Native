@@ -4,26 +4,22 @@ import { Animated, View } from "react-native";
 import { ItemMacro } from "~/components/ItemMacro";
 import { Header } from "~/components/ui/header";
 import { useMacros } from "~/hooks/useMacro";
+import AnimatedScrollView from "~/components/AnimatedScrollView"; // Ajout de l'import
 
 const Macros = () => {
   const { macros, getMacros } = useMacros();
 
   useEffect(() => {
     getMacros();
-    }, []);
+  }, []);
   return (
-    <Animated.ScrollView // Changement de View à Animated.View
-      className="flex-1 pb-12"
-    >
-      <View>
-        <Header className="px-8 pt-8 " title="Macros" />
-      </View>
-      <Animated.ScrollView className={`px-8`} scrollEventThrottle={16}>
+    <AnimatedScrollView>
+      <Header title="Macros" />
         {macros.map((macro, index) => (
           <ItemMacro key={index} title={`macro ${index}`} macro={macro} />
         ))}
-      </Animated.ScrollView>
-    </Animated.ScrollView>
+     
+    </AnimatedScrollView>
   );
 };
 

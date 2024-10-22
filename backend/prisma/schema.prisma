@@ -79,6 +79,7 @@ model Media {
   uploaded_at        DateTime        @updatedAt()
   user_id            Int
   folder_id          Int?
+  duration           Int?
   user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
   Playlist_media     PlaylistMedia[]
   folder             Folder?         @relation(fields: [folder_id], references: [id], onDelete: Cascade)

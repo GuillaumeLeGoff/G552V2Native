@@ -15,6 +15,7 @@ export interface Media {
   uploaded_at: Date;
   user_id: number;
   folder_id: number | null;
+  duration: number | null;
   user?: User;
   Playlist_media?: PlaylistMedia[];
   folder?: Folder | null;

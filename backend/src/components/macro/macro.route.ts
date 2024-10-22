@@ -24,7 +24,7 @@ router.get("/:button_id", authMiddleware, (req, res, next) =>
   macroController.findMacro(req, res, next)
 );
 
-router.put("/:button_id", authMiddleware, validateDto(UpdateMacroDto), (req, res, next) =>
+router.put("/:buttonId", authMiddleware, validateDto(UpdateMacroDto), (req, res, next) =>
   macroController.updateMacro(req, res, next)
 );
 

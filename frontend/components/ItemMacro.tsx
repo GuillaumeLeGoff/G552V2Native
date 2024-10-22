@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useMacros } from "~/hooks/useMacro";
 import { usePlaylists } from "~/hooks/usePlaylists";
 import { Macro } from "~/types/Macro";
 interface ItemMacro {
@@ -23,6 +24,7 @@ export function ItemMacro({
 }: ItemMacro) {
   const insets = useSafeAreaInsets();
   const { playlists } = usePlaylists();
+  const { updateMacros } = useMacros();
   const contentInsets = {
     top: insets.top,
     bottom: insets.bottom,
@@ -51,8 +53,8 @@ export function ItemMacro({
 
       <Select  defaultValue={{ value: defaultPlaylist?.id.toString() || '', label: defaultPlaylist?.name || 'Select a playlist' }}
       
-       onValueChange={(value) => {
-          console.log(value);
+       onValueChange={(playlist) => {
+          updateMacros(macro.button_id, Number(playlist?.value ?? null));
         }}
       >
         <SelectTrigger className='w-[250px]'>
@@ -64,7 +66,6 @@ export function ItemMacro({
         <SelectContent insets={contentInsets} className='w-[250px]'>
           <SelectGroup>
             {playlists &&
-              playlists.length > 0 &&
               playlists.map((playlist) => (
                 <SelectItem key={playlist.id} label={playlist.name} value={playlist.id.toString()}
                

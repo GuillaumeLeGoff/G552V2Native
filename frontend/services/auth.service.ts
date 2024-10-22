@@ -1,4 +1,5 @@
 import { PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
+import { HttpException } from "../utils/HttpException";
 
 export class AuthService {
   static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/auth`;
@@ -11,19 +12,12 @@ export class AuthService {
       },
       body: JSON.stringify({ username, password }),
     });
-
-    if (!response.ok) {
-      if (response.status === 409) {
-        throw new Error("User already connected", { cause: 409 });
-      }
-      throw new Error(`HTTP error! status: ${response.status}`, {
-        cause: response.status,
-      });
-    }
-
     const result = await response.json();
-    console.log(result);
-    return { token: result.data, message: result.message };
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
+    
+    return result.data;
   }
 
   static async logout() {
@@ -34,7 +28,7 @@ export class AuthService {
       },
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new HttpException(response.status, `HTTP error ${response.statusText}`);
     }
     return await response.json();
   }

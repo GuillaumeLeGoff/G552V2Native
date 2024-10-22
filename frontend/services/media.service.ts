@@ -1,41 +1,32 @@
 import { PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
-import { fetchWithAuth } from "~/store/authStore";
+import { fetchWithAuth } from "~/utils/fetchWithAuth";
 import { Media } from "~/types/Media";
+import { HttpException } from "~/utils/HttpException";
 
 export class MediaService {
   static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/media`;
 
   static async uploadMedia(formData: FormData): Promise<Media> {
-    try {
       const response = await fetchWithAuth(`${this.API_URL}/`, {
         method: "POST",
         body: formData,
       });
-
+      const result = await response.json()
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Upload failed:", errorText);
-        throw new Error("Failed to upload media");
-      }
-
-      const result = await response.json();
-      return result.data;
-    } catch (error) {
-      console.error("Error uploading media:", error);
-      throw error;
+        ;
+        throw new HttpException(result.status, result.message);
     }
+    return result.data;
   }
 
   static async getAllMedia(): Promise<Media[]> {
     const response = await fetchWithAuth(this.API_URL, {
       method: "GET",
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch media");
-    }
-
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -43,12 +34,11 @@ export class MediaService {
     const response = await fetchWithAuth(`${this.API_URL}/${mediaId}`, {
       method: "GET",
     });
-
+    const result = await response.json();
     if (!response.ok) {
-      throw new Error(`Failed to fetch media with ID ${mediaId}`);
+      throw new HttpException(result.status, result.message);
     }
 
-    const result = await response.json();
     return result.data;
   }
 
@@ -56,12 +46,10 @@ export class MediaService {
     const response = await fetchWithAuth(`${this.API_URL}/folder/${folderId}`, {
       method: "GET",
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch media for folder ID ${folderId}`);
-    }
-
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -73,12 +61,10 @@ export class MediaService {
       },
       body: JSON.stringify(updateData),
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update media with ID ${mediaId}`);
-    }
-
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -90,9 +76,9 @@ export class MediaService {
       },
       body: JSON.stringify({ mediaIds }),
     });
-
+    const result = await response.json();
     if (!response.ok) {
-      throw new Error(`Failed to delete media with ID ${mediaIds}`);
+      throw new HttpException(result.status, result.message);
     }
   }
 }

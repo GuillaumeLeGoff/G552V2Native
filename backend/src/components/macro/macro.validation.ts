@@ -18,9 +18,9 @@ export class UpdateMacroDto {
 
   @IsOptional()
   @IsNumber()
-  public playlist_id?: number;
+  public playlistId?: number;
 
   @IsOptional()
   @IsNumber()
-  public button_id?: number;
+  public buttonId?: number;
 }

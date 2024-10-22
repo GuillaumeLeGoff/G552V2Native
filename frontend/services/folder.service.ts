@@ -1,6 +1,7 @@
 import { PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
-import { fetchWithAuth } from "~/store/authStore";
+import { fetchWithAuth } from "~/utils/fetchWithAuth";
 import { Folder } from "~/types/Folder";
+import { HttpException } from "~/utils/HttpException";
 
 export class FolderService {
   static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/folder`;
@@ -11,6 +12,10 @@ export class FolderService {
     });
 
     const result = await response.json();
+
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data[0];
   }
 
@@ -20,6 +25,9 @@ export class FolderService {
     });
 
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -34,10 +42,10 @@ export class FolderService {
       },
       body: JSON.stringify({ name, parent_id }),
     });
-    if (!response.ok) {
-      throw new Error("Failed to create playlist");
-    }
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -49,10 +57,11 @@ export class FolderService {
       },
       body: JSON.stringify({ folderIds }),
     });
-    if (!response.ok) {
-      throw new Error("Failed to delete folders");
-    }
     const result = await response.json();
+    if (!response.ok) { 
+      throw new HttpException(result.status, result.message);
+    }
+
     return result.data;
   }
 }

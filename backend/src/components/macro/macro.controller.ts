@@ -48,12 +48,13 @@ export class MacroController {
 
   updateMacro = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
-      const button_id = req.params.button_id;
-      const user_id = req.user?.id;
+      console.log(req.body);
+      const buttonId = req.params.buttonId;
+      const userId = req.user?.id;
       const macroData: UpdateMacroDto = req.body;
       const updatedMacro = await this.macroService.updateMacro(
-        parseInt(button_id),
-        user_id,
+        parseInt(buttonId),
+        userId,
         macroData
       );
       res.status(200).json({ data: updatedMacro, message: "updated" });

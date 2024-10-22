@@ -12,6 +12,7 @@ import { ChevronRight } from "~/lib/icons/ChevronRight";
 import { Trash } from "~/lib/icons/Trash";
 import { X } from "~/lib/icons/X";
 import CreateMediasAndFolderDrawer from "./drawer/@createMediasAndFolder";
+import AnimatedScrollView from "~/components/AnimatedScrollView";
 
 function HeaderAction() {
   const { selectedItems, setSelectItems, deleteItems, handleBack, folder } =
@@ -50,6 +51,7 @@ function HeaderAction() {
         >
           <ArrowLeft size={24} className="text-primary mr-2" />
         </TouchableOpacity>
+        
         {folder?.path?.split("/").map((part, index) => (
           <React.Fragment key={index}>
             <Text
@@ -61,11 +63,11 @@ function HeaderAction() {
             >
               {part}
             </Text>
-            {index < (folder?.path?.split("/")?.length || 0) - 1 && (
+            {index < (folder?.path?.split("/")?.length || 0) - 1 && selectedItems?.length < 1 && (
               <ChevronRight size={20} className="mx-1 text-primary" />
             )}
-          </React.Fragment>
-        ))}
+            </React.Fragment>
+          ))}
       </View>
     </>
   );
@@ -88,7 +90,7 @@ function MediasScreen() {
 
   return (
     <>
-      <Animated.ScrollView>
+      <AnimatedScrollView>
         <HeaderAction />
         <View className="flex-row flex-wrap">
           {folder?.subFolders?.map((subFolder, index) => (
@@ -127,16 +129,17 @@ function MediasScreen() {
                 onLongPress={() => handleItemSelect(media)}
                 isSelected={selectedItems?.some(
                   (item) =>
-                    item.id === media.id &&
-                    item.type === "image" ||
-                    item.type === "video"
+                    (item.id === media.id && (item.type === "image" || item.type === "video"))
+                    
                 )}
               />
             </View>
           ))}
         </View>
-        <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
-      </Animated.ScrollView>
+        {selectedItems?.length < 1 && (
+          <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
+        )}
+      </AnimatedScrollView>
       <CreateMediasAndFolderDrawer
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

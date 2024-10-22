@@ -4,10 +4,13 @@ import { AuthService } from "../services/auth.service";
 import { useAuthStore } from "../store/authStore";
 import { useUserStore } from "~/store/userStore";
 import { router } from "expo-router";
+import { catchError } from "~/utils/catchError";
+import { HttpException } from "../utils/HttpException";
 
 export const useAuth = () => {
-  const { token, setToken } = useAuthStore();
   const { setUser, setUsers, users, user } = useUserStore();
+  const { token, setToken } = useAuthStore();
+  
   const [userSelected, setUserSelected] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -15,42 +18,44 @@ export const useAuth = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [isAlreadyConnected, setIsAlreadyConnected] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const getAllUsers = useCallback(async () => {
-    const users = await UserService.getUsers();
-    if (users) {
+    const [error, users] = await catchError(UserService.getUsers());
+    if (error) {
+      setError(error.message); // Ajout de la gestion des erreurs
+    } else if (users) {
       setUsers(users);
     }
-  }, [setUsers]);
+  }, [setUsers, setError]);
 
-  const logout = useCallback(async () => {
-    await AuthService.logout();
-    setToken(null);
-  }, [setToken]);
-
+  const logout = async () => {
+    const [error] = await catchError(AuthService.logout());
+    if (error) {
+      setError(error.message); // Ajout de la gestion des erreurs
+    } else {
+      setToken(null);
+      setUser(null); // Réinitialisation de l'utilisateur lors de la déconnexion
+    }
+  };
+  
   const login = useCallback(async () => {
     if (userSelected && password) {
-      try {
-        const { token: newToken } = await AuthService.login(
-          userSelected,
-          password
-        );
+      const [error, newToken] = await catchError(
+        AuthService.login(userSelected, password)
+      );
+      if (error) {
+        if (error.status === 409) {
+          setIsAlreadyConnected(true);
+        }
+        setAuthError(error.message);
+      } else {
         setToken(newToken);
-        setError(null);
+        setAuthError(null);
         setIsAlreadyConnected(false);
         setUser(userSelected);
         router.push("/playlists");
         return true;
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.log(error.cause);
-          if (error.cause === 409) {
-            setIsAlreadyConnected(true);
-          } else {
-            setError("Invalid username or password");
-          }
-        }
-        return false;
       }
     }
     return false;
@@ -70,7 +75,6 @@ export const useAuth = () => {
     } else {
       setUsernameError(false);
     }
-
     if (hasError) {
       setShakeKey((prev) => prev + 1);
       return false;
@@ -80,14 +84,14 @@ export const useAuth = () => {
   }, [password, userSelected, login, setPasswordError, setUsernameError]);
 
   const disconnectUser = useCallback(async () => {
-    try {
-      await AuthService.logout();
-      /* setUserSelected(null); */
-      setPassword(null);
-    } catch (error) {
-      console.error("Failed to disconnect user:", error);
-      setError("Failed to disconnect user. Please try again.");
-    }
+      const [error] = await catchError(AuthService.logout());
+      if (error) {
+        setError(error.message);
+      } else {
+        setUserSelected(null);
+        setPassword(null);
+      }
+    
   }, [userSelected]);
 
   useEffect(() => {
@@ -116,5 +120,6 @@ export const useAuth = () => {
     disconnectUser,
     token,
     shakeKey,
+    authError,
   };
 };

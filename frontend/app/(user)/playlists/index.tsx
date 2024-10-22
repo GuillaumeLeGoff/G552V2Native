@@ -8,6 +8,8 @@ import { ItemPlaylist } from "~/components/ItemPlaylist";
 import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists"; // {{ edit_1 }}
 import CreatePlaylist from "./drawer/@createPlaylist";
+import AnimatedScrollView from "~/components/AnimatedScrollView";
+
 
 function HeaderAction() {
   const { selectedPlaylist, setSelectPlaylist, deletePlaylists } =
@@ -65,7 +67,7 @@ function PlaylistsScreen() {
 
   return (
     <>
-      <Animated.ScrollView>
+      <AnimatedScrollView>
         <HeaderAction />
         <View>
           {playlists &&
@@ -85,7 +87,8 @@ function PlaylistsScreen() {
             ))}
           <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
         </View>
-      </Animated.ScrollView>
+      </AnimatedScrollView>
+
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <CreatePlaylist />
       </Drawer>

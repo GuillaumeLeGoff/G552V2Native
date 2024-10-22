@@ -4,6 +4,7 @@ import { MediaService } from "~/services/media.service";
 import { useFolderStore } from "~/store/folderStore";
 import { Folder } from "~/types/Folder";
 import { Media } from "~/types/Media";
+import { catchError } from "~/utils/catchError";
 
 const assignFolderType = (folder: Folder): Folder => ({
   ...folder,
@@ -24,8 +25,10 @@ export const useFolder = () => {
 
   const getRootFolder = async () => {
 
-    const rootFolder = await FolderService.getRoot();
-    if (rootFolder) {
+    const [error, rootFolder] = await catchError(FolderService.getRoot());
+    if (error) {
+
+    } else if (rootFolder) {
       const typedFolder = assignFolderType(rootFolder); // Assignation du type
       setFolder(typedFolder);
     }
@@ -33,8 +36,10 @@ export const useFolder = () => {
 
   const getFolderById = useCallback(
     async (folderId: number | null) => {
-      const folder = await FolderService.getFolderById(folderId);
-      if (folder) {
+      const [error, folder] = await catchError(FolderService.getFolderById(folderId));
+      if (error) {
+
+      } else if (folder) {
         const typedFolder = assignFolderType(folder); // Assignation du type
         setFolder(typedFolder);
       }
@@ -44,8 +49,10 @@ export const useFolder = () => {
 
   const createFolder = useCallback(
     async (folderName: string, parent_id: number | null) => {
-      const newFolder = await FolderService.createFolder(folderName, parent_id);
-      if (folder && newFolder) {
+      const [error, newFolder] = await catchError(FolderService.createFolder(folderName, parent_id));
+      if (error) {
+
+      } else if (folder && newFolder) {
         const typedFolder = assignFolderType(newFolder); 
         const updatedSubFolders = [...(folder.subFolders || []), typedFolder];
         setFolder({ ...folder, subFolders: updatedSubFolders });
@@ -92,14 +99,19 @@ export const useFolder = () => {
 
     if (folderIds.length > 0) {
       console.log(folderIds);
-      await FolderService.deleteFolders(folderIds);
+      const [error] = await catchError(FolderService.deleteFolders(folderIds));
+      if (error) {
+
+      }
     }
 
     if (mediaIds.length > 0) {
       console.log(mediaIds);
-      await MediaService.deleteMedia(mediaIds);
-    }
+      const [error] = await catchError(MediaService.deleteMedia(mediaIds));
+      if (error) {
 
+      }
+    }
     if (folder) {
       const updatedSubFolders =
         folder.subFolders?.filter(

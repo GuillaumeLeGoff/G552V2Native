@@ -29,19 +29,15 @@ import { Header } from "~/components/ui/header";
 import { ChevronDown } from "~/lib/icons/ChevronDown";
 
 export default function Login() {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const handleClose = () => setIsOpen(false);
 
   const {
     users,
     handleLogin,
-    userSelected, // Ajoutez cette ligne
+    userSelected,
     setUserSelected,
     password,
     setPassword,
-    error,
+    authError, // Utilisation de authError
     shakeKey,
     setError,
     usernameError,
@@ -53,6 +49,13 @@ export default function Login() {
     disconnectUser,
   } = useAuth();
 
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClose = () => setIsOpen(false);
+
+  
   const selectShakeAnimation = useSharedValue(0);
   const inputShakeAnimation = useSharedValue(0);
 
@@ -181,7 +184,7 @@ export default function Login() {
 
           <View className="h-6 justify-center pb-2">
             <Text className="text-red-500 text-sm text-center">
-              {error ? error : ""}
+              {authError ? authError : ""}
             </Text>
           </View>
         </CardContent>

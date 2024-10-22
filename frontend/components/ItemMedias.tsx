@@ -1,4 +1,4 @@
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View, Text } from "react-native";
 import { Circle } from "~/lib/icons/Circle";
 import { CircleCheck } from "~/lib/icons/CircleCheck";
 import { Media } from "~/types/Media";
@@ -54,22 +54,30 @@ export function ItemMedias({
           />
         </View>
       )}
+      {media.type.includes("image") && (
       <Image
         className="rounded-lg"
         source={{
           uri: `http://192.168.100.158:4000/uploads/admin/${media.file_name}`,
         }}
         style={{ width: "100%", height: (250 * 9) / 16 }} // Ajuste la hauteur pour un ratio 16:9
-      />
-      {/* <Text
-        className={`self-center text-lg ${
-          isSelected ? "text-secondary-foreground" : "text-primary"
-        }`}
-        numberOfLines={1} // Limite le texte à une seule ligne
-        ellipsizeMode="tail" // Coupe le texte à la fin si trop long
-      >
-        {media.original_file_name}
-      </Text> */}
+        />
+      )}
+
+      {media.type.includes("video") && (
+        <>
+          <Image
+            className="rounded-lg"
+            source={{
+              uri: `http://192.168.100.158:4000/uploads/admin/${media.thumbnail_name}`,
+            }}
+            style={{ width: "100%", height: (250 * 9) / 16 }} // Ajuste la hauteur pour un ratio 16:9
+          />
+          <Text className="absolute bottom-2 right-4 text-white bg-black bg-opacity-50 px-1 rounded opacity-70">
+            {media.duration}s
+          </Text>
+        </>
+      )}
     </TouchableOpacity>
   );
 }

@@ -7,6 +7,7 @@ interface AuthState {
   user: string | null;
   setToken: (token: string | null) => void;
   setUser: (user: string | null) => void;
+  resetAuth: () => void;
 }
 
 export const useAuthStore = create(
@@ -16,6 +17,7 @@ export const useAuthStore = create(
       user: null,
       setToken: (token) => set({ token }),
       setUser: (user) => set({ user }),
+      resetAuth: () => set({ token: null, user: null }), // Ajout d'une méthode pour réinitialiser l'authentification
     }),
     {
       name: "auth-storage",
@@ -24,24 +26,4 @@ export const useAuthStore = create(
   )
 );
 
-export async function fetchWithAuth(url: string, options: RequestInit = {}) {
-  const { token } = useAuthStore.getState();
-  if (!token) {
-    throw new Error("No token available");
-  }
-  console.log("token", url);
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-   /*  console.log("response", response); */
-    /*  useAuthStore.getState().setToken(null); */
-    throw new Error("Failed to fetch");
-  }
 
-  return response;
-}

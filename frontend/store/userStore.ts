@@ -9,6 +9,7 @@ type UserState = {
 type UserActions = {
   setUsers: (users: User[]) => void;
   setUser: (user: string) => void;
+  resetUser: () => void;
 };
 
 export const useUserStore = create<UserState & UserActions>((set) => ({
@@ -20,4 +21,5 @@ export const useUserStore = create<UserState & UserActions>((set) => ({
   setUser: (user: string) => {
     set({ user });    
   },
+  resetUser: () => set({ users: [], user: null }), // Ajout d'une méthode pour réinitialiser les utilisateurs
 }));

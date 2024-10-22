@@ -25,6 +25,7 @@ export class MediaService {
       folder_id: folderId,
       thumbnail_path: file.thumbnail_path || null,
       thumbnail_name: file.thumbnail_name || null,
+      duration: file.duration || null,
     };
     try {
       const createdMedia = await prisma.media.create({

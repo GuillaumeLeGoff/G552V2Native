@@ -25,6 +25,7 @@ export class MediaController {
           res,
           () => {}
         );
+       
         res.status(201).json({ data: createdMedia, message: "created" });
       });
     } catch (error) {
@@ -88,7 +89,6 @@ export class MediaController {
 
   deleteMedia = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("deleteMedia", req.body);
       const { mediaIds } = req.body;
       const medias: Media[] = await this.mediaService.findMedia(mediaIds);
       await this.uploadService.deleteMedias(medias).then(() => {

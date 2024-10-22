@@ -1,6 +1,7 @@
 import { PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
-import { fetchWithAuth } from "../store/authStore";
+import { fetchWithAuth } from "~/utils/fetchWithAuth";
 import { Playlist } from "~/types/Playlist";
+import { HttpException } from "~/utils/HttpException";
 
 export class PlaylistService {
   static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/playlist`;
@@ -9,8 +10,10 @@ export class PlaylistService {
     const response = await fetchWithAuth(this.API_URL, {
       method: "GET",
     });
-
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -19,6 +22,9 @@ export class PlaylistService {
       method: "GET",
     });
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -30,10 +36,10 @@ export class PlaylistService {
       },
       body: JSON.stringify({ name }),
     });
-    if (!response.ok) {
-      throw new Error("Failed to create playlist");
-    }
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 
@@ -45,10 +51,10 @@ export class PlaylistService {
       },
       body: JSON.stringify({ ids }),
     });
-    if (!response.ok) {
-      throw new Error("Failed to delete playlists");
-    }
     const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
     return result.data;
   }
 }

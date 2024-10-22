@@ -13,6 +13,7 @@ export class MacroService {
         button_id_user_id: {
           user_id: macroData.user_id,
           button_id: macroData.button_id,
+           
         },
       },
     });
@@ -56,35 +57,26 @@ export class MacroService {
   }
 
   public async updateMacro(
-    button_id: number,
-    user_id: number,
+    buttonId: number,
+    userId: number,
     macroData: UpdateMacroDto
   ): Promise<Macro> {
-    const macro = await prisma.macro.findUnique({
-      where: {
-        button_id_user_id: {
-          user_id: user_id,
-          button_id: button_id,
-        },
-      },
-    });
+    console.log(macroData);
+    console.log(buttonId);
+    console.log(userId);
+    
 
-    if (!macro) {
-      throw new HttpException(
-        404,
-        `Macro with user ID ${user_id} and button ID ${button_id} doesn't exist.`
-      );
-    }
+    
 
     return prisma.macro.update({
       where: {
         button_id_user_id: {
-          user_id: user_id,
-          button_id: button_id,
+          user_id: userId,
+          button_id: buttonId,
         },
       },
       data: {
-        ...macroData,
+        playlist_id: macroData.playlistId,
       },
     });
   }

@@ -85,6 +85,7 @@ export class UploadService {
             );
             req.file.thumbnail_path = thumbnailPath;
             req.file.thumbnail_name = thumbnailName;
+            req.file.duration = duration;
           } catch (error) {
             console.log(error);
             throw new HttpException(500, "Cannot generate thumbnail");
