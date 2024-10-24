@@ -1,8 +1,8 @@
 import React from "react";
-import { ActivityIndicator, View, TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withSequence,
   withTiming,
 } from "react-native-reanimated";
@@ -20,16 +20,13 @@ import {
 } from "~/components/ui/select";
 import { Text } from "~/components/ui/text";
 import { useAuth } from "~/hooks/useAuth";
-import { Lock } from "~/lib/icons/Lock";
-import ForgotPassword from "./drawer/@forgotPassword";
-import AlreadyConnected from "./drawer/@alreadyConnected";
 import { Eye } from "~/lib/icons/Eye";
 import { EyeOff } from "~/lib/icons/EyeOff";
-import { Header } from "~/components/ui/header";
-import { ChevronDown } from "~/lib/icons/ChevronDown";
+import { Lock } from "~/lib/icons/Lock";
+import AlreadyConnected from "./drawer/@alreadyConnected";
+import ForgotPassword from "./drawer/@forgotPassword";
 
 export default function Login() {
-
   const {
     users,
     handleLogin,
@@ -49,13 +46,11 @@ export default function Login() {
     disconnectUser,
   } = useAuth();
 
-
   const [isOpen, setIsOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClose = () => setIsOpen(false);
 
-  
   const selectShakeAnimation = useSharedValue(0);
   const inputShakeAnimation = useSharedValue(0);
 

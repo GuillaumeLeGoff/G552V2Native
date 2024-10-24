@@ -17,6 +17,7 @@ import { useFolder } from "~/hooks/useFolder";
 import { useMedia } from "~/hooks/useMedia";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import { Camera } from "lucide-react-native";
 interface CreateMediasAndFolderDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -67,7 +68,7 @@ const CreateMediasAndFolderDrawer: React.FC<
         const { uri, type: assetType } = asset;
 
         const filename = asset.fileName || uri.split("/").pop() || "media";
-        
+
         let type;
         const match = /\.(\w+)$/.exec(filename);
         if (match) {
@@ -120,7 +121,7 @@ const CreateMediasAndFolderDrawer: React.FC<
         const { uri, type: assetType } = asset;
 
         const filename = asset.fileName || uri.split("/").pop() || "media";
-        
+
         let type;
         const match = /\.(\w+)$/.exec(filename);
         if (match) {
@@ -172,12 +173,12 @@ const CreateMediasAndFolderDrawer: React.FC<
                 <Upload size={24} className="mr-2 text-primary" />
                 <Text className="font-avenir-book text-lg">Upload Media</Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 className="p-4 border-gray-300 gap-2 flex flex-row items-center justify-center"
                 onPress={takePhoto}
               >
-              
+                <Camera size={24} className="mr-2 text-primary" />
                 <Text className="font-avenir-book text-lg">Take Photo</Text>
               </TouchableOpacity>
 

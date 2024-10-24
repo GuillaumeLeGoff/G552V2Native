@@ -2,6 +2,8 @@ import { Image, TouchableOpacity, View, Text } from "react-native";
 import { Circle } from "~/lib/icons/Circle";
 import { CircleCheck } from "~/lib/icons/CircleCheck";
 import { Media } from "~/types/Media";
+import { API_PORT, IP_ADDRESS, PROTOCOL } from "@env";
+import { useAuth } from "~/hooks/useAuth";
 
 interface ItemMedias {
   media: Media;
@@ -18,6 +20,7 @@ export function ItemMedias({
   media,
   selectMode,
 }: ItemMedias) {
+  const { user } = useAuth();
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -55,21 +58,20 @@ export function ItemMedias({
         </View>
       )}
       {media.type.includes("image") && (
-      <Image
-        className="rounded-lg"
-        source={{
-          uri: `http://192.168.100.158:4000/uploads/admin/${media.file_name}`,
-        }}
-        style={{ width: "100%", height: (250 * 9) / 16 }} // Ajuste la hauteur pour un ratio 16:9
+        <Image
+          className="rounded-lg"
+          source={{
+            uri: `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/uploads/${user}/${media.file_name}`,
+          }}
+          style={{ width: "100%", height: (250 * 9) / 16 }} // Ajuste la hauteur pour un ratio 16:9
         />
       )}
-
       {media.type.includes("video") && (
         <>
           <Image
             className="rounded-lg"
             source={{
-              uri: `http://192.168.100.158:4000/uploads/admin/${media.thumbnail_name}`,
+              uri: `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/uploads/${user}/${media.thumbnail_name}`,
             }}
             style={{ width: "100%", height: (250 * 9) / 16 }} // Ajuste la hauteur pour un ratio 16:9
           />
