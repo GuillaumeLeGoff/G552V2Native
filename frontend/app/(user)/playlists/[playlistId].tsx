@@ -7,21 +7,24 @@ import { ItemMediasPlaylist } from "~/components/ItemMediasPlaylist";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { usePlaylistStore } from "~/store/playlistStore";
 import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 export default function Playlist() {
   const [isOpen, setIsOpen] = useState(false);
   const { playlist } = usePlaylistStore();
-  useEffect(() => {
-    console.log("playlist", playlist);
-  }, [playlist]);
+  const [list, setList] = useState(playlist?.medias);
+  const pan = Gesture.Pan()
+    .onStart(() => {
+      console.log("start");
+    })
+    .onUpdate((event) => {
+      console.log("update", event);
+    });
   return (
     <Modal className="flex-1 justify-center items-center">
-      <Animated.ScrollView scrollEventThrottle={16}>
+      <GestureDetector gesture={pan}>
         <HeaderAction />
-        {playlist?.medias.map((media: any, index: number) => (
-          <ItemMediasPlaylist key={media.id} media={media} />
-        ))}
-      </Animated.ScrollView>
+      </GestureDetector>
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <AddMediasToPlaylist />
       </Drawer>

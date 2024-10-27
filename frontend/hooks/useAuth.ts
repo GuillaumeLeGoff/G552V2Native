@@ -10,7 +10,7 @@ import { HttpException } from "../utils/HttpException";
 export const useAuth = () => {
   const { setUser, setUsers, users, user } = useUserStore();
   const { token, setToken } = useAuthStore();
-  
+
   const [userSelected, setUserSelected] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +23,7 @@ export const useAuth = () => {
   const getAllUsers = useCallback(async () => {
     const [error, users] = await catchError(UserService.getUsers());
     if (error) {
+      console.log(error);
       setError(error.message); // Ajout de la gestion des erreurs
     } else if (users) {
       setUsers(users);
@@ -38,7 +39,7 @@ export const useAuth = () => {
       setUser(null); // Réinitialisation de l'utilisateur lors de la déconnexion
     }
   };
-  
+
   const login = useCallback(async () => {
     if (userSelected && password) {
       const [error, newToken] = await catchError(
@@ -84,14 +85,13 @@ export const useAuth = () => {
   }, [password, userSelected, login, setPasswordError, setUsernameError]);
 
   const disconnectUser = useCallback(async () => {
-      const [error] = await catchError(AuthService.logout());
-      if (error) {
-        setError(error.message);
-      } else {
-        setUserSelected(null);
-        setPassword(null);
-      }
-    
+    const [error] = await catchError(AuthService.logout());
+    if (error) {
+      setError(error.message);
+    } else {
+      setUserSelected(null);
+      setPassword(null);
+    }
   }, [userSelected]);
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { PROTOCOL, IP_ADDRESS, API_PORT } from "@env";
+import { HttpException } from "~/utils/HttpException";
 export class UserService {
   static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/user`;
   static async getUsers() {
@@ -10,7 +11,10 @@ export class UserService {
         },
       });
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new HttpException(
+          response.status,
+          `HTTP error! status: ${response.status}`
+        );
       }
 
       const result = await response.json();
