@@ -18,8 +18,7 @@ import Animated, {
 import {
   Gesture,
   GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+  } from "react-native-gesture-handler";
 import { cn } from "~/lib/utils";
 import { TextRef, ViewRef } from "@rn-primitives/types";
 import { createContext, useContext } from "react";
@@ -107,7 +106,7 @@ const Drawer = React.forwardRef<View, DrawerProps>(
           animationType="none"
           onRequestClose={handleClose} // Gère le bouton de retour
         >
-          <GestureHandlerRootView style={{ flex: 1 }}>
+
             <View style={styles.drawerContainer}>
               {/* Overlay */}
               <TouchableOpacity
@@ -124,7 +123,7 @@ const Drawer = React.forwardRef<View, DrawerProps>(
                 {children}
               </Animated.View>
             </View>
-          </GestureHandlerRootView>
+
         </Modal>
       </DrawerContext.Provider>
     );
