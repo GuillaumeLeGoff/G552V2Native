@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Pressable, Text, View, findNodeHandle } from "react-native";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useItemStore } from "~/store/item";
 import { Item } from "~/types/Item";
 
@@ -30,7 +31,12 @@ export default function ItemList({
     }
   };
 
+ /*  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY:  }}
+  })); */
+
   return (
+    <Animated.View >
     <Pressable onLongPress={handleLongPress}>
       <View
         ref={viewRef}
@@ -39,5 +45,6 @@ export default function ItemList({
         <Text className="text-lg font-bold">{item.title}</Text>
       </View>
     </Pressable>
+    </Animated.View>
   );
 }
