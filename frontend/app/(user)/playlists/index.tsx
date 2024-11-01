@@ -7,13 +7,7 @@ import CreatePlaylist from "./drawer/@createPlaylist";
 import DragItem from "~/components/dnd/DragItem";
 import DragArea from "~/components/dnd/DragArea";
 import { useItemStore } from "~/store/item";
-
-type Layout = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+import { Item, Layout } from "~/types/Item";
 
 function PlaylistsScreen() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -36,7 +30,7 @@ function PlaylistsScreen() {
     { id: 15, title: "Item 15" },
   ];
 
-  const { items, setItems, setItemLayouts, } = useItemStore();
+  const { items, setItems, setDraggingItem, layoutItems } = useItemStore();
 
   useEffect(() => {
     if (items.length === 0) {
@@ -44,22 +38,23 @@ function PlaylistsScreen() {
     }
   }, []);
 
-  const handleItemLayout = (id: number, layout: Layout) => {
-    setItemLayouts({ [id]: layout });
+  const handleItemLayout = (layout: Layout) => {
+    setDraggingItem(layout);
+
   };
 
   return (
     <View className="bg-secondary flex-1 p-8">
       <DragArea>
         <FlatList
-          style={{ flex: 1, }}
+          style={{ flex: 1 }}
           data={items}
-          keyExtractor={(item) => item.id.toString()} 
-          renderItem={({ item }) => (
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item, index }) => (
             <ItemList
-            
               item={item}
-              onLayout={(layout) => handleItemLayout(item.id, layout)}
+              index={index}
+              onLayout={(layout) => handleItemLayout(layout)}
             />
           )}
         />
@@ -69,6 +64,3 @@ function PlaylistsScreen() {
 }
 
 export default PlaylistsScreen;
-
-
-

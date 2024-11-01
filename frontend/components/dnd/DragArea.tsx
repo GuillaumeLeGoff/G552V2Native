@@ -12,32 +12,35 @@ import { useItemStore } from "~/store/item";
 import { GestureStateManager } from "react-native-gesture-handler/lib/typescript/handlers/gestures/gestureStateManager";
 
 export default function DragArea({ children }: { children: React.ReactNode }) {
-  const { draggingItem, setDraggingItem, itemLayouts } = useItemStore();
+  const { setDraggingItem, draggingItem, dragy } = useItemStore();
 
- const dragx = useSharedValue(0);
-  const dragy = useSharedValue(0);
+  const dragx = useSharedValue(0);
 
   useEffect(() => {
-    if (draggingItem && itemLayouts[draggingItem.id]) {
-      const layout = itemLayouts[draggingItem.id];
-      if (layout.x && layout.y) { // Ajouté pour vérifier que x et y sont définis
-        dragx.value = layout.x;
-        dragy.value = layout.y;
+    console.log("draggingItem", draggingItem);
+    if (draggingItem) {
+      console.log(draggingItem);
+      if (draggingItem.x && draggingItem.y) {
+        dragx.value = draggingItem.x;
+        dragy.value = draggingItem.y;
       } else {
-        console.warn(`Layout pour l'item ID ${draggingItem.id} manque x ou y.`);
+        console.warn(`Layout pour l'item ID manque x ou y.`);
       }
     }
-  }, [draggingItem, itemLayouts]);
+  }, [draggingItem]);
 
-  const pan = Gesture.Pan().manualActivation(true) .onTouchesMove((event, stateManager) => {
+  const pan = Gesture.Pan()
+    .manualActivation(true)
+    .onTouchesMove((event, stateManager) => {
       if (draggingItem) {
         stateManager.activate();
       }
     })
     .onUpdate((event) => {
-      if (draggingItem && itemLayouts[draggingItem.id]) {
-        dragx.value = itemLayouts[draggingItem.id].x + event.translationX;
-        dragy.value = itemLayouts[draggingItem.id].y + event.translationY;
+      if (draggingItem) {
+        console.log(draggingItem);
+        dragx.value = draggingItem.x + event.translationX;
+        dragy.value = draggingItem.y + event.translationY;
       }
     })
     .onFinalize(() => {
@@ -50,20 +53,21 @@ export default function DragArea({ children }: { children: React.ReactNode }) {
 
   return (
     <View style={{ flex: 1 }}>
-        <GestureDetector gesture={pan}>
-         <View
-            style={{...StyleSheet.absoluteFillObject}}
-          >
-             {children}
-           {draggingItem && itemLayouts[draggingItem.id] && ( <Animated.View style={[animatedStyle, { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }]}>
-              <DragItem item={draggingItem} />
-           </Animated.View>
-            )}
-            </View>
-        </GestureDetector>
+      <GestureDetector gesture={pan}>
+        <View style={{ ...StyleSheet.absoluteFillObject }}>
+          {children}
+          {draggingItem && (
+            <Animated.View
+              style={[
+                animatedStyle,
+                { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
+              ]}
+            >
+              <DragItem />
+            </Animated.View>
+          )}
+        </View>
+      </GestureDetector>
     </View>
   );
 }
-
-
-

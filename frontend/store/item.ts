@@ -1,32 +1,35 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { Item } from "~/types/Item";
-
-type Layout = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+import { Item, Layout } from "~/types/Item";
+import { useSharedValue, SharedValue } from "react-native-reanimated";
 
 type ItemStore = {
   items: Item[];
+
   setItems: (items: Item[]) => void;
-  draggingItem: Item | undefined;
-  setDraggingItem: (item: Item | undefined) => void;
-  itemLayouts: { [key: number]: Layout };
-  setItemLayouts: (layouts: { [key: number]: Layout }) => void;
+  layoutItems: Layout[] | undefined;
+  setLayoutItems: (layout: Layout[]) => void;
+  draggingItem: Layout | undefined;
+  setDraggingItem: (layout: Layout | undefined) => void;
+  dragy: SharedValue<number>;
+  setDragy: (value: number) => void;
 };
 
-export const useItemStore = create<ItemStore>((set) => ({
-  items: [],
-  setItems: (items) => set({ items }),
-  draggingItem: undefined,
-  setDraggingItem: (item) => set({ draggingItem: item }),
-  itemLayouts: {},
-  setItemLayouts: (layouts) =>
-    set((state) => ({
-      itemLayouts: { ...state.itemLayouts, ...layouts },
-    })),
-}));
+export const useItemStore = create<ItemStore>((set) => {
+  const dragy = useSharedValue(0);
+
+  return {
+    items: [],
+    setItems: (items) => set({ items }),
+    layoutItems: [],
+    setLayoutItems: (layout) => set({ layoutItems: layout }),
+
+    draggingItem: undefined,
+    setDraggingItem: (layout) => set({ draggingItem: layout }),
+    dragy,
+    setDragy: (value) => {
+      dragy.value = value;
+    },
+  };
+});

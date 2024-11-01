@@ -3,15 +3,12 @@ interface Item {
   title: string;
 }
 
-type Layout = {
+interface Layout {
   x: number;
   y: number;
   width: number;
   height: number;
-};
+  item: Item;
+}
 
-type ItemLayouts = {
-  [key: number]: Layout;
-};
-
-export type { Item };
+export type { Item, Layout };
