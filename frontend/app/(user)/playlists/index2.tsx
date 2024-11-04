@@ -1,20 +1,13 @@
 import React, { useEffect, useMemo, useRef, useCallback } from "react";
-import { FlatList, View, StyleSheet, Animated, Modal } from "react-native";
+import { FlatList, View, StyleSheet, Animated } from "react-native";
 import ItemList from "~/components/dnd/ItemList"; // Assurez-vous que ItemList utilise React.memo
 import DragArea from "~/components/dnd/DragArea";
 import { useItemStore } from "~/store/item";
 import { Item, Layout } from "~/types/Item";
-import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { useAnimatedReaction, runOnJS } from "react-native-reanimated";
-import { router } from "expo-router";
 import { debounce } from "lodash";
-import { usePlaylistStore } from "~/store/playlistStore";
-import ActionHeader from "~/components/ActionHeader";
-import { Drawer } from "~/components/drawer";
-import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
-function Playlist() {
+function PlaylistsScreen() {
   const [isOpen, setIsOpen] = React.useState(false);
 
   // Données initiales
@@ -28,7 +21,13 @@ function Playlist() {
       { id: 6, title: "Item 6" },
       { id: 7, title: "Item 7" },
       { id: 8, title: "Item 8" },
-     
+      { id: 9, title: "Item 9" },
+      { id: 10, title: "Item 10" },
+      { id: 11, title: "Item 11" },
+      { id: 12, title: "Item 12" },
+      { id: 13, title: "Item 13" },
+      { id: 14, title: "Item 14" },
+      { id: 15, title: "Item 15" },
     ],
     []
   );
@@ -147,19 +146,8 @@ function Playlist() {
     ),
     [handleItemLayout]
   );
-  const pan = Gesture.Pan()
-    .onStart(() => {
-      console.log("start");
-    })
-    .onUpdate((event) => {
-      console.log("update", event);
-    });
 
   return (
-    <Modal >
-       <GestureHandlerRootView style={{ flex: 1 }}>
-        <HeaderAction />
-      
      <View className="flex-1 p-8">
       <DragArea updateItemPosition={updateItemPosition}>
         <Animated.FlatList
@@ -179,35 +167,9 @@ function Playlist() {
         />
       </DragArea>
     </View>
-</GestureHandlerRootView>
-    </Modal>
   );
 }
 
 
-function HeaderAction() {
-  const { playlist } = usePlaylistStore();
-  return (
-    <>
-      <ActionHeader
-        text={playlist?.name || ""}
-        actionsBeforeText={[
-          {
-            icon: ArrowLeft,
-            onPress: () => router.back(),
-            size: 24,
-          },
-        ]}
-        /*  actionsAfterText={[
-          {
-            icon: Trash,
-            onPress: () => deletePlaylists(selectedPlaylist),
-            size: 20,
-          },
-        ]} */
-      />
-    </>
-  );
-}
 
-export default Playlist;
+export default PlaylistsScreen;
