@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { Item, Layout } from "~/types/Item";
 import { useSharedValue, SharedValue } from "react-native-reanimated";
+import { useAnimatedReaction, runOnJS } from "react-native-reanimated";
 
 type ItemStore = {
   items: Item[];
@@ -14,11 +15,13 @@ type ItemStore = {
   setDraggingItem: (layout: Layout | undefined) => void;
   dragy: SharedValue<number>;
   setDragy: (value: number) => void;
+  dragOffset: SharedValue<number>;
+  setDragOffset: (value: number) => void;
 };
 
 export const useItemStore = create<ItemStore>((set) => {
   const dragy = useSharedValue(0);
-
+  const dragOffset = useSharedValue(0);
   return {
     items: [],
     setItems: (items) => set({ items }),
@@ -30,6 +33,10 @@ export const useItemStore = create<ItemStore>((set) => {
     dragy,
     setDragy: (value) => {
       dragy.value = value;
+    },
+    dragOffset,
+    setDragOffset: (value) => {
+      dragOffset.value = value;
     },
   };
 });

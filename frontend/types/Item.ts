@@ -9,6 +9,7 @@ interface Layout {
   width: number;
   height: number;
   item: Item;
+  index: number;
 }
 
 export type { Item, Layout };
