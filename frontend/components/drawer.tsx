@@ -15,10 +15,7 @@ import Animated, {
   Easing,
   runOnJS,
 } from "react-native-reanimated";
-import {
-  Gesture,
-  GestureDetector,
-  } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { cn } from "~/lib/utils";
 import { TextRef, ViewRef } from "@rn-primitives/types";
 import { createContext, useContext } from "react";
@@ -106,24 +103,22 @@ const Drawer = React.forwardRef<View, DrawerProps>(
           animationType="none"
           onRequestClose={handleClose} // Gère le bouton de retour
         >
-
-            <View style={styles.drawerContainer}>
-              {/* Overlay */}
-              <TouchableOpacity
-                style={styles.overlay}
-                activeOpacity={1}
-                onPress={handleClose}
-              />
-              {/* Drawer */}
-              <Animated.View
-                style={[rStyle, styles.content, style]}
-                {...props}
-                ref={ref}
-              >
-                {children}
-              </Animated.View>
-            </View>
-
+          <View style={styles.drawerContainer}>
+            {/* Overlay */}
+            <TouchableOpacity
+              style={styles.overlay}
+              activeOpacity={1}
+              onPress={handleClose}
+            />
+            {/* Drawer */}
+            <Animated.View
+              style={[rStyle, styles.content, style]}
+              {...props}
+              ref={ref}
+            >
+              {children}
+            </Animated.View>
+          </View>
         </Modal>
       </DrawerContext.Provider>
     );
@@ -202,7 +197,7 @@ const DrawerContent = React.forwardRef<
       <Animated.View
         ref={ref}
         className={cn(
-          "absolute left-0 right-0 bottom-0 bg-white border-t-muted rounded-t-lg p-4",
+          "absolute left-0 right-0 bottom-0 bg-background border-t-muted rounded-lg  p-4",
           className
         )}
         style={[rStyle, style]}
@@ -232,11 +227,7 @@ const DrawerFooter = React.forwardRef<
   ViewRef,
   React.ComponentPropsWithoutRef<typeof View>
 >(({ className, ...props }, ref) => (
-  <View
-    ref={ref}
-    className={cn(" p-6 pt-0", className)}
-    {...props}
-  />
+  <View ref={ref} className={cn(" p-6 pt-0", className)} {...props} />
 ));
 DrawerFooter.displayName = "DrawerFooter";
 
@@ -286,7 +277,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     paddingTop: 20,
     paddingHorizontal: 20,
-    
   },
   handle: {
     width: 40,

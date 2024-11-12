@@ -6,7 +6,7 @@ interface AuthState {
   token: string | null;
   user: string | null;
   setToken: (token: string | null) => void;
-  setUser: (user: string | null) => void;
+  setUserConnected: (user: string | null) => void;
   resetAuth: () => void;
 }
 
@@ -16,7 +16,7 @@ export const useAuthStore = create(
       token: null,
       user: null,
       setToken: (token) => set({ token }),
-      setUser: (user) => set({ user }),
+      setUserConnected: (user) => set({ user }),
       resetAuth: () => set({ token: null, user: null }), // Ajout d'une méthode pour réinitialiser l'authentification
     }),
     {

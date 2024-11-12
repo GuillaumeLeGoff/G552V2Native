@@ -51,15 +51,19 @@ export class PlaylistMediaService {
 
   async createPlaylistMedia(
     playlistMediaDataArray: CreatePlaylistMediaDto[]
-  ): Promise<any> {
-    const newPlaylistMedias = await prisma.playlistMedia.createMany({
-      data: playlistMediaDataArray.map((data) => ({
-        media_id: data.media_id,
-        playlist_id: data.playlist_id,
-        media_dur_in_playlist: data.media_dur_in_playlist,
-        media_pos_in_playlist: data.media_pos_in_playlist,
-      })),
-    });
+  ): Promise<PlaylistMedia[]> {
+    const newPlaylistMedias = await Promise.all(
+      playlistMediaDataArray.map(async (data) => {
+        return await prisma.playlistMedia.create({
+          data: {
+            media_id: data.media_id,
+            playlist_id: data.playlist_id,
+            media_dur_in_playlist: data.media_dur_in_playlist,
+            media_pos_in_playlist: data.media_pos_in_playlist,
+          },
+        });
+      })
+    );
     return newPlaylistMedias;
   }
 }

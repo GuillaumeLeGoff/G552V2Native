@@ -9,7 +9,7 @@ import { HttpException } from "../utils/HttpException";
 
 export const useAuth = () => {
   const { setUser, setUsers, users, user } = useUserStore();
-  const { token, setToken } = useAuthStore();
+  const { token, setToken, setUserConnected } = useAuthStore();
 
   const [userSelected, setUserSelected] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
@@ -22,10 +22,12 @@ export const useAuth = () => {
 
   const getAllUsers = useCallback(async () => {
     const [error, users] = await catchError(UserService.getUsers());
+
     if (error) {
       console.log(error);
       setError(error.message); // Ajout de la gestion des erreurs
     } else if (users) {
+      console.log(users);
       setUsers(users);
     }
   }, [setUsers, setError]);
@@ -36,7 +38,7 @@ export const useAuth = () => {
       setError(error.message); // Ajout de la gestion des erreurs
     } else {
       setToken(null);
-      setUser(null); // Réinitialisation de l'utilisateur lors de la déconnexion
+      setUserConnected(null); // Réinitialisation de l'utilisateur lors de la déconnexion
     }
   };
 
@@ -55,6 +57,7 @@ export const useAuth = () => {
         setAuthError(null);
         setIsAlreadyConnected(false);
         setUser(userSelected);
+        setUserConnected(userSelected);
         router.push("/playlists");
         return true;
       }

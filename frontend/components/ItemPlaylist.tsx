@@ -15,6 +15,7 @@ export function ItemPlaylist({
   onPress,
   onLongPress,
   isSelected,
+  ...props
 }: ItemPlaylist) {
   return (
     <TouchableOpacity
@@ -24,6 +25,7 @@ export function ItemPlaylist({
       className={`flex-row items-center justify-between mb-2 mt-6 p-12 rounded-lg shadow-sm ${
         isSelected ? "bg-secondary" : "bg-card"
       }`}
+      {...props}
     >
       <Text
         className={`text-lg font-avenir-black ${

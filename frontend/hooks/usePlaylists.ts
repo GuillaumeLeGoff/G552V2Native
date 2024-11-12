@@ -1,13 +1,10 @@
 import { router } from "expo-router";
-import { useEffect } from "react";
 import { useAuth } from "~/hooks/useAuth";
 import { PlaylistService } from "~/services/playlist.service";
+import { PlaylistMediaService } from "~/services/playlistMedia.service";
 import { usePlaylistStore } from "~/store/playlistStore";
-import { Media } from "~/types/Media";
 import { Playlist } from "~/types/Playlist";
 import { useFolder } from "./useFolder";
-import { PlaylistMediaService } from "~/services/playlistMedia.service";
-import { PlaylistMedia } from "~/types/PlaylistMedia";
 
 export const usePlaylists = () => {
   const {
@@ -19,7 +16,7 @@ export const usePlaylists = () => {
     selectedPlaylist,
   } = usePlaylistStore();
   const { token } = useAuth();
-  const { selectedItems } = useFolder();
+  const { selectedItems, setSelectItems } = useFolder();
 
   const getPlaylists = async () => {
     try {
@@ -46,13 +43,12 @@ export const usePlaylists = () => {
 
   const handlePressPlaylist = async (playlist: Playlist) => {
     const data = await PlaylistService.getPlaylist(playlist.id);
-    console.log("data", data);
+    console.log("data", data.medias);
     setPlaylist(data);
     router.push(`/playlists/${playlist.id}`);
   };
 
   const addMediasToPlaylist = async () => {
-    console.log("medias", selectedItems);
     const newPlaylistMedias = selectedItems.map((item) => ({
       playlist_id: playlist?.id || "",
       media_id: item.id,
@@ -61,11 +57,23 @@ export const usePlaylists = () => {
         ? playlist.medias.length + 1
         : 1,
     }));
-    console.log("newPlaylistMedias", newPlaylistMedias);
-    const medias = await PlaylistMediaService.createPlaylistMedia(
-      newPlaylistMedias
-    );
-    console.log("medias", medias);
+
+    const newPlaylistMediasCreated =
+      await PlaylistMediaService.createPlaylistMedia(newPlaylistMedias);
+
+    const updatedPlaylist = {
+      ...playlist,
+      medias: [
+        ...(playlist?.medias || []),
+        ...newPlaylistMedias.map((media, index) => ({
+          ...media,
+          id: newPlaylistMediasCreated[index].id,
+          media: selectedItems[index],
+        })),
+      ],
+    };
+    setPlaylist(updatedPlaylist);
+    setSelectItems([]);
   };
 
   const handleSelectPlaylist = (item: Playlist) => {
@@ -77,7 +85,6 @@ export const usePlaylists = () => {
     console.log("item", item);
     console.log("selectedPlaylist", selectedPlaylist);
   };
-
 
   return {
     playlists,

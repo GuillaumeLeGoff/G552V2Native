@@ -1,60 +1,81 @@
+import { API_PORT, IP_ADDRESS, PROTOCOL } from "@env";
 import React, { useEffect, useRef } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useAuthStore } from "~/store/authStore";
 import { useItemStore } from "~/store/item";
+import { useUserStore } from "~/store/userStore";
 import { Item, Layout } from "~/types/Item";
+import { PlaylistMedia } from "~/types/PlaylistMedia";
+import { GripVertical } from "~/lib/icons/GripVertical";
 
 export default function ItemList({
-  item,
+  media,
   index,
-  onLayout,
 }: {
-  item: Item;
+  media: PlaylistMedia;
   index: number;
-  onLayout: (layout: Layout) => void;
 }) {
   const viewRef = useRef<View>(null);
   const { setDraggingItem, dragy, draggingItem, dragOffset } = useItemStore();
+  const { user } = useAuthStore();
 
   const handleLongPress = () => {
     if (viewRef.current) {
       viewRef.current.measureInWindow((x, y, width, height) => {
-        const layout: Layout = { x, y, width, height: height + 8, item, index };
+        const layout: Layout = {
+          x: x - 28,
+          y: y - 82,
+          width,
+          height,
+          media,
+          index,
+        };
         setDraggingItem(layout);
-      }); 
+      });
     }
   };
-const marginTop = useSharedValue(0);
- const  ItemHeight =  (draggingItem?.height || 0)
+  const marginTop = useSharedValue(0);
+  const ItemHeight = draggingItem?.height || 0;
   useAnimatedReaction(
     () => dragy?.value,
     (newDragY) => {
       if (!newDragY) {
         marginTop.value = 0;
       }
-     
-      const itemY = index * ItemHeight  - dragOffset.value;
 
-      // if it's above the first item
-      if (index === 0 && newDragY < itemY +  ItemHeight ) {
+      const itemY = index * ItemHeight;
+
+      // Calculer l'offset si l'élément en cours de déplacement est supprimé de la liste
+      const adjustedIndex =
+        draggingItem && draggingItem.index <= index ? index - 1 : index;
+      const adjustedItemY = adjustedIndex * ItemHeight;
+
+      // Si c'est au-dessus du premier élément
+      if (adjustedIndex === 0 && newDragY < adjustedItemY) {
         marginTop.value = withTiming(ItemHeight);
       }
 
-      // if it's on top of the current item
-      // TODO: keep track of the currently dragging item, and offset the comparison, becuase it is deleted form the lists
+      // Si c'est au-dessus de l'élément actuel
+      if (newDragY >= adjustedItemY && newDragY < adjustedItemY + ItemHeight) {
+        marginTop.value = withTiming(ItemHeight);
+      }
+
       marginTop.value = withTiming(
-        newDragY >= itemY && newDragY < itemY + ItemHeight ? ItemHeight : 0
+        newDragY >= adjustedItemY && newDragY < adjustedItemY + ItemHeight
+          ? ItemHeight
+          : 0
       );
     }
   );
 
-   useEffect(() => {
-    const itemY = index * ItemHeight  - dragOffset.value;
+  useEffect(() => {
+    const itemY = index * ItemHeight - dragOffset.value;
     if (draggingItem) {
       marginTop.value =
         dragy.value >= itemY && dragy.value < itemY + ItemHeight
@@ -63,8 +84,7 @@ const marginTop = useSharedValue(0);
     } else {
       marginTop.value = 0;
     }
-  }, [draggingItem ,dragOffset.value ]);
-
+  }, [draggingItem, dragOffset.value]);
 
   /* const animatedStyle = useAnimatedStyle(() => {
     if (!dragy.value) {
@@ -85,22 +105,30 @@ const marginTop = useSharedValue(0);
       ],
     };
   }); */
-  
-  if (draggingItem?.item.id === item.id) {
-    return <Animated.View style={{ marginTop }} />;
+
+  if (draggingItem?.media.id === media.id && draggingItem.index === index) {
+    return null;
   }
   return (
     <Animated.View style={{ marginTop }}>
       <Pressable onLongPress={handleLongPress}>
         <View
           ref={viewRef}
-          className="m-2 bg-primary px-10 py-4 rounded-lg items-center"
+          className="m-2 bg-card px-10 py-4 rounded-lg items-center flex-row justify-between"
         >
-          <Text className="text-lg font-bold">{item.title}</Text>
+          <GripVertical size={24} className="text-secondary-foreground" />
+          <Image
+            className="rounded-lg "
+            source={{
+              uri: `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/uploads/${user}/${media.media?.file_name}`,
+            }}
+            style={{ width: "50%", height: (250 * 9) / 20 }} // Ajuste la hauteur pour un ratio 16:9
+          />
+          <Text className="text-secondary-foreground text-xl font-avenir-heavy">
+            {media.media?.duration || "0"}
+          </Text>
         </View>
       </Pressable>
     </Animated.View>
-  ); 
+  );
 }
-
-

@@ -15,61 +15,70 @@ import { Text } from "~/components/ui/text";
 import { useFolder } from "~/hooks/useFolder";
 import { usePlaylists } from "~/hooks/usePlaylists";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
-export default function AddMediasToPlaylist() {
+export default function AddMediasToPlaylist({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}) {
   const { folder, handleItemSelect, selectedItems, handleItemFolderPress } =
     useFolder();
 
   const { addMediasToPlaylist } = usePlaylists();
   return (
     <DrawerContent>
-      <DrawerHeader>
-        <DrawerTitle>Add medias to playlist</DrawerTitle>
-      </DrawerHeader>
-      <HeaderAction />
-      <View className="flex-row flex-wrap">
-        {folder?.subFolders?.map((subFolder, index) => (
-          <View key={index} style={{ width: "50%", padding: 8 }}>
-            <ItemFolder
-              title={subFolder.name}
-              selectMode={false}
-              onPress={() => {
-                handleItemFolderPress(subFolder);
-              }}
-              isSelected={selectedItems?.some(
-                (item) => item.id === subFolder.id && item.type === "folder"
-              )}
-            />
-          </View>
-        ))}
-      </View>
-      <View className="flex-row flex-wrap">
-        {folder?.media?.map((media, index) => (
-          <View key={index} style={{ width: "50%", padding: 8 }}>
-            <ItemMedias
-              selectMode={selectedItems?.length > 0}
-              media={media}
-              onPress={() => {
-                handleItemSelect(media);
-              }}
-              onLongPress={() => handleItemSelect(media)}
-              isSelected={selectedItems?.some((item) => item.id === media.id)}
-            />
-          </View>
-        ))}
-      </View>
-
-      <DrawerFooter>
-        <View className="flex-row justify-end">
-          <Button
-            className="mt-4 bg-secondary"
-            onPress={() => {
-              addMediasToPlaylist();
-            }}
-          >
-            <Text className="text-secondary-foreground">Add</Text>
-          </Button>
+      <View className="">
+        <DrawerHeader>
+          <DrawerTitle>Add medias to playlist</DrawerTitle>
+        </DrawerHeader>
+        <HeaderAction />
+        <View className="flex-row flex-wrap ">
+          {folder?.subFolders?.map((subFolder, index) => (
+            <View key={index} style={{ width: "50%", padding: 8 }}>
+              <ItemFolder
+                title={subFolder.name}
+                selectMode={false}
+                onPress={() => {
+                  handleItemFolderPress(subFolder);
+                }}
+                isSelected={selectedItems?.some(
+                  (item) => item.id === subFolder.id && item.type === "folder"
+                )}
+              />
+            </View>
+          ))}
         </View>
-      </DrawerFooter>
+        <View className="flex-row flex-wrap">
+          {folder?.media?.map((media, index) => (
+            <View key={index} style={{ width: "50%", padding: 8 }}>
+              <ItemMedias
+                selectMode={selectedItems?.length > 0}
+                media={media}
+                onPress={() => {
+                  handleItemSelect(media);
+                }}
+                onLongPress={() => handleItemSelect(media)}
+                isSelected={selectedItems?.some((item) => item.id === media.id)}
+              />
+            </View>
+          ))}
+        </View>
+
+        <DrawerFooter>
+          <View className="flex-row justify-end">
+            <Button
+              className="mt-4 bg-secondary"
+              onPress={() => {
+                addMediasToPlaylist();
+                setIsOpen(false);
+              }}
+            >
+              <Text className="text-secondary-foreground">Add</Text>
+            </Button>
+          </View>
+        </DrawerFooter>
+      </View>
     </DrawerContent>
   );
 }

@@ -9,7 +9,7 @@ import { usePlaylistStore } from "~/store/playlistStore";
 import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
-export default function Playlist() {
+export default function PlaylistCopy() {
   const [isOpen, setIsOpen] = useState(false);
   const { playlist } = usePlaylistStore();
   const [list, setList] = useState(playlist?.medias);

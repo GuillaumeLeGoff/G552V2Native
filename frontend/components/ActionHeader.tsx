@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 
 interface ActionHeaderProps {
   text: string;
+  className?: string;
   actionsBeforeText?: Array<{
     icon: React.ElementType;
     onPress: () => void;
@@ -23,14 +24,17 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
   text,
   actionsBeforeText = [],
   actionsAfterText = [],
+  className,
 }) => {
   return (
-    <View className="flex flex-row items-start justify-between z-50">
+    <View
+      className={`flex flex-row items-start justify-between z-50 ${className}`}
+    >
       {actionsBeforeText.map((action, index) => (
         <TouchableOpacity
           key={index}
           className={`pt-1 ${
-            index !== actionsBeforeText.length - 1 ? "pr-2" : ""
+            index !== actionsBeforeText.length - 1 ? "pr-4" : ""
           }`}
           onPress={action.onPress}
         >

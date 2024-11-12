@@ -1,3 +1,5 @@
+import { PlaylistMedia } from "./PlaylistMedia";
+
 interface Item {
   id: number;
   title: string;
@@ -8,7 +10,7 @@ interface Layout {
   y: number;
   width: number;
   height: number;
-  item: Item;
+  media: PlaylistMedia;
   index: number;
 }
 

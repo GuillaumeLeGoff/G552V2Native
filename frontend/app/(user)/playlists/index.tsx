@@ -1,15 +1,16 @@
-import { Trash, X } from "lucide-react-native"; // {{ edit_1 }}
+import { Trash, X } from "lucide-react-native";
 import React, { useEffect } from "react";
-import { Animated, View } from "react-native";
-import ActionHeader from "~/components/ActionHeader"; // {{ edit_2 }}
-import { CreateButton } from "~/components/createButton";
+import { View } from "react-native";
+import ActionHeader from "~/components/ActionHeader";
 import { Drawer } from "~/components/drawer";
 import { ItemPlaylist } from "~/components/ItemPlaylist";
 import { Header } from "~/components/ui/header";
-import { usePlaylists } from "~/hooks/usePlaylists"; // {{ edit_1 }}
+import { usePlaylists } from "~/hooks/usePlaylists";
 import CreatePlaylist from "./drawer/@createPlaylist";
 import AnimatedScrollView from "~/components/AnimatedScrollView";
-
+import FloatingActionButton from "~/components/FloatingActionButton";
+import { useSharedValue } from "react-native-reanimated";
+import FloatingActionMenu from "~/components/FloatingActionMenu";
 
 function HeaderAction() {
   const { selectedPlaylist, setSelectPlaylist, deletePlaylists } =
@@ -47,8 +48,9 @@ function HeaderAction() {
   );
 }
 
-function PlaylistsScreen() {
+function PlaylistsList() {
   const [isOpen, setIsOpen] = React.useState(false);
+  const isExpanded = useSharedValue(false);
 
   const {
     playlists,
@@ -59,11 +61,21 @@ function PlaylistsScreen() {
     setSelectPlaylist,
   } = usePlaylists();
 
-  
   useEffect(() => {
-      getPlaylists();
-      setSelectPlaylist([]);
+    getPlaylists();
+    setSelectPlaylist([]);
   }, []);
+
+  const secondaryButtons = [
+    {
+      label: "Add",
+      onPress: () => setIsOpen(true),
+    },
+  ];
+
+  const handlePress = () => {
+    isExpanded.value = !isExpanded.value;
+  };
 
   return (
     <>
@@ -85,10 +97,9 @@ function PlaylistsScreen() {
                 isSelected={selectedPlaylist?.some((p) => p.id === item.id)}
               />
             ))}
-          <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
         </View>
       </AnimatedScrollView>
-
+      <FloatingActionMenu secondaryButtons={secondaryButtons} />
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <CreatePlaylist />
       </Drawer>
@@ -96,4 +107,4 @@ function PlaylistsScreen() {
   );
 }
 
-export default PlaylistsScreen;
+export default PlaylistsList;
