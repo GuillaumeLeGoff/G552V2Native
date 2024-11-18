@@ -12,6 +12,4 @@ export interface Folder {
   subFolders?: Folder[] | null;
   path: string | null;
   updated_at: Date;
-  folderId: number | null;
-  type: "folder" | "image" | "video"
 }

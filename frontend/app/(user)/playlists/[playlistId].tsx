@@ -1,26 +1,34 @@
 import { router } from "expo-router";
 import { debounce } from "lodash";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { Animated, FlatList, Modal, View, Button, Alert } from "react-native";
+import { Animated, FlatList, Modal, View } from "react-native";
 import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import ActionHeader from "~/components/ActionHeader";
 import DragArea from "~/components/dnd/DragArea";
-import ItemList from "~/components/dnd/ItemList"; // Assurez-vous que ItemList utilise React.memo
+import ItemList from "~/components/dnd/ItemList";
+import { Drawer } from "~/components/drawer";
+import FloatingActionMenu from "~/components/FloatingActionMenu";
+import { usePlaylistsMedias } from "~/hooks/usePlaylistsMedias";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
+import { Trash } from "~/lib/icons/Trash";
+import { X } from "~/lib/icons/X";
 import { useItemStore } from "~/store/item";
 import { usePlaylistStore } from "~/store/playlistStore";
-import { Layout } from "~/types/Item";
 import { PlaylistMedia } from "~/types/PlaylistMedia";
-import { Play } from "~/lib/icons/Play";
-import FloatingActionMenu from "~/components/FloatingActionMenu";
 import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
-import { Drawer } from "~/components/drawer";
+import { PlaylistMediaService } from "~/services/playlistMedia.service";
 
 function PlaylistModify() {
   const [isOpen, setIsOpen] = useState(false);
   const { playlist, setPlaylist } = usePlaylistStore();
   const { setDragOffset, dragOffset, dragy, draggingItem } = useItemStore();
+  const {
+    selectedPlaylistMedias,
+    handlePressPlaylistMedia,
+    setSelectedPlaylistMedias,
+    deleteSelectedPlaylistMedias,
+  } = usePlaylistsMedias();
 
   // Création d'une Map pour une recherche optimisée
   const idToIndexMap = useMemo(() => {
@@ -42,26 +50,24 @@ function PlaylistModify() {
 
   // Fonction pour mettre à jour la position d'un élément
   const updateItemPosition = useCallback(
-    (item: PlaylistMedia, y: number) => {
-      console.log("y", y);
-      const itemHeight = draggingItem?.height ?? 6; // Remplacez par la hauteur réelle de vos items
-      console.log("y / itemHeight", y / itemHeight);
+    async (item: PlaylistMedia, y: number) => {
+      const itemHeight = draggingItem?.height ?? 6;
       const newPosition = Math.floor(y / itemHeight);
       const currentIndex = idToIndexMap.get(item.id);
 
-      console.log("newPosition", newPosition);
-      console.log("currentIndex", currentIndex);
-
-      // Vérifier si l'index actuel est défini et différent de la nouvelle position
       if (currentIndex === undefined || currentIndex === newPosition) return;
 
       const updatedMedias = playlist?.medias ? [...playlist.medias] : [];
-      updatedMedias.splice(currentIndex, 1); // Retirer l'élément de sa position actuelle
-      let adjustedPosition = newPosition;
-      /* if (newPosition > currentIndex) {
-        adjustedPosition -= 1;
-      } */
-      updatedMedias.splice(adjustedPosition, 0, item);
+      updatedMedias.splice(currentIndex, 1);
+      updatedMedias.splice(newPosition, 0, item);
+
+      // Mettre à jour la position des médias dans la liste
+      updatedMedias.forEach((media, index) => {
+        media.media_pos_in_playlist = index + 1; // Mise à jour de la position
+      });
+      console.log("updatedMedias", updatedMedias);
+      const result = await PlaylistMediaService.updateMediaOrder(updatedMedias);
+      console.log("result", result);
 
       debouncedSetItems(updatedMedias);
     },
@@ -120,17 +126,15 @@ function PlaylistModify() {
   );
   const renderItem = useCallback(
     ({ item, index }: { item: PlaylistMedia; index: number }) => (
-      <ItemList media={item} index={index} />
+      <ItemList
+        media={item}
+        index={index}
+        selectedPlaylistMedias={selectedPlaylistMedias}
+        handlePressPlaylistMedia={handlePressPlaylistMedia}
+      />
     ),
-    []
+    [selectedPlaylistMedias, handlePressPlaylistMedia]
   );
-  const pan = Gesture.Pan()
-    .onStart(() => {
-      console.log("start");
-    })
-    .onUpdate((event) => {
-      console.log("update", event);
-    });
 
   const secondaryButtons = [
     {
@@ -143,7 +147,12 @@ function PlaylistModify() {
     <Modal>
       <View className="h-full bg-background px-8">
         <GestureHandlerRootView className="h-full " style={{ flex: 1 }}>
-          <HeaderAction />
+          <HeaderAction
+            selectedPlaylistMedias={selectedPlaylistMedias}
+            setSelectedPlaylistMedias={setSelectedPlaylistMedias}
+            deleteSelectedPlaylistMedias={deleteSelectedPlaylistMedias}
+            playlistName={playlist?.name || ""}
+          />
 
           <DragArea updateItemPosition={updateItemPosition}>
             <Animated.FlatList
@@ -181,28 +190,51 @@ function PlaylistModify() {
   );
 }
 
-function HeaderAction() {
-  const { playlist } = usePlaylistStore();
+function HeaderAction({
+  selectedPlaylistMedias,
+  setSelectedPlaylistMedias,
+  deleteSelectedPlaylistMedias,
+  playlistName,
+}: {
+  selectedPlaylistMedias: PlaylistMedia[];
+  setSelectedPlaylistMedias: (medias: PlaylistMedia[]) => void;
+  deleteSelectedPlaylistMedias: () => void;
+  playlistName: string;
+}) {
   return (
     <>
-      <ActionHeader
-        className="py-8"
-        text={playlist?.name || ""}
-        actionsBeforeText={[
-          {
-            icon: ArrowLeft,
-            onPress: () => router.back(),
-            size: 24,
-          },
-        ]}
-        /*  actionsAfterText={[
-          {
-            icon: Trash,
-            onPress: () => deletePlaylists(selectedPlaylist),
-            size: 20,
-          },
-        ]} */
-      />
+      {selectedPlaylistMedias && selectedPlaylistMedias.length > 0 ? (
+        <ActionHeader
+          className="py-8"
+          text={`${selectedPlaylistMedias.length} sélectionné(s)`}
+          actionsBeforeText={[
+            {
+              icon: X,
+              onPress: () => setSelectedPlaylistMedias([]),
+              size: 24,
+            },
+          ]}
+          actionsAfterText={[
+            {
+              icon: Trash,
+              onPress: () => deleteSelectedPlaylistMedias(),
+              size: 20,
+            },
+          ]}
+        />
+      ) : (
+        <ActionHeader
+          className="py-8"
+          text={playlistName || ""}
+          actionsBeforeText={[
+            {
+              icon: ArrowLeft,
+              onPress: () => router.back(),
+              size: 24,
+            },
+          ]}
+        />
+      )}
     </>
   );
 }

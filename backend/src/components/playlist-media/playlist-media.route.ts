@@ -36,7 +36,11 @@ router.put(
     playlistMediaController.updatePlaylistMedia(req, res, next)
 );
 
-router.delete("/:playlistMediaId", authMiddleware, (req, res, next) =>
+router.post("/update-order", authMiddleware, (req, res, next) =>
+  playlistMediaController.updateMediaOrder(req, res, next)
+);
+
+router.delete("/", authMiddleware, (req, res, next) =>
   playlistMediaController.deletePlaylistMedia(req, res, next)
 );
 

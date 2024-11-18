@@ -47,7 +47,7 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
       ))}
       <View className="flex-1">
         <Text
-          className="font-avenir-heavy text-primary text-2xl font-bold"
+          className="font-avenir-heavy text-primary text-2xl font-bold pl-2"
           style={{ width: 200 }}
         >
           {text}

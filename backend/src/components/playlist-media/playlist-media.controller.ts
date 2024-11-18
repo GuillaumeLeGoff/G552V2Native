@@ -100,15 +100,31 @@ export class PlaylistMediaController {
     next: NextFunction
   ) => {
     try {
-      const playlistMediaId: number = parseInt(req.params.playlistMediaId);
-      const deletedPlaylistMedia: PlaylistMedia | null =
-        await this.playlistMediaService.deletePlaylistMedia(playlistMediaId);
+      const playlistMediaIds: number[] = req.body.ids;
+      const deletedPlaylistMedia: boolean =
+        await this.playlistMediaService.deletePlaylistMedia(playlistMediaIds);
       if (!deletedPlaylistMedia) {
         res.status(404).json({ message: "PlaylistMedia not found" });
       } else {
         res.status(200).json({ message: "deleted" });
       }
     } catch (error) {
+      next(error);
+    }
+  };
+
+  updateMediaOrder = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      console.log("updateMediaOrder");
+      const { medias } = req.body;
+      await this.playlistMediaService.updateMediaOrder(medias);
+      res.status(200).send({ message: "Order updated successfully" });
+    } catch (error) {
+      console.log(error);
       next(error);
     }
   };

@@ -8,8 +8,8 @@ import { catchError } from "~/utils/catchError";
 import { HttpException } from "../utils/HttpException";
 
 export const useAuth = () => {
-  const { setUser, setUsers, users, user } = useUserStore();
-  const { token, setToken, setUserConnected } = useAuthStore();
+  const { setUser, setUsers, users } = useUserStore();
+  const { token, setToken, setUserConnected, user } = useAuthStore();
 
   const [userSelected, setUserSelected] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export const useAuth = () => {
 
     if (error) {
       console.log(error);
-      setError(error.message); // Ajout de la gestion des erreurs
+      setError(error.message);
     } else if (users) {
       console.log(users);
       setUsers(users);
@@ -35,10 +35,10 @@ export const useAuth = () => {
   const logout = async () => {
     const [error] = await catchError(AuthService.logout());
     if (error) {
-      setError(error.message); // Ajout de la gestion des erreurs
+      setError(error.message);
     } else {
       setToken(null);
-      setUserConnected(null); // Réinitialisation de l'utilisateur lors de la déconnexion
+      setUserConnected(null);
     }
   };
 

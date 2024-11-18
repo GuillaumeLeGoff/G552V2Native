@@ -3,23 +3,27 @@ import React, { useEffect, useRef } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import Animated, {
   useAnimatedReaction,
-  useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { Circle } from "~/lib/icons/Circle";
+import { CircleCheck } from "~/lib/icons/CircleCheck";
+import { GripVertical } from "~/lib/icons/GripVertical";
 import { useAuthStore } from "~/store/authStore";
 import { useItemStore } from "~/store/item";
-import { useUserStore } from "~/store/userStore";
-import { Item, Layout } from "~/types/Item";
+import { Layout } from "~/types/Item";
 import { PlaylistMedia } from "~/types/PlaylistMedia";
-import { GripVertical } from "~/lib/icons/GripVertical";
 
 export default function ItemList({
   media,
   index,
+  selectedPlaylistMedias,
+  handlePressPlaylistMedia,
 }: {
   media: PlaylistMedia;
   index: number;
+  selectedPlaylistMedias: PlaylistMedia[];
+  handlePressPlaylistMedia: (item: PlaylistMedia) => void;
 }) {
   const viewRef = useRef<View>(null);
   const { setDraggingItem, dragy, draggingItem, dragOffset } = useItemStore();
@@ -86,37 +90,32 @@ export default function ItemList({
     }
   }, [draggingItem, dragOffset.value]);
 
-  /* const animatedStyle = useAnimatedStyle(() => {
-    if (!dragy.value) {
-      return { };
-    }
-
-    return {
-      transform: [
-        {
-          translateY: withTiming(
-            dragy.value &&
-            draggingItem &&
-            dragy.value < index * draggingItem.height + draggingItem.height - dragOffset.value
-              ? draggingItem.height
-              : 0
-          ),
-        },
-      ],
-    };
-  }); */
-
   if (draggingItem?.media.id === media.id && draggingItem.index === index) {
     return null;
   }
   return (
     <Animated.View style={{ marginTop }}>
-      <Pressable onLongPress={handleLongPress}>
+      <Pressable
+        onPress={() => handlePressPlaylistMedia(media)}
+        onLongPress={handleLongPress}
+      >
         <View
           ref={viewRef}
-          className="m-2 bg-card px-10 py-4 rounded-lg items-center flex-row justify-between"
+          className={`m-2 bg-card px-10 py-4 rounded-lg items-center flex-row justify-between ${
+            selectedPlaylistMedias?.some((m) => m.id === media.id)
+              ? "bg-secondary"
+              : ""
+          }`}
         >
-          <GripVertical size={24} className="text-secondary-foreground" />
+          {selectedPlaylistMedias.length > 0 ? (
+            selectedPlaylistMedias?.some((m) => m.id === media.id) ? (
+              <CircleCheck size={24} className="text-secondary-foreground" />
+            ) : (
+              <Circle size={24} className="text-secondary-foreground" />
+            )
+          ) : (
+            <GripVertical size={24} className="text-secondary-foreground" />
+          )}
           <Image
             className="rounded-lg "
             source={{

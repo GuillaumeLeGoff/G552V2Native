@@ -6,94 +6,62 @@ import { Folder } from "~/types/Folder";
 import { Media } from "~/types/Media";
 import { catchError } from "~/utils/catchError";
 
-const assignFolderType = (folder: Folder): Folder => ({
-  ...folder,
-  type: "folder",
-  subFolders: folder.subFolders
-    ? folder.subFolders.map(assignFolderType)
-    : undefined,
-  media: folder.media ? folder.media.map(assignMediaType) : undefined,
-});
-
-const assignMediaType = (media: Media): Media => ({
-  ...media,
-  type: media.type,
-});
-
 export const useFolder = () => {
-  const { folder, setFolder, selectedItems, setSelectItems } = useFolderStore();
+  const { folder, setFolder, selectedFolder, setSelectFolder } =
+    useFolderStore();
 
+  // Get the root folder when the app is opened
   const getRootFolder = async () => {
-
     const [error, rootFolder] = await catchError(FolderService.getRoot());
     if (error) {
-
     } else if (rootFolder) {
-      const typedFolder = assignFolderType(rootFolder); // Assignation du type
-      setFolder(typedFolder);
+      setFolder(rootFolder);
     }
   };
-
+  // Get the folder by id
   const getFolderById = useCallback(
     async (folderId: number | null) => {
-      const [error, folder] = await catchError(FolderService.getFolderById(folderId));
+      const [error, folder] = await catchError(
+        FolderService.getFolderById(folderId)
+      );
       if (error) {
-
       } else if (folder) {
-        const typedFolder = assignFolderType(folder); // Assignation du type
-        setFolder(typedFolder);
+        setFolder(folder);
       }
     },
     [setFolder]
   );
 
+  // Create a folder
   const createFolder = useCallback(
     async (folderName: string, parent_id: number | null) => {
-      const [error, newFolder] = await catchError(FolderService.createFolder(folderName, parent_id));
+      const [error, newFolder] = await catchError(
+        FolderService.createFolder(folderName, parent_id)
+      );
       if (error) {
-
       } else if (folder && newFolder) {
-        const typedFolder = assignFolderType(newFolder); 
-        const updatedSubFolders = [...(folder.subFolders || []), typedFolder];
+        const updatedSubFolders = [...(folder.subFolders || []), newFolder];
         setFolder({ ...folder, subFolders: updatedSubFolders });
       }
     },
     [folder, setFolder]
   );
 
-  const handleItemFolderPress = (item: Folder) => {
-    console.log("item", folder);
+  // Handle the press on a folder
+  const handleFolderPress = (item: Folder) => {
     getFolderById(item.id);
   };
 
-  const handleItemMediaPress = (item: Media) => {
-    console.log("item", item);
-  };
-
-  const handleItemSelect = (item: Folder | Media) => {
-    console.log("item", selectedItems);
-    if (selectedItems.some((f) => f.id === item.id && f.type === item.type)) {
-      setSelectItems(
-        selectedItems.filter((f) => !(f.id === item.id && f.type === item.type))
-      );
-    } else {
-      setSelectItems([...selectedItems, item]);
-    }
-  };
-
-  const handleBack = () => {
-    getFolderById(folder?.parent_id || null);
-  };
-
+  // Delete items (folder or media)
   const deleteItems = async (selectedItems: (Folder | Media)[]) => {
     const folderIds: number[] = [];
     const mediaIds: number[] = [];
 
     selectedItems.forEach((item) => {
-      if ("subFolders" in item) {
-        folderIds.push(item.id);
-      } else {
+      if ("type" in item) {
         mediaIds.push(item.id);
+      } else {
+        folderIds.push(item.id);
       }
     });
 
@@ -101,7 +69,6 @@ export const useFolder = () => {
       console.log(folderIds);
       const [error] = await catchError(FolderService.deleteFolders(folderIds));
       if (error) {
-
       }
     }
 
@@ -109,23 +76,23 @@ export const useFolder = () => {
       console.log(mediaIds);
       const [error] = await catchError(MediaService.deleteMedia(mediaIds));
       if (error) {
-
       }
     }
     if (folder) {
       const updatedSubFolders =
         folder.subFolders?.filter(
-          (f) =>
+          (folder: Folder) =>
             !selectedItems.some(
-              (item) => "subFolders" in item && item.id === f.id
+              (item: Folder | Media) => "name" in item && item.id === folder.id
             )
         ) || [];
 
       const updatedMedia =
         folder.media?.filter(
-          (m) =>
+          (media: Media) =>
             !selectedItems.some(
-              (item) => !("subFolders" in item) && item.id === m.id
+              (item: Folder | Media) =>
+                !("type" in item) && item.id === media.id
             )
         ) || [];
 
@@ -136,19 +103,43 @@ export const useFolder = () => {
       });
     }
 
-    setSelectItems([]);
+    setSelectFolder([]);
   };
 
+  // Handle the press on a media
+  const handleMediaPress = (item: Media) => {
+    console.log("item", item);
+  };
+
+  // Select folder and media
+  const handleSelect = (item: Folder | Media) => {
+    if (selectedFolder.some((f: Folder | Media) => f.id === item.id)) {
+      setSelectFolder(
+        selectedFolder.filter((f: Folder | Media) => f.id !== item.id)
+      );
+    } else {
+      setSelectFolder([...selectedFolder, item]);
+    }
+  };
+
+  // Handle the back button
+  const handleBack = () => {
+    getFolderById(folder?.parent_id || null);
+  };
+
+  useEffect(() => {
+    getRootFolder();
+  }, []);
 
   return {
     folder,
     setFolder,
     createFolder,
-    setSelectItems,
-    selectedItems,
-    handleItemFolderPress,
-    handleItemMediaPress,
-    handleItemSelect,
+    setSelectFolder,
+    selectedFolder,
+    handleFolderPress,
+    handleMediaPress,
+    handleSelect,
     deleteItems,
     handleBack,
     getRootFolder,

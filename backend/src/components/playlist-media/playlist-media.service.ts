@@ -42,11 +42,11 @@ export class PlaylistMediaService {
     return playlistMedia;
   }
 
-  async deletePlaylistMedia(id: number): Promise<PlaylistMedia | null> {
-    const playlistMedia = await prisma.playlistMedia.delete({
-      where: { id },
+  async deletePlaylistMedia(ids: number[]): Promise<boolean> {
+    await prisma.playlistMedia.deleteMany({
+      where: { id: { in: ids } },
     });
-    return playlistMedia;
+    return true;
   }
 
   async createPlaylistMedia(
@@ -65,5 +65,18 @@ export class PlaylistMediaService {
       })
     );
     return newPlaylistMedias;
+  }
+
+  async updateMediaOrder(
+    medias: { id: number; media_pos_in_playlist: number }[]
+  ) {
+    for (const media of medias) {
+      await prisma.playlistMedia.update({
+        where: { id: media.id },
+        data: {
+          media_pos_in_playlist: media.media_pos_in_playlist,
+        },
+      });
+    }
   }
 }

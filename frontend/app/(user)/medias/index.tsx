@@ -13,27 +13,33 @@ import { Trash } from "~/lib/icons/Trash";
 import { X } from "~/lib/icons/X";
 import CreateMediasAndFolderDrawer from "./drawer/@createMediasAndFolder";
 import AnimatedScrollView from "~/components/AnimatedScrollView";
+import { Folder } from "~/types/Folder";
+import { Media } from "~/types/Media";
 
 function HeaderAction() {
-  const { selectedItems, setSelectItems, deleteItems, handleBack, folder } =
+  const { selectedFolder, setSelectFolder, deleteItems, handleBack, folder } =
     useFolder();
+
+  useEffect(() => {
+    console.log("folder", folder);
+  }, [folder]);
 
   return (
     <>
-      {selectedItems && selectedItems.length > 0 ? (
+      {selectedFolder && selectedFolder.length > 0 ? (
         <ActionHeader
-          text={`${selectedItems.length} sélectionné(s)`}
+          text={`${selectedFolder.length} sélectionné(s)`}
           actionsBeforeText={[
             {
               icon: X,
-              onPress: () => setSelectItems([]),
+              onPress: () => setSelectFolder([]),
               size: 24,
             },
           ]}
           actionsAfterText={[
             {
               icon: Trash,
-              onPress: () => deleteItems(selectedItems),
+              onPress: () => deleteItems(selectedFolder),
               size: 20,
             },
           ]}
@@ -51,8 +57,8 @@ function HeaderAction() {
         >
           <ArrowLeft size={24} className="text-primary mr-2" />
         </TouchableOpacity>
-        
-        {folder?.path?.split("/").map((part, index) => (
+
+        {folder?.path?.split("/").map((part: string, index: number) => (
           <React.Fragment key={index}>
             <Text
               className={
@@ -63,11 +69,12 @@ function HeaderAction() {
             >
               {part}
             </Text>
-            {index < (folder?.path?.split("/")?.length || 0) - 1 && selectedItems?.length < 1 && (
-              <ChevronRight size={20} className="mx-1 text-primary" />
-            )}
-            </React.Fragment>
-          ))}
+            {index < (folder?.path?.split("/")?.length || 0) - 1 &&
+              selectedFolder?.length < 1 && (
+                <ChevronRight size={20} className="mx-1 text-primary" />
+              )}
+          </React.Fragment>
+        ))}
       </View>
     </>
   );
@@ -76,67 +83,60 @@ function HeaderAction() {
 function MediasScreen() {
   const {
     folder,
-    handleItemSelect,
-    selectedItems,
-    handleItemFolderPress,
-    handleItemMediaPress,
-    getRootFolder,
+    handleSelect,
+    selectedFolder,
+    handleFolderPress,
+    handleMediaPress,
   } = useFolder();
   const [isOpen, setIsOpen] = React.useState(false);
-
-  useEffect(() => {
-    getRootFolder();
-  }, []);
 
   return (
     <>
       <AnimatedScrollView>
         <HeaderAction />
         <View className="flex-row flex-wrap">
-          {folder?.subFolders?.map((subFolder, index) => (
+          {folder?.subFolders?.map((subFolder: Folder, index: number) => (
             <View key={index} style={{ width: "50%", padding: 8 }}>
               <ItemFolder
                 title={subFolder.name}
-                selectMode={selectedItems?.length > 0}
+                selectMode={selectedFolder?.length > 0}
                 onPress={() => {
-                  if (selectedItems && selectedItems.length > 0) {
-                    handleItemSelect(subFolder);
+                  if (selectedFolder && selectedFolder.length > 0) {
+                    handleSelect(subFolder);
                   } else {
-                    handleItemFolderPress(subFolder);
+                    handleFolderPress(subFolder);
                   }
                 }}
-                onLongPress={() => handleItemSelect(subFolder)}
-                isSelected={selectedItems?.some(
-                  (item) => item.id === subFolder.id && item.type === "folder"
+                onLongPress={() => handleSelect(subFolder)}
+                isSelected={selectedFolder?.some(
+                  (item: Folder | Media) => item.id === subFolder.id
                 )}
               />
             </View>
           ))}
         </View>
         <View className="flex-row flex-wrap">
-          {folder?.media?.map((media, index) => (
+          {folder?.media?.map((media: Media, index: number) => (
             <View key={index} style={{ width: "50%", padding: 8 }}>
               <ItemMedias
-                selectMode={selectedItems?.length > 0}
+                selectMode={selectedFolder?.length > 0}
                 media={media}
                 onPress={() => {
-                  if (selectedItems && selectedItems.length > 0) {
-                    handleItemSelect(media);
+                  if (selectedFolder && selectedFolder.length > 0) {
+                    handleSelect(media);
                   } else {
-                    handleItemMediaPress(media);
+                    handleMediaPress(media);
                   }
                 }}
-                onLongPress={() => handleItemSelect(media)}
-                isSelected={selectedItems?.some(
-                  (item) =>
-                    (item.id === media.id && (item.type === "image" || item.type === "video"))
-                    
+                onLongPress={() => handleSelect(media)}
+                isSelected={selectedFolder?.some(
+                  (item: Folder | Media) => item.id === media.id
                 )}
               />
             </View>
           ))}
         </View>
-        {selectedItems?.length < 1 && (
+        {selectedFolder?.length < 1 && (
           <CreateButton className="mt-4" onPress={() => setIsOpen(true)} />
         )}
       </AnimatedScrollView>

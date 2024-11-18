@@ -28,7 +28,7 @@ export function ItemMedias({
       activeOpacity={0.8}
     >
       {selectMode && (
-        <View className="absolute top-3 left-3 " style={{ zIndex: 2 }}>
+        <View className="absolute top-3 left-7 " style={{ zIndex: 2 }}>
           {isSelected ? (
             <CircleCheck
               size={24}

@@ -62,7 +62,6 @@ model Folder {
   parent_id  Int?
   subFolders Folder[] @relation("FolderToSubFolder")
   updated_at DateTime @updatedAt
-  folderId   Int?
   path       String?
 }
 

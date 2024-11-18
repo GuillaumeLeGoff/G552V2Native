@@ -25,11 +25,54 @@ export class PlaylistMediaService {
     const response = await fetchWithAuth(this.API_URL, {
       method: "PUT",
       body: JSON.stringify(playlistMedia),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     const result = await response.json();
     if (!response.ok) {
       throw new HttpException(result.status, result.message);
     }
     return result.data;
+  }
+
+  static async deletePlaylistMedias(playlistMediaIds: number[]) {
+    const response = await fetchWithAuth(this.API_URL, {
+      method: "DELETE",
+      body: JSON.stringify({ ids: playlistMediaIds }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
+    return result.data;
+  }
+
+  static async updateMediaOrder(updatedOrder: PlaylistMedia[]) {
+    try {
+      const response = await fetchWithAuth(this.API_URL + "/update-order", {
+        method: "POST",
+        body: JSON.stringify({
+          medias: updatedOrder.map((media) => ({
+            id: media.id,
+            media_pos_in_playlist: media.media_pos_in_playlist,
+          })),
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new HttpException(result.status, result.message);
+      }
+      return result.data;
+    } catch (error) {
+      console.error("Failed to update media order", error);
+      throw error;
+    }
   }
 }

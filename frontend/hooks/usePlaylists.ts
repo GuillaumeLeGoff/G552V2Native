@@ -15,8 +15,7 @@ export const usePlaylists = () => {
     setSelectPlaylist,
     selectedPlaylist,
   } = usePlaylistStore();
-  const { token } = useAuth();
-  const { selectedItems, setSelectItems } = useFolder();
+  const { selectedFolder, setSelectFolder } = useFolder();
 
   const getPlaylists = async () => {
     try {
@@ -43,19 +42,18 @@ export const usePlaylists = () => {
 
   const handlePressPlaylist = async (playlist: Playlist) => {
     const data = await PlaylistService.getPlaylist(playlist.id);
-    console.log("data", data.medias);
     setPlaylist(data);
     router.push(`/playlists/${playlist.id}`);
   };
 
   const addMediasToPlaylist = async () => {
-    const newPlaylistMedias = selectedItems.map((item) => ({
+    const newPlaylistMedias = selectedFolder.map((item, index) => ({
       playlist_id: playlist?.id || "",
       media_id: item.id,
       media_dur_in_playlist: 1,
       media_pos_in_playlist: playlist?.medias?.length
-        ? playlist.medias.length + 1
-        : 1,
+        ? playlist.medias.length + index + 1
+        : index + 1,
     }));
 
     const newPlaylistMediasCreated =
@@ -68,12 +66,12 @@ export const usePlaylists = () => {
         ...newPlaylistMedias.map((media, index) => ({
           ...media,
           id: newPlaylistMediasCreated[index].id,
-          media: selectedItems[index],
+          media: selectedFolder[index],
         })),
       ],
     };
-    setPlaylist(updatedPlaylist);
-    setSelectItems([]);
+    setPlaylist(updatedPlaylist as Playlist);
+    setSelectFolder([]);
   };
 
   const handleSelectPlaylist = (item: Playlist) => {
@@ -82,8 +80,6 @@ export const usePlaylists = () => {
     } else {
       setSelectPlaylist([...(selectedPlaylist || []), item]);
     }
-    console.log("item", item);
-    console.log("selectedPlaylist", selectedPlaylist);
   };
 
   return {

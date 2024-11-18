@@ -22,7 +22,7 @@ export default function AddMediasToPlaylist({
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }) {
-  const { folder, handleItemSelect, selectedItems, handleItemFolderPress } =
+  const { folder, handleSelect, selectedFolder, handleFolderPress } =
     useFolder();
 
   const { addMediasToPlaylist } = usePlaylists();
@@ -40,10 +40,10 @@ export default function AddMediasToPlaylist({
                 title={subFolder.name}
                 selectMode={false}
                 onPress={() => {
-                  handleItemFolderPress(subFolder);
+                  handleFolderPress(subFolder);
                 }}
-                isSelected={selectedItems?.some(
-                  (item) => item.id === subFolder.id && item.type === "folder"
+                isSelected={selectedFolder?.some(
+                  (item) => item.id === subFolder.id
                 )}
               />
             </View>
@@ -53,13 +53,15 @@ export default function AddMediasToPlaylist({
           {folder?.media?.map((media, index) => (
             <View key={index} style={{ width: "50%", padding: 8 }}>
               <ItemMedias
-                selectMode={selectedItems?.length > 0}
+                selectMode={selectedFolder?.length > 0}
                 media={media}
                 onPress={() => {
-                  handleItemSelect(media);
+                  handleSelect(media);
                 }}
-                onLongPress={() => handleItemSelect(media)}
-                isSelected={selectedItems?.some((item) => item.id === media.id)}
+                onLongPress={() => handleSelect(media)}
+                isSelected={selectedFolder?.some(
+                  (item) => item.id === media.id
+                )}
               />
             </View>
           ))}
@@ -84,11 +86,11 @@ export default function AddMediasToPlaylist({
 }
 
 function HeaderAction() {
-  const { selectedItems, handleBack, folder } = useFolder();
+  const { selectedFolder, handleBack, folder } = useFolder();
   return (
     <>
-      {selectedItems && selectedItems.length > 0 && (
-        <ActionHeader text={`${selectedItems.length} sélectionné(s)`} />
+      {selectedFolder && selectedFolder.length > 0 && (
+        <ActionHeader text={`${selectedFolder.length} sélectionné(s)`} />
       )}
 
       <View className="flex-1 flex-row items-center gap-2">

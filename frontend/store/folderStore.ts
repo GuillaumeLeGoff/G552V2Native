@@ -4,14 +4,14 @@ import { Media } from "~/types/Media"; // Assuming Media is imported from somewh
 
 interface FolderStore {
   folder: Folder | null;
-  selectedItems: (Folder | Media)[]; // Changed from (Folder | Media)[] | null to (Folder | Media)[]
+  selectedFolder: (Folder | Media)[]; // Changed from (Folder | Media)[] | null to (Folder | Media)[]
   setFolder: (folder: Folder) => void;
-  setSelectItems: (items: (Folder | Media)[]) => void;
+  setSelectFolder: (items: (Folder | Media)[]) => void;
 }
 
 export const useFolderStore = create<FolderStore>((set) => ({
   folder: null,
-  selectedItems: [],
+  selectedFolder: [],
   setFolder: (folders: Folder) => set({ folder: folders }),
-  setSelectItems: (items: (Folder | Media)[]) => set({ selectedItems: items }),
+  setSelectFolder: (items: (Folder | Media)[]) => set({ selectedFolder: items }),
 }));
