@@ -15,13 +15,17 @@ import Animated, {
   Easing,
   runOnJS,
 } from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
 import { cn } from "~/lib/utils";
 import { TextRef, ViewRef } from "@rn-primitives/types";
 import { createContext, useContext } from "react";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
-const DRAWER_HEIGHT = SCREEN_HEIGHT * 0.6;
+const DRAWER_HEIGHT = SCREEN_HEIGHT * 0.8;
 
 interface DrawerProps extends React.ComponentPropsWithoutRef<typeof View> {
   isOpen: boolean;
@@ -103,22 +107,19 @@ const Drawer = React.forwardRef<View, DrawerProps>(
           animationType="none"
           onRequestClose={handleClose} // Gère le bouton de retour
         >
-          <View style={styles.drawerContainer}>
-            {/* Overlay */}
-            <TouchableOpacity
-              style={styles.overlay}
-              activeOpacity={1}
-              onPress={handleClose}
-            />
-            {/* Drawer */}
-            <Animated.View
-              style={[rStyle, styles.content, style]}
-              {...props}
-              ref={ref}
-            >
-              {children}
-            </Animated.View>
-          </View>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <View style={styles.drawerContainer}>
+              <TouchableOpacity
+                style={styles.overlay}
+                activeOpacity={1}
+                onPress={handleClose}
+              />
+
+              <Animated.View style={[rStyle, style]} {...props} ref={ref}>
+                {children}
+              </Animated.View>
+            </View>
+          </GestureHandlerRootView>
         </Modal>
       </DrawerContext.Provider>
     );
@@ -193,20 +194,23 @@ const DrawerContent = React.forwardRef<
   });
 
   return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View
-        ref={ref}
-        className={cn(
-          "absolute left-0 right-0 bottom-0 bg-background border-t-muted rounded-lg  p-4",
-          className
-        )}
-        style={[rStyle, style]}
-        {...props}
-      >
-        <View style={styles.handle} />
-        {children as React.ReactNode}
-      </Animated.View>
-    </GestureDetector>
+    <Animated.View
+      ref={ref}
+      className={cn(
+        " bg-background border-t-muted rounded-t-lg p-4",
+        className
+      )}
+      style={[rStyle, styles.content, style]}
+      {...props}
+    >
+      <GestureDetector gesture={gesture}>
+        <View>
+          <View style={styles.handle} />
+          {Array.isArray(children) ? children[0] : children}
+        </View>
+      </GestureDetector>
+      {Array.isArray(children) && children[1]}
+    </Animated.View>
   );
 });
 DrawerContent.displayName = "DrawerContent";
@@ -272,11 +276,8 @@ const styles = StyleSheet.create({
   content: {
     // Styles additionnels pour le Drawer, si nécessaire
     // Vous pouvez ajuster ces styles selon vos besoins
-    backgroundColor: "white",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    paddingTop: 20,
-    paddingHorizontal: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   handle: {
     width: 40,

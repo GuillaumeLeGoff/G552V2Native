@@ -120,6 +120,7 @@ export class PlaylistMediaController {
   ) => {
     try {
       console.log("updateMediaOrder");
+      console.log(req.body);
       const { medias } = req.body;
       await this.playlistMediaService.updateMediaOrder(medias);
       res.status(200).send({ message: "Order updated successfully" });

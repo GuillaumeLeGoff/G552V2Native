@@ -70,6 +70,7 @@ export class PlaylistMediaService {
   async updateMediaOrder(
     medias: { id: number; media_pos_in_playlist: number }[]
   ) {
+    console.log(medias);
     for (const media of medias) {
       await prisma.playlistMedia.update({
         where: { id: media.id },

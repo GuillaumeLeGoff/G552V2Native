@@ -30,7 +30,11 @@ const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
   const isExpanded = useSharedValue(false);
 
   const toggleMenu = () => {
-    isExpanded.value = !isExpanded.value;
+    if (secondaryButtons.length === 1) {
+      secondaryButtons[0].onPress();
+    } else {
+      isExpanded.value = !isExpanded.value;
+    }
   };
 
   const mainButtonStyle = useAnimatedStyle(() => {
@@ -49,6 +53,7 @@ const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
           index={index}
           label={button.label}
           onPress={button.onPress}
+          buttonLetter={button.label.charAt(0)}
         />
       ))}
 
@@ -57,7 +62,10 @@ const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
           className=" bg-secondary"
           style={[styles.mainButton, mainButtonStyle]}
         >
-          <Text className="text-secondary-foreground" style={styles.mainButtonText}>
+          <Text
+            className="text-secondary-foreground"
+            style={styles.mainButtonText}
+          >
             +
           </Text>
         </Animated.View>
@@ -69,7 +77,7 @@ const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 90,
+    bottom: 30,
     right: 30,
     alignItems: "center",
   },
@@ -77,7 +85,7 @@ const styles = StyleSheet.create({
     height: 56,
     width: 56,
     borderRadius: 28,
-  
+
     justifyContent: "center",
     alignItems: "center",
   },

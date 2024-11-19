@@ -22,10 +22,9 @@ export function ItemFolder({
       onPress={onPress}
       onLongPress={onLongPress}
       activeOpacity={0.8}
-      className={`items-center rounded-lg shadow-sm pl-8 p-6 flex-row ${
+      className={`items-center rounded-lg shadow-sm pl-8 p-4  flex-row ${
         isSelected ? "bg-secondary" : "bg-card"
       }`}
-      style={{ flex: 1 }}
     >
       {selectMode ? (
         isSelected ? (
@@ -52,7 +51,7 @@ export function ItemFolder({
         />
       )}
       <Text
-        className={`flex-1 self-center text-lg text-center ${
+        className={`flex-1 self-center text-lg text-center p-4 ${
           isSelected ? "text-secondary-foreground" : "text-primary"
         }`}
         numberOfLines={1} // Limite le texte à une seule ligne

@@ -1,7 +1,13 @@
 import { router } from "expo-router";
 import { debounce } from "lodash";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { Animated, FlatList, Modal, View } from "react-native";
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
+import { Animated, FlatList, Modal, View, BackHandler } from "react-native";
 import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import ActionHeader from "~/components/ActionHeader";
@@ -52,9 +58,15 @@ function PlaylistModify() {
   const updateItemPosition = useCallback(
     async (item: PlaylistMedia, y: number) => {
       const itemHeight = draggingItem?.height ?? 6;
-      const newPosition = Math.floor(y / itemHeight);
+      let newPosition = Math.floor(y / itemHeight);
       const currentIndex = idToIndexMap.get(item.id);
 
+      // Assurez-vous que la nouvelle position ne dépasse pas les limites
+      newPosition = Math.max(0, newPosition);
+      newPosition = Math.min(newPosition, (playlist?.medias?.length || 1) - 1);
+
+      console.log("currentIndex", currentIndex);
+      console.log("newPosition", newPosition);
       if (currentIndex === undefined || currentIndex === newPosition) return;
 
       const updatedMedias = playlist?.medias ? [...playlist.medias] : [];
@@ -63,11 +75,10 @@ function PlaylistModify() {
 
       // Mettre à jour la position des médias dans la liste
       updatedMedias.forEach((media, index) => {
-        media.media_pos_in_playlist = index + 1; // Mise à jour de la position
+        media.media_pos_in_playlist = index; // Mise à jour de la position
       });
-      console.log("updatedMedias", updatedMedias);
+
       const result = await PlaylistMediaService.updateMediaOrder(updatedMedias);
-      console.log("result", result);
 
       debouncedSetItems(updatedMedias);
     },
@@ -142,6 +153,21 @@ function PlaylistModify() {
       onPress: () => setIsOpen(true),
     },
   ];
+
+  useEffect(() => {
+    const backAction = () => {
+      console.log("backAction");
+      router.back();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <Modal>
