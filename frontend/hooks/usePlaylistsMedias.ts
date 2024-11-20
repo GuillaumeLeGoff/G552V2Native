@@ -29,7 +29,6 @@ export const usePlaylistsMedias = () => {
       )
     );
     if (error) {
-      console.log(error);
     } else {
       if (playlist?.id !== undefined) {
         const updatedMedias = (playlist.medias || []).filter(

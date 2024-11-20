@@ -11,7 +11,7 @@ export default function ForgotPassword() {
 
   const handleResetPassword = () => {
     // Ajoutez ici la logique pour envoyer l'email de réinitialisation
-    console.log("Réinitialisation du mot de passe pour:", email);
+
     onClose();
   };
 

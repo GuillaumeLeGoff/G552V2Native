@@ -1,41 +1,42 @@
-import { useEffect, useCallback, useState } from "react";
-import { UserService } from "../services/user.service";
-import { AuthService } from "../services/auth.service";
-import { useAuthStore } from "../store/authStore";
-import { useUserStore } from "~/store/userStore";
 import { router } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { useUserStore } from "~/store/userStore";
 import { catchError } from "~/utils/catchError";
-import { HttpException } from "../utils/HttpException";
+import { AuthService } from "../services/auth.service";
+import { UserService } from "../services/user.service";
+import { useAuthStore } from "../store/authStore";
 
 export const useAuth = () => {
-  const { setUser, setUsers, users } = useUserStore();
-  const { token, setToken, setUserConnected, user } = useAuthStore();
+  const { users, setUser, setUsers  } = useUserStore();
+  const { token, user, setToken, setUserConnected } = useAuthStore();
 
   const [userSelected, setUserSelected] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [isAlreadyConnected, setIsAlreadyConnected] = useState(false);
-  const [shakeKey, setShakeKey] = useState(0);
   const [authError, setAuthError] = useState<string | null>(null);
+  
+  const [isAlreadyConnectedOpen, setIsAlreadyConnectedOpen] = useState(false);
+  const [forgotPasswordIsOpen, setForgotPasswordIsOpen] = useState(false);
 
-  const getAllUsers = useCallback(async () => {
+  const [shakeKey, setShakeKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getUsers = useCallback(async () => {
     const [error, users] = await catchError(UserService.getUsers());
 
     if (error) {
-      console.log(error);
-      setError(error.message);
     } else if (users) {
-      console.log(users);
       setUsers(users);
     }
-  }, [setUsers, setError]);
+  }, [setUsers]);
 
   const logout = async () => {
     const [error] = await catchError(AuthService.logout());
     if (error) {
-      setError(error.message);
+     
     } else {
       setToken(null);
       setUserConnected(null);
@@ -49,13 +50,13 @@ export const useAuth = () => {
       );
       if (error) {
         if (error.status === 409) {
-          setIsAlreadyConnected(true);
+          setIsAlreadyConnectedOpen(true);
         }
         setAuthError(error.message);
       } else {
         setToken(newToken);
         setAuthError(null);
-        setIsAlreadyConnected(false);
+        setIsAlreadyConnectedOpen(false);
         setUser(userSelected);
         setUserConnected(userSelected);
         router.push("/playlists");
@@ -66,6 +67,7 @@ export const useAuth = () => {
   }, [setToken, userSelected, password]);
 
   const handleLogin = useCallback(async () => {
+    setIsLoading(true);
     let hasError = false;
     if (!password) {
       setPasswordError(true);
@@ -81,25 +83,26 @@ export const useAuth = () => {
     }
     if (hasError) {
       setShakeKey((prev) => prev + 1);
+      setIsLoading(false);
       return false;
     } else {
-      return await login();
+      await login();
+      setIsLoading(false);
+      return true;
     }
   }, [password, userSelected, login, setPasswordError, setUsernameError]);
 
-  const disconnectUser = useCallback(async () => {
-    const [error] = await catchError(AuthService.logout());
-    if (error) {
-      setError(error.message);
-    } else {
-      setUserSelected(null);
-      setPassword(null);
-    }
-  }, [userSelected]);
+  const handleDisconnectUser = useCallback(async () => {
+    await logout();
+    await login();
+    setUserSelected(null);
+    setPassword(null);
+  }, [logout]);
 
   useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+    console.log("useEffect");
+    getUsers();
+  }, []);
 
   return {
     handleLogin,
@@ -111,18 +114,22 @@ export const useAuth = () => {
     setUserSelected,
     password,
     setPassword,
-    error,
-    setError,
     usernameError,
     setUsernameError,
     passwordError,
     setPasswordError,
     user,
-    isAlreadyConnected,
-    setIsAlreadyConnected,
-    disconnectUser,
+    isAlreadyConnectedOpen,
+    setIsAlreadyConnectedOpen,
+    handleDisconnectUser,
     token,
     shakeKey,
     authError,
+    forgotPasswordIsOpen,
+    setForgotPasswordIsOpen,
+    isLoading,
+    setIsLoading,
+    showPassword,
+    setShowPassword,
   };
 };

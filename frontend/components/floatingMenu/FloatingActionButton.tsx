@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Pressable, Text } from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -19,17 +19,15 @@ const OFFSET = 60;
 interface FloatingActionButtonProps {
   isExpanded: Animated.SharedValue<boolean>;
   index: number;
-  label: string;
+  icon: React.ReactNode;
   onPress: () => void;
-  buttonLetter: string;
 }
 
 const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   isExpanded,
   index,
-  label,
+  icon,
   onPress,
-  buttonLetter,
 }) => {
   const animatedStyles = useAnimatedStyle(() => {
     const moveValue = isExpanded.value ? OFFSET * (index + 1) : 0;
@@ -52,7 +50,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       style={[animatedStyles, styles.buttonContainer]}
     >
       <Pressable onPress={onPress} style={[styles.button, styles.shadow]}>
-        <Text className="text-secondary-foreground">{label}</Text>
+        {icon}
       </Pressable>
     </Animated.View>
   );

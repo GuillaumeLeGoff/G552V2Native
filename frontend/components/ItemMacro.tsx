@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -16,21 +16,18 @@ import { Macro } from "~/types/Macro";
 interface ItemMacro {
   title: string;
   macro: Macro;
+  selectItems: JSX.Element[];
 }
 
 export function ItemMacro({
   title,
   macro,
+  selectItems,
 }: ItemMacro) {
-  const insets = useSafeAreaInsets();
+
   const { playlists } = usePlaylists();
   const { updateMacros } = useMacros();
-  const contentInsets = {
-    top: insets.top,
-    bottom: insets.bottom,
-    left: 12,
-    right: 12,
-  };
+  
 
   // Trouver la playlist par défaut
   const defaultPlaylist = playlists.find(
@@ -38,16 +35,8 @@ export function ItemMacro({
   );
 
   return (
-    <View
-      className={`flex-row items-center justify-between mb-2 mt-6 p-6 rounded-lg shadow-sm 
-        bg-card
-      `}
-    >
-      <Text
-        className={`text-lg font-avenir-black 
-        text-primary 
-      `}
-      >
+    <View className={`flex-row items-center justify-between mt-6 px-6 py-4 rounded-lg shadow-sm bg-card`}>
+      <Text className={`text-lg font-avenir-black text-primary `}>
         {title}
       </Text>
 
@@ -63,16 +52,9 @@ export function ItemMacro({
             placeholder='Select a playlist'
           />
         </SelectTrigger>
-        <SelectContent insets={contentInsets} className='w-[250px]'>
+        <SelectContent className='w-[250px]'>
           <SelectGroup>
-            {playlists &&
-              playlists.map((playlist) => (
-                <SelectItem key={playlist.id} label={playlist.name} value={playlist.id.toString()}
-               
-                >
-                  {playlist.name}
-                </SelectItem>
-              ))}
+            {selectItems}
           </SelectGroup>
         </SelectContent>
       </Select>

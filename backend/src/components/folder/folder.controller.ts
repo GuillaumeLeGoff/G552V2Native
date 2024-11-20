@@ -23,7 +23,6 @@ export class FolderController {
     next: NextFunction
   ) => {
     try {
-      console.log("createFolder", req.body);
       const folder: CreateFolderDto = req.body;
       const user_id = req.user.id;
       const newFolder: Folder = await this.folderService.createFolder(
@@ -32,8 +31,6 @@ export class FolderController {
       );
       res.status(201).json({ data: newFolder, message: "created" });
     } catch (error) {
-      console.log(error);
-
       next(error);
     }
   };
@@ -91,15 +88,12 @@ export class FolderController {
       const subFoldersIds: number[] =
         await this.folderService.findAllNestedFolderIds(folderIds);
       const allFoldersIds = [...folderIds, ...subFoldersIds];
-      console.log("allFoldersIds", allFoldersIds);
       const medias: Media[] =
         await this.folderService.findMediaByFolderId(allFoldersIds);
 
       await this.uploadService.deleteMedias(medias);
       await this.folderService.deleteFolder(allFoldersIds);
       await this.mediaService.deleteMedias(medias.map((media) => media.id));
-
-      console.log("medias", medias);
       res.status(200).json({ message: "deleted" });
     } catch (error) {
       next(error);

@@ -9,8 +9,6 @@ import { catchError } from "~/utils/catchError";
 export const useFolder = () => {
   const { folder, setFolder, selectedFolder, setSelectFolder } =
     useFolderStore();
-
-  // Get the root folder when the app is opened
   const getRootFolder = async () => {
     const [error, rootFolder] = await catchError(FolderService.getRoot());
     if (error) {
@@ -18,7 +16,6 @@ export const useFolder = () => {
       setFolder(rootFolder);
     }
   };
-  // Get the folder by id
   const getFolderById = useCallback(
     async (folderId: number | null) => {
       const [error, folder] = await catchError(
@@ -31,8 +28,6 @@ export const useFolder = () => {
     },
     [setFolder]
   );
-
-  // Create a folder
   const createFolder = useCallback(
     async (folderName: string, parent_id: number | null) => {
       const [error, newFolder] = await catchError(
@@ -42,15 +37,13 @@ export const useFolder = () => {
       } else if (folder && newFolder) {
         const updatedSubFolders = [...(folder.subFolders || []), newFolder];
         setFolder({ ...folder, subFolders: updatedSubFolders });
+        console.log("newFolder", { ...folder, subFolders: updatedSubFolders });
       }
     },
+    
     [folder, setFolder]
   );
 
-  // Handle the press on a folder
-  const handleFolderPress = (item: Folder) => {
-    getFolderById(item.id);
-  };
 
   // Delete items (folder or media)
   const deleteItems = async (selectedItems: (Folder | Media)[]) => {
@@ -66,14 +59,12 @@ export const useFolder = () => {
     });
 
     if (folderIds.length > 0) {
-      console.log(folderIds);
       const [error] = await catchError(FolderService.deleteFolders(folderIds));
       if (error) {
       }
     }
 
     if (mediaIds.length > 0) {
-      console.log(mediaIds);
       const [error] = await catchError(MediaService.deleteMedia(mediaIds));
       if (error) {
       }
@@ -92,7 +83,7 @@ export const useFolder = () => {
           (media: Media) =>
             !selectedItems.some(
               (item: Folder | Media) =>
-                !("type" in item) && item.id === media.id
+                item.id === media.id
             )
         ) || [];
 
@@ -108,7 +99,7 @@ export const useFolder = () => {
 
   // Handle the press on a media
   const handleMediaPress = (item: Media) => {
-    console.log("item", item);
+  
   };
 
   // Select folder and media
@@ -136,8 +127,8 @@ export const useFolder = () => {
     setFolder,
     createFolder,
     setSelectFolder,
+    getFolderById,
     selectedFolder,
-    handleFolderPress,
     handleMediaPress,
     handleSelect,
     deleteItems,

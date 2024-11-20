@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, icon, onIconPress, className }) => {
   return (
-    <View className={cn("flex flex-row items-center justify-between z-50 ", className)}>
+    <View className={cn("flex flex-row items-center justify-between z-50 pt-8", className)}>
       <Text
         className="font-avenir-heavy text-primary text-4xl font-bold"
         style={{ width: 200 }}

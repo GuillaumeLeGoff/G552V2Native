@@ -22,7 +22,6 @@ export class PlaylistController {
   ) => {
           
     try {
-      console.log("createPlaylist", req.body);  
       const playlistData: CreatePlaylistDto = req.body;
       const newPlaylist: Playlist = await this.playlistService.createPlaylist(
         playlistData,
@@ -92,7 +91,6 @@ export class PlaylistController {
     next: NextFunction
   ) => {
     try {
-      console.log("deletePlaylists", req.body);
       const playlistIds: number[] = req.body.ids;
       await this.playlistService.deletePlaylists(playlistIds);
       res.status(200).json({ message: "Playlists supprimées" });

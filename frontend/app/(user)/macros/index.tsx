@@ -1,25 +1,42 @@
 import * as React from "react";
-import { useEffect, useRef } from "react";
-import { Animated, View } from "react-native";
+import { FlatList } from "react-native";
 import { ItemMacro } from "~/components/ItemMacro";
 import { Header } from "~/components/ui/header";
 import { useMacros } from "~/hooks/useMacro";
-import AnimatedScrollView from "~/components/AnimatedScrollView"; // Ajout de l'import
+import { Macro } from "~/types/Macro";
+import  { useMemo } from "react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "~/components/ui/select";
+import { usePlaylists } from "~/hooks/usePlaylists";
 
 const Macros = () => {
-  const { macros, getMacros } = useMacros();
+  const { macros } = useMacros();
+  const { playlists } = usePlaylists();
+  
+  const selectItems = useMemo(() => {
+    return playlists.map((playlist) => (
+      <SelectItem
+        key={playlist.id}
+        label={playlist.name}
+        value={playlist.id.toString()}
+      >
+        {playlist.name}
+      </SelectItem>
+    ));
+  }, [playlists]);
 
-  useEffect(() => {
-    getMacros();
-  }, []);
+  const renderItem = ({ item, index }: { item: Macro, index: number }) => (
+    <ItemMacro key={index} title={`macro ${index}`} macro={item} selectItems={selectItems} />
+  );
+
   return (
-    <AnimatedScrollView>
-      <Header title="Macros" />
-        {macros.map((macro, index) => (
-          <ItemMacro key={index} title={`macro ${index}`} macro={macro} />
-        ))}
-     
-    </AnimatedScrollView>
+    <FlatList
+      ListHeaderComponent={<Header title="Macros" />}
+      data={macros}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => index.toString()}
+      showsVerticalScrollIndicator={false}
+      className="px-8 pb-8"
+    />
   );
 };
 

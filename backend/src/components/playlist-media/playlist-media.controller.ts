@@ -31,7 +31,6 @@ export class PlaylistMediaController {
         );
       res.status(201).json({ data: newPlaylistMedias, message: "created" });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };
@@ -119,13 +118,10 @@ export class PlaylistMediaController {
     next: NextFunction
   ) => {
     try {
-      console.log("updateMediaOrder");
-      console.log(req.body);
       const { medias } = req.body;
       await this.playlistMediaService.updateMediaOrder(medias);
       res.status(200).send({ message: "Order updated successfully" });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };

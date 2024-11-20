@@ -47,7 +47,6 @@ export class UploadService {
   }
 
   public handleUpload = async (req: any, res: any, next: NextFunction) => {
-    console.log("Request Body:", req.body);
     try {
       const uploadDir = path.resolve(
         __dirname,
@@ -67,9 +66,7 @@ export class UploadService {
       });
 
       upload.single("file")(req, res, async (err) => {
-        console.log("req.file", req.file);
         if (err) {
-          console.log(err);
           throw new HttpException(500, "Cannot upload file");
         }
         if (req.file.mimetype.startsWith("video/")) {
@@ -87,7 +84,6 @@ export class UploadService {
             req.file.thumbnail_name = thumbnailName;
             req.file.duration = duration;
           } catch (error) {
-            console.log(error);
             throw new HttpException(500, "Cannot generate thumbnail");
           }
         }
@@ -117,7 +113,6 @@ export class UploadService {
         }
       }
     } catch (error) {
-      console.log(error);
       throw new HttpException(500, "Cannot delete media");
     }
   };
@@ -140,7 +135,6 @@ export class UploadService {
       // Supprimer tous les enregistrements média de la base de données
       await prisma.media.deleteMany();
     } catch (error) {
-      console.log(error);
       throw new HttpException(500, "Impossible de supprimer tous les médias");
     }
   };

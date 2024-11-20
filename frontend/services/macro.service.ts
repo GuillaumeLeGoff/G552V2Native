@@ -15,7 +15,6 @@ export class MacroService {
     if (!response.ok) {
       throw new HttpException(result.status, result.message);
     }
-    console.log(result.data);
     return result.data;
   }
 
@@ -36,8 +35,6 @@ export class MacroService {
   }
 
   static async updateMacros(macroButtonId: number, playlistId: number): Promise<Macro> {
-    console.log(`${this.API_URL}/${macroButtonId}`);
-    console.log(playlistId);
     const response = await fetchWithAuth(`${this.API_URL}/${macroButtonId}`, {
       method: "PUT",
       headers: {
@@ -46,7 +43,6 @@ export class MacroService {
       body: JSON.stringify({ playlist_id: playlistId }), // Conversion en snake_case
     });
        const result = await response.json();
-       console.log(result);
        if (!response.ok) {
         throw new HttpException(result.status, result.message);
        }

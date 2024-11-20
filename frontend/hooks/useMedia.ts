@@ -26,7 +26,6 @@ export const useMedia = () => {
       }
     } catch (err) {
       if (err instanceof Error) {
-        console.log("err", err);
         setError(err.message);
       }
     } finally {

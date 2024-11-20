@@ -14,7 +14,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     },
   });
   if (!response.ok) {
-   /*  console.log("response", response); */
+
     /*  useAuthStore.getState().setToken(null); */
     throw new Error("Failed to fetch");
   }

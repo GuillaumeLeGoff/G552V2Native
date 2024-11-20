@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { StyleSheet, View, Pressable, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -9,9 +9,8 @@ import Animated, {
 import FloatingActionButton from "./FloatingActionButton";
 
 interface SecondaryButton {
-  label: string;
+  icon: React.ReactNode;
   onPress: () => void;
-  color?: string;
 }
 
 interface FloatingActionMenuProps {
@@ -24,9 +23,9 @@ const SPRING_CONFIG = {
   damping: 10,
 };
 
-const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
+const FloatingActionMenu = forwardRef(({
   secondaryButtons,
-}) => {
+}: FloatingActionMenuProps, ref) => {
   const isExpanded = useSharedValue(false);
 
   const toggleMenu = () => {
@@ -36,6 +35,12 @@ const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
       isExpanded.value = !isExpanded.value;
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    closeMenu: () => {
+      isExpanded.value = false;
+    },
+  }));
 
   const mainButtonStyle = useAnimatedStyle(() => {
     const rotate = isExpanded.value ? "45deg" : "0deg";
@@ -51,9 +56,8 @@ const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
           key={index}
           isExpanded={isExpanded}
           index={index}
-          label={button.label}
           onPress={button.onPress}
-          buttonLetter={button.label.charAt(0)}
+          icon={button.icon}
         />
       ))}
 
@@ -72,7 +76,7 @@ const FloatingActionMenu: React.FC<FloatingActionMenuProps> = ({
       </Pressable>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

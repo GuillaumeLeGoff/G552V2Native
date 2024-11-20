@@ -15,15 +15,11 @@ export class ScoringController {
   ) {}
 
   createScoring = async (req: CustomRequest, res: Response, next: NextFunction) => {
-    console.log("createScoring");
-
     try {
       const scoringData: CreateScoringDto = req.body;
       const newScoring = await this.scoringService.createScoring(scoringData, req.user);
       res.status(201).json({ data: newScoring, message: "created" });
     } catch (error) {
-      console.log("createScoring error", error);
-
       next(error);
     }
   };

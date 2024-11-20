@@ -25,7 +25,6 @@ export class AuthController {
         .status(201)
         .json({ data: user, message: "User registered successfully" });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };

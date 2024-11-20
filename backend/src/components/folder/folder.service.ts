@@ -84,7 +84,6 @@ export class FolderService {
     return medias;
   } 
   async findAllNestedFolders(folderIds: number[]): Promise<Folder[]> {
-    console.log("folderIds", folderIds);
     let allFolders: Folder[] = [];
     let currentLevelFolders = await prisma.folder.findMany({
       where: { parent_id: { in: folderIds } },
@@ -99,8 +98,6 @@ export class FolderService {
       allFolders = allFolders.concat(currentLevelFolders);
     }
     allFolders = allFolders.concat(currentLevelFolders);
-    console.log("allFolders", allFolders);
-
     return allFolders;
   }
   async deleteFolder(folderIds: number[]): Promise<Folder | null> {

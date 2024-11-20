@@ -71,8 +71,6 @@ export class AuthService {
   }
 
   async login(credentials: LoginUserDto): Promise<string> {
-    console.log();
-
     const user = await prisma.user.findUnique({
       where: { username: credentials.username },
       include: { activeSessions: true },
@@ -106,13 +104,10 @@ export class AuthService {
     );
 
     if (active_token_verify.exp < Date.now()) {
-      console.log(active_token_verify);
       throw new HttpException(409, `User already logged `, {
         username: active_token_verify.username,
       });
     } else {
-      console.log(process.env.JWT_SECRET);
-
       const token = jwt.sign(
         { id: user.id, username: user.username },
         process.env.JWT_SECRET,

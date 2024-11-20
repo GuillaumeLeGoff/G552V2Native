@@ -61,13 +61,6 @@ export class MacroService {
     userId: number,
     macroData: UpdateMacroDto
   ): Promise<Macro> {
-    console.log(macroData);
-    console.log(buttonId);
-    console.log(userId);
-    
-
-    
-
     return prisma.macro.update({
       where: {
         button_id_user_id: {

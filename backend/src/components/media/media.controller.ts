@@ -17,7 +17,6 @@ export class MediaController {
   ) {}
 
   uploadFile = async (req: any, res: Response, next: NextFunction) => {
-    console.log("Request Body:", req.body);
     try {
       await this.uploadService.handleUpload(req, res, async () => {
         const createdMedia = await this.mediaService.createMedia(

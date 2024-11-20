@@ -33,7 +33,6 @@ export class MediaService {
       });
       return createdMedia; // Retourne le média créé
     } catch (error) {
-      console.log(error);
       throw new HttpException(500, "Cannot create media");
     }
   }
@@ -70,7 +69,6 @@ export class MediaService {
     mediaId: number,
     data: UpdateMediaDto
   ): Promise<UpdateMediaDto> {
-    console.log(data);
     const media = await prisma.media.findUnique({
       where: { id: mediaId },
     });

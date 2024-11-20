@@ -48,7 +48,7 @@ export class MacroController {
 
   updateMacro = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
+
       const buttonId = req.params.buttonId;
       const userId = req.user?.id;
       const macroData: UpdateMacroDto = req.body;

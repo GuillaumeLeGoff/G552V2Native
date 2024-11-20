@@ -28,7 +28,7 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
 }) => {
   return (
     <View
-      className={`flex flex-row items-start justify-between z-50 ${className}`}
+      className={`flex flex-row items-start justify-between z-50 pt-8 ${className}`}
     >
       {actionsBeforeText.map((action, index) => (
         <TouchableOpacity

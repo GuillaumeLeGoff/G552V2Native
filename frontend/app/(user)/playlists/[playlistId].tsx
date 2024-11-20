@@ -14,7 +14,7 @@ import ActionHeader from "~/components/ActionHeader";
 import DragArea from "~/components/dnd/DragArea";
 import ItemList from "~/components/dnd/ItemList";
 import { Drawer } from "~/components/drawer";
-import FloatingActionMenu from "~/components/FloatingActionMenu";
+import FloatingActionMenu from "~/components/floatingMenu/FloatingActionMenu";
 import { usePlaylistsMedias } from "~/hooks/usePlaylistsMedias";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { Trash } from "~/lib/icons/Trash";

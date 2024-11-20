@@ -1,5 +1,4 @@
 import { router } from "expo-router";
-import { useAuth } from "~/hooks/useAuth";
 import { PlaylistService } from "~/services/playlist.service";
 import { PlaylistMediaService } from "~/services/playlistMedia.service";
 import { usePlaylistStore } from "~/store/playlistStore";

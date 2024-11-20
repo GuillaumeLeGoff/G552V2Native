@@ -13,10 +13,10 @@ import { Text } from '~/components/ui/text';
 interface AlreadyConnectedProps {
   isOpen: boolean;
   onClose: () => void;
-  onDisconnect: () => void;
+  disconnectUser: () => void;
 }
 
-export default function AlreadyConnected({ isOpen, onClose, onDisconnect }: AlreadyConnectedProps) {
+export default function AlreadyConnected({ isOpen, onClose, disconnectUser }: AlreadyConnectedProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className='sm:max-w-[425px]'>
@@ -30,7 +30,7 @@ export default function AlreadyConnected({ isOpen, onClose, onDisconnect }: Alre
           <Button variant="outline" onPress={onClose}>
             <Text>Cancel</Text>
           </Button>
-          <Button variant="secondary" onPress={onDisconnect}>
+          <Button variant="secondary" onPress={disconnectUser}>
             <Text>Disconnect and Log In</Text>
           </Button>
         </DialogFooter>

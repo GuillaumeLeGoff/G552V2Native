@@ -34,22 +34,24 @@ export default function Login() {
     setUserSelected,
     password,
     setPassword,
-    authError, // Utilisation de authError
+    authError, 
     shakeKey,
-    setError,
     usernameError,
     setUsernameError,
     passwordError,
     setPasswordError,
-    isAlreadyConnected,
-    setIsAlreadyConnected,
-    disconnectUser,
+    isAlreadyConnectedOpen,
+    setIsAlreadyConnectedOpen,
+    handleDisconnectUser,
+    isLoading,
+    showPassword,
+    setShowPassword,
+    forgotPasswordIsOpen,
+    setForgotPasswordIsOpen,
   } = useAuth();
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const handleClose = () => setIsOpen(false);
+
+
 
   const selectShakeAnimation = useSharedValue(0);
   const inputShakeAnimation = useSharedValue(0);
@@ -92,18 +94,7 @@ export default function Login() {
     inputShakeAnimation,
   ]);
 
-  const onLogin = async () => {
-    setIsLoading(true);
-    setError(null);
-    await handleLogin();
-    setIsLoading(false);
-  };
 
-  const handleDisconnect = async () => {
-    await disconnectUser();
-    setIsAlreadyConnected(false);
-    onLogin();
-  };
 
   return (
     <View className="flex items-center justify-center h-full bg-background">
@@ -172,7 +163,7 @@ export default function Login() {
                 </TouchableOpacity>
               </Input>
             </Animated.View>
-            <Button variant="link" size="sm" onPress={() => setIsOpen(true)}>
+            <Button variant="link" size="sm" onPress={() => setForgotPasswordIsOpen(true)}>
               <Text className=" text-foreground text-sm">Lost password</Text>
             </Button>
           </View>
@@ -184,7 +175,7 @@ export default function Login() {
           </View>
         </CardContent>
         <CardFooter className="flex justify-center items-center">
-          <Button variant="secondary" onPress={onLogin} disabled={isLoading}>
+          <Button variant="secondary" onPress={handleLogin} disabled={isLoading}>
             <View className="flex flex-row items-center">
               {isLoading ? (
                 <ActivityIndicator size="small" color="#000000" />
@@ -202,13 +193,13 @@ export default function Login() {
           </Button>
         </CardFooter>
       </Card>
-      <Drawer isOpen={isOpen} onClose={handleClose}>
+      <Drawer isOpen={forgotPasswordIsOpen} onClose={() => setForgotPasswordIsOpen(false)}>
         <ForgotPassword />
       </Drawer>
       <AlreadyConnected
-        isOpen={isAlreadyConnected}
-        onClose={() => setIsAlreadyConnected(false)}
-        onDisconnect={handleDisconnect}
+        isOpen={isAlreadyConnectedOpen}
+        onClose={() => setIsAlreadyConnectedOpen(false)}
+        disconnectUser={handleDisconnectUser}
       />
     </View>
   );

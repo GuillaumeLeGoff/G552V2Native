@@ -42,9 +42,9 @@ function Root() {
 
 export function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+  
       <Root />
-    </GestureHandlerRootView>
+    
   );
 }
 

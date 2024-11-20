@@ -1,16 +1,15 @@
-import { Trash, X } from "lucide-react-native";
+import { Plus, Trash, X } from "lucide-react-native";
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { FlatList } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import ActionHeader from "~/components/ActionHeader";
 import { Drawer } from "~/components/drawer";
+import FloatingActionMenu from "~/components/floatingMenu/FloatingActionMenu";
 import { ItemPlaylist } from "~/components/ItemPlaylist";
 import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists";
+import { Playlist } from "~/types/Playlist";
 import CreatePlaylist from "./drawer/@createPlaylist";
-import AnimatedScrollView from "~/components/AnimatedScrollView";
-import FloatingActionButton from "~/components/FloatingActionButton";
-import { useSharedValue } from "react-native-reanimated";
-import FloatingActionMenu from "~/components/FloatingActionMenu";
 
 function HeaderAction() {
   const { selectedPlaylist, setSelectPlaylist, deletePlaylists } =
@@ -68,37 +67,36 @@ function PlaylistsList() {
 
   const secondaryButtons = [
     {
-      label: "Add",
+      icon: <Plus />,
       onPress: () => setIsOpen(true),
     },
   ];
 
-  const handlePress = () => {
-    isExpanded.value = !isExpanded.value;
-  };
+
+  const renderItem = ({ item, index }: { item: Playlist; index: number }) => (
+    <ItemPlaylist
+      key={item.id}
+      title={item.name}
+      onPress={() => {
+        selectedPlaylist && selectedPlaylist.length > 0
+          ? handleSelectPlaylist(item)
+          : handlePressPlaylist(item);
+      }}
+      onLongPress={() => handleSelectPlaylist(item)}
+      isSelected={selectedPlaylist?.some((p) => p.id === item.id)}
+    />
+  );
 
   return (
     <>
-      <AnimatedScrollView>
-        <HeaderAction />
-        <View>
-          {playlists &&
-            playlists.length > 0 &&
-            playlists.map((item) => (
-              <ItemPlaylist
-                key={item.id}
-                title={item.name}
-                onPress={() => {
-                  selectedPlaylist && selectedPlaylist.length > 0
-                    ? handleSelectPlaylist(item)
-                    : handlePressPlaylist(item);
-                }}
-                onLongPress={() => handleSelectPlaylist(item)}
-                isSelected={selectedPlaylist?.some((p) => p.id === item.id)}
-              />
-            ))}
-        </View>
-      </AnimatedScrollView>
+      <FlatList
+        ListHeaderComponent={<HeaderAction />}
+        data={playlists}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        className="px-8 pb-8"
+      />
       <FloatingActionMenu secondaryButtons={secondaryButtons} />
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <CreatePlaylist />

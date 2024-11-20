@@ -18,8 +18,6 @@ export class ModeController {
       const newMode: Mode = await this.modeService.createMode(modeData);
       res.status(201).json({ data: newMode, message: "created" });
     } catch (error) {
-      console.log(error);
-
       next(error);
     }
   };
@@ -66,8 +64,6 @@ export class ModeController {
       );
       res.status(200).json({ data: updateMode, message: "updated" });
     } catch (error) {
-      console.log(error);
-
       next(error);
     }
   };
