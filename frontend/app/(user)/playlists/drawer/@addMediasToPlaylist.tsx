@@ -23,8 +23,7 @@ export default function AddMediasToPlaylist({
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }) {
-  const { folder, handleSelect, selectedFolder, handleFolderPress } =
-    useFolder();
+  const { folder, handleSelect, selectedFolder, getFolderById } = useFolder();
 
   const { addMediasToPlaylist } = usePlaylists();
 
@@ -46,7 +45,7 @@ export default function AddMediasToPlaylist({
                   title={subFolder.name}
                   selectMode={false}
                   onPress={() => {
-                    handleFolderPress(subFolder);
+                    getFolderById(subFolder.id);
                   }}
                   isSelected={selectedFolder?.some(
                     (item) => item.id === subFolder.id

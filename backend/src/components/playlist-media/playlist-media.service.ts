@@ -17,6 +17,9 @@ export class PlaylistMediaService {
           user_id: user.id,
         },
       },
+      orderBy: {
+        media_pos_in_playlist: "asc",
+      },
     });
     return playlistMedias;
   }
@@ -25,6 +28,7 @@ export class PlaylistMediaService {
     const playlistMedia = await prisma.playlistMedia.findUnique({
       where: { id },
     });
+    
     return playlistMedia;
   }
 

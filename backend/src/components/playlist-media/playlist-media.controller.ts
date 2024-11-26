@@ -41,9 +41,11 @@ export class PlaylistMediaController {
     next: NextFunction
   ) => {
     try {
+      console.log("getPlaylistMediaById");
       const playlistMediaId: number = parseInt(req.params.playlistMediaId);
       const playlistMedia: PlaylistMedia | null =
         await this.playlistMediaService.getPlaylistMediaById(playlistMediaId);
+      console.log(playlistMedia);
       if (!playlistMedia) {
         res.status(404).json({ message: "PlaylistMedia not found" });
       } else {
@@ -120,6 +122,7 @@ export class PlaylistMediaController {
     try {
       const { medias } = req.body;
       await this.playlistMediaService.updateMediaOrder(medias);
+
       res.status(200).send({ message: "Order updated successfully" });
     } catch (error) {
       next(error);

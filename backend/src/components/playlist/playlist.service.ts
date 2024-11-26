@@ -24,6 +24,9 @@ export class PlaylistService {
           include: {
             media: true, // Assurez-vous que le modèle Prisma inclut une relation 'media'
           },
+          orderBy: {
+            media_pos_in_playlist: "asc", // Tri par position dans la playlist
+          },
         },
       },
     });

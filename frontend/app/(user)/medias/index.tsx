@@ -1,3 +1,4 @@
+import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useRef } from "react";
 import { Platform, SectionList, TouchableOpacity, View } from "react-native";
 import ActionHeader from "~/components/ActionHeader";
@@ -7,9 +8,9 @@ import { ItemMedias } from "~/components/ItemMedias";
 import { Header } from "~/components/ui/header";
 import { Text } from "~/components/ui/text";
 import { useFolder } from "~/hooks/useFolder";
+import { useMedia } from "~/hooks/useMedia";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { Camera } from "~/lib/icons/Camera";
-import { ChevronRight } from "~/lib/icons/ChevronRight";
 import { FolderPlus } from "~/lib/icons/FolderPlus";
 import { ImagePlus } from "~/lib/icons/ImagePlus";
 import { Trash } from "~/lib/icons/Trash";
@@ -17,10 +18,6 @@ import { X } from "~/lib/icons/X";
 import { Folder } from "~/types/Folder";
 import { Media } from "~/types/Media";
 import CreateMediasAndFolderDrawer from "./drawer/@createMediasAndFolder";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
-import { useMedia } from "~/hooks/useMedia";
-
 
 function MediasScreen() {
   const {
@@ -48,11 +45,9 @@ function MediasScreen() {
 
   const menuRef = useRef<any>(null);
 
-  
-
-    const pickImage = async () => {
+  const pickImage = async () => {
     try {
-        menuRef.current?.closeMenu();
+      menuRef.current?.closeMenu();
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All, // Modification : autorise les images et vidéos
         allowsEditing: true,
@@ -95,17 +90,15 @@ function MediasScreen() {
         }
         formData.append("folderId", folder?.id.toString() || "");
         await uploadMedia(formData);
-        
       }
     } catch (error) {
       console.error("Error picking or uploading media:", error);
-   
     }
   };
 
   const takePhoto = async () => {
     try {
-        menuRef.current?.closeMenu();
+      menuRef.current?.closeMenu();
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All, // Modification : autorise les photos et vidéos
         allowsEditing: true,
@@ -148,21 +141,18 @@ function MediasScreen() {
         }
         formData.append("folderId", folder?.id.toString() || "");
         await uploadMedia(formData);
-      
       }
     } catch (error) {
       console.error("Error taking or uploading media:", error);
-    
     }
   };
 
-    useEffect(() => {
+  useEffect(() => {
     const requestMediaLibraryPermissions = async () => {
       if (Platform.OS !== "web") {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
-         
         }
       }
     };
@@ -170,7 +160,7 @@ function MediasScreen() {
     requestMediaLibraryPermissions();
   }, []);
 
-const secondaryButtons = [
+  const secondaryButtons = [
     {
       icon: <ImagePlus size={24} className="text-secondary-foreground" />,
       onPress: pickImage,
@@ -245,12 +235,11 @@ const secondaryButtons = [
         )}
       />
 
-      <FloatingActionMenu ref={menuRef} secondaryButtons={secondaryButtons}  />
+      <FloatingActionMenu ref={menuRef} secondaryButtons={secondaryButtons} />
       <CreateMediasAndFolderDrawer
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
-          
         }}
       />
     </>
@@ -295,8 +284,8 @@ function HeaderAction() {
         >
           <ArrowLeft size={24} className="text-primary mr-2" />
         </TouchableOpacity>
-     <Text className="text-primary">{folder.path}</Text>
-       {/*  {folder?.path?.split("/").map((part: string, index: number) => (
+        <Text className="text-primary">{folder.path}</Text>
+        {/*  {folder?.path?.split("/").map((part: string, index: number) => (
           <React.Fragment key={index}>
             <Text
               className={

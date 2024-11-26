@@ -24,9 +24,14 @@ import { usePlaylistStore } from "~/store/playlistStore";
 import { PlaylistMedia } from "~/types/PlaylistMedia";
 import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
 import { PlaylistMediaService } from "~/services/playlistMedia.service";
+import ChangePlaylistMediasTime from "./drawer/@changePlaylistMediasTime";
+import NumberPicker from "~/components/scrollPicker";
 
 function PlaylistModify() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenAddMediasToPlaylist, setIsOpenAddMediasToPlaylist] =
+    useState(false);
+  const [isOpenChangePlaylistMediasTime, setIsOpenChangePlaylistMediasTime] =
+    useState(false);
   const { playlist, setPlaylist } = usePlaylistStore();
   const { setDragOffset, dragOffset, dragy, draggingItem } = useItemStore();
   const {
@@ -65,8 +70,6 @@ function PlaylistModify() {
       newPosition = Math.max(0, newPosition);
       newPosition = Math.min(newPosition, (playlist?.medias?.length || 1) - 1);
 
-      console.log("currentIndex", currentIndex);
-      console.log("newPosition", newPosition);
       if (currentIndex === undefined || currentIndex === newPosition) return;
 
       const updatedMedias = playlist?.medias ? [...playlist.medias] : [];
@@ -78,7 +81,7 @@ function PlaylistModify() {
         media.media_pos_in_playlist = index; // Mise à jour de la position
       });
 
-      const result = await PlaylistMediaService.updateMediaOrder(updatedMedias);
+      await PlaylistMediaService.updateMediaOrder(updatedMedias);
 
       debouncedSetItems(updatedMedias);
     },
@@ -135,9 +138,16 @@ function PlaylistModify() {
     }),
     [draggingItem]
   );
+
+  const openDrawerChangePlaylistMediasTime = (item: PlaylistMedia) => {
+    setIsOpenChangePlaylistMediasTime(true);
+    console.log(item);
+    /* setSelectedPlaylistMedias([item]); */
+  };
   const renderItem = useCallback(
     ({ item, index }: { item: PlaylistMedia; index: number }) => (
       <ItemList
+        openDrawer={() => openDrawerChangePlaylistMediasTime(item)}
         media={item}
         index={index}
         selectedPlaylistMedias={selectedPlaylistMedias}
@@ -149,14 +159,13 @@ function PlaylistModify() {
 
   const secondaryButtons = [
     {
-      label: "Add",
-      onPress: () => setIsOpen(true),
+      icon: null,
+      onPress: () => setIsOpenChangePlaylistMediasTime(true),
     },
   ];
 
   useEffect(() => {
     const backAction = () => {
-      console.log("backAction");
       router.back();
       return true;
     };
@@ -172,6 +181,7 @@ function PlaylistModify() {
   return (
     <Modal>
       <View className="h-full bg-background px-8">
+        <NumberPicker />
         <GestureHandlerRootView className="h-full " style={{ flex: 1 }}>
           <HeaderAction
             selectedPlaylistMedias={selectedPlaylistMedias}
@@ -198,7 +208,6 @@ function PlaylistModify() {
           </DragArea>
         </GestureHandlerRootView>
         <FloatingActionMenu secondaryButtons={secondaryButtons} />
-
         {/*  <View className="flex-row justify-between items-center absolute bottom-0 left-0 right-0 px-8 py-4 bg-card">
           <View className="bg-secondary rounded-full p-2">
             <Play
@@ -208,8 +217,23 @@ function PlaylistModify() {
             />
           </View>
         </View> */}
-        <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <AddMediasToPlaylist isOpen={isOpen} setIsOpen={setIsOpen} />
+        <Drawer
+          isOpen={isOpenChangePlaylistMediasTime}
+          onClose={() => setIsOpenChangePlaylistMediasTime(false)}
+        >
+          <ChangePlaylistMediasTime
+            isOpen={isOpenChangePlaylistMediasTime}
+            setIsOpen={setIsOpenChangePlaylistMediasTime}
+          />
+        </Drawer>
+        <Drawer
+          isOpen={isOpenAddMediasToPlaylist}
+          onClose={() => setIsOpenAddMediasToPlaylist(false)}
+        >
+          <AddMediasToPlaylist
+            isOpen={isOpenAddMediasToPlaylist}
+            setIsOpen={setIsOpenAddMediasToPlaylist}
+          />
         </Drawer>
       </View>
     </Modal>

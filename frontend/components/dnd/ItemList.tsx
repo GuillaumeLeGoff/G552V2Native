@@ -19,11 +19,13 @@ export default function ItemList({
   index,
   selectedPlaylistMedias,
   handlePressPlaylistMedia,
+  openDrawer,
 }: {
   media: PlaylistMedia;
   index: number;
   selectedPlaylistMedias: PlaylistMedia[];
   handlePressPlaylistMedia: (item: PlaylistMedia) => void;
+  openDrawer: () => void;
 }) {
   const viewRef = useRef<View>(null);
   const { setDraggingItem, dragy, draggingItem, dragOffset } = useItemStore();
@@ -123,9 +125,11 @@ export default function ItemList({
             }}
             style={{ width: "50%", height: (250 * 9) / 20 }} // Ajuste la hauteur pour un ratio 16:9
           />
-          <Text className="text-secondary-foreground text-xl font-avenir-heavy">
-            {media.media?.duration || "0"}
-          </Text>
+          <Pressable onPress={openDrawer}>
+            <Text className="text-secondary-foreground text-xl font-avenir-heavy">
+              {media.media?.duration || "0"}
+            </Text>
+          </Pressable>
         </View>
       </Pressable>
     </Animated.View>
