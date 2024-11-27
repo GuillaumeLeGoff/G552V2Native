@@ -13,8 +13,8 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!response.ok) {
 
+  if (!response.ok) {
     /*  useAuthStore.getState().setToken(null); */
     throw new Error("Failed to fetch");
   }

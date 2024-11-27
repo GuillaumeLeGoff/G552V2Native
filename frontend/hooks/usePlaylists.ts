@@ -24,7 +24,6 @@ export const usePlaylists = () => {
       console.error("Failed to fetch playlists", error);
     }
   };
-
   const createPlaylist = async (name: string) => {
     try {
       const newPlaylist = await PlaylistService.createPlaylist(name);
@@ -44,7 +43,6 @@ export const usePlaylists = () => {
     setPlaylist(data);
     router.push(`/playlists/${playlist.id}`);
   };
-
   const addMediasToPlaylist = async () => {
     const newPlaylistMedias = selectedFolder.map((item, index) => ({
       playlist_id: playlist?.id || "",
@@ -72,7 +70,6 @@ export const usePlaylists = () => {
     setPlaylist(updatedPlaylist as Playlist);
     setSelectFolder([]);
   };
-
   const handleSelectPlaylist = (item: Playlist) => {
     if (selectedPlaylist?.some((p) => p.id === item.id)) {
       setSelectPlaylist(selectedPlaylist.filter((p) => p.id !== item.id));

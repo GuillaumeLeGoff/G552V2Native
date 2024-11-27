@@ -27,31 +27,42 @@ export default function DragArea({
   useEffect(() => {
     if (draggingItem) {
       if (draggingItem.x && draggingItem.y) {
+      
         dragx.value = draggingItem.x;
         dragy.value = draggingItem.y;
-      } else {
-        console.warn(`Layout pour l'item ID manque x ou y.`);
-      }
+      } /* else {
+        dragx.value = 9999999;
+        dragy.value = 9999999;
+      } */
     }
   }, [draggingItem]);
 
   const pan = Gesture.Pan()
     .manualActivation(true)
     .onTouchesMove((event, stateManager) => {
+      console.log("onTouchesMove", dragx.value, dragy.value);
       if (draggingItem) {
         stateManager.activate();
       }
     })
     .onUpdate((event) => {
+      console.log("onUpdate", dragx.value, dragy.value);
       if (draggingItem) {
         dragx.value = draggingItem.x + event.translationX;
         dragy.value = draggingItem.y + event.translationY;
       }
-    })
+    }).onEnd(() =>{
+            
+       
+      })
     .onFinalize(() => {
       if (draggingItem) {
+        
         runOnJS(setDraggingItem)(undefined);
+       
         runOnJS(updateItemPosition)(draggingItem.media, dragy.value);
+       
+
       }
     });
 

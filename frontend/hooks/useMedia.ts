@@ -2,6 +2,7 @@ import { useState } from "react";
 import MediaService from "~/services/media.service";
 import { useFolderStore } from "~/store/folderStore";
 import { Media } from "~/types/Media";
+import { catchError } from '~/utils/catchError';
 
 export const useMedia = () => {
   const [media, setMedia] = useState<Media[]>([]);
@@ -12,10 +13,15 @@ export const useMedia = () => {
   const uploadMedia = async (formData: FormData) => {
     setLoading(true);
     setError(null);
-    try {
-      const uploadedMedia = await MediaService.uploadMedia(formData);
-      setMedia((prevMedia) => [...prevMedia, uploadedMedia]);
-      if (folder) {
+
+      const [error, uploadedMedia] = await catchError(
+        MediaService.uploadMedia(formData)
+      );
+      if (error) {
+        console.log("error", error.message, error.status, error.data);
+      } else {
+        setMedia((prevMedia) => [...prevMedia, uploadedMedia]);
+        if (folder) {
         const updatedFolder = {
           ...folder,
           media: folder.media
@@ -24,14 +30,11 @@ export const useMedia = () => {
         };
         setFolder(updatedFolder);
       }
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      }
-    } finally {
+   
       setLoading(false);
-    }
+    
   };
+}
   const fetchAllMedia = async () => {
     setLoading(true);
     setError(null);

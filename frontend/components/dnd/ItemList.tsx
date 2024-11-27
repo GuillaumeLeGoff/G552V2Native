@@ -38,7 +38,7 @@ export default function ItemList({
           x: x - 28,
           y: y - 82,
           width,
-          height,
+          height: height + 16,
           media,
           index,
         };
@@ -51,37 +51,34 @@ export default function ItemList({
   useAnimatedReaction(
     () => dragy?.value,
     (newDragY) => {
+
       if (!newDragY) {
         marginTop.value = 0;
       }
+      if (draggingItem) {
+        const itemY = index * ItemHeight;
 
-      const itemY = index * ItemHeight;
+        const adjustedIndex =
+          draggingItem && draggingItem.index <= index ? index - 1 : index;
+        const adjustedItemY = adjustedIndex * ItemHeight;
 
-      // Calculer l'offset si l'élément en cours de déplacement est supprimé de la liste
-      const adjustedIndex =
-        draggingItem && draggingItem.index <= index ? index - 1 : index;
-      const adjustedItemY = adjustedIndex * ItemHeight;
-
-      // Si c'est au-dessus du premier élément
-      if (adjustedIndex === 0 && newDragY < adjustedItemY) {
-        marginTop.value = withTiming(ItemHeight);
+        if (adjustedIndex === 0 && newDragY < itemY) {
+          marginTop.value = withTiming(ItemHeight);
+        } else if (
+          newDragY >= adjustedItemY &&
+          newDragY < adjustedItemY + ItemHeight
+        ) {
+          marginTop.value = withTiming(ItemHeight);
+        } else {
+          marginTop.value = withTiming(0);
+        }
+        // TODO: keep track of the currently dragging item, and offset the comparison, becuase it is deleted form the lists
       }
-
-      // Si c'est au-dessus de l'élément actuel
-      if (newDragY >= adjustedItemY && newDragY < adjustedItemY + ItemHeight) {
-        marginTop.value = withTiming(ItemHeight);
-      }
-
-      marginTop.value = withTiming(
-        newDragY >= adjustedItemY && newDragY < adjustedItemY + ItemHeight
-          ? ItemHeight
-          : 0
-      );
     }
   );
 
   useEffect(() => {
-    const itemY = index * ItemHeight - dragOffset.value;
+    const itemY = index * ItemHeight
     if (draggingItem) {
       marginTop.value =
         dragy.value >= itemY && dragy.value < itemY + ItemHeight
@@ -90,10 +87,10 @@ export default function ItemList({
     } else {
       marginTop.value = 0;
     }
-  }, [draggingItem, dragOffset.value]);
+  }, [draggingItem]);
 
   if (draggingItem?.media.id === media.id && draggingItem.index === index) {
-    return null;
+    return  <Animated.View style={{ marginTop }} />;
   }
   return (
     <Animated.View style={{ marginTop }}>
@@ -125,11 +122,20 @@ export default function ItemList({
             }}
             style={{ width: "50%", height: (250 * 9) / 20 }} // Ajuste la hauteur pour un ratio 16:9
           />
-          <Pressable onPress={openDrawer}>
-            <Text className="text-secondary-foreground text-xl font-avenir-heavy">
-              {media.media?.duration || "0"}
+          <View   className="flex-row justify-center items-center">
+            <Pressable
+              onPress={ selectedPlaylistMedias.length === 0 ? openDrawer : undefined}
+              style={{width: 50}}
+              className={`rounded-xl p-2 bg-secondary  justify-center items-center ${selectedPlaylistMedias.length > 0 && selectedPlaylistMedias.some((m) => m.id === media.id) ? "border-2 border-secondary-foreground" : ""} `}
+            >
+            <Text className="text-secondary-foreground text-xl font-avenir-heavy px-1  ">
+              {media.media_dur_in_playlist || "0"}
             </Text>
-          </Pressable>
+            </Pressable>
+            <Text className={`text-secondary-foreground text-xl font-avenir-heavy `}>
+              {" "}s
+            </Text>
+          </View>
         </View>
       </Pressable>
     </Animated.View>

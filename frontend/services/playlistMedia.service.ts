@@ -21,8 +21,11 @@ export class PlaylistMediaService {
     return result.data;
   }
 
-  static async updatePlaylistMedia(playlistMedia: PlaylistMedia) {
-    const response = await fetchWithAuth(this.API_URL, {
+  static async updatePlaylistMedia(
+    playlistMedia: PlaylistMedia,
+
+  ) {
+    const response = await fetchWithAuth(this.API_URL + "/" + playlistMedia.id, {
       method: "PUT",
       body: JSON.stringify(playlistMedia),
       headers: {

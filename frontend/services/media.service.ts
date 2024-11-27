@@ -7,15 +7,15 @@ export class MediaService {
   static API_URL = `${PROTOCOL}://${IP_ADDRESS}:${API_PORT}/media`;
 
   static async uploadMedia(formData: FormData): Promise<Media> {
-      const response = await fetchWithAuth(`${this.API_URL}/`, {
-        method: "POST",
+    console.log("uploadMedia");
+    console.log("formData", formData);
+    const response = await fetchWithAuth(`${this.API_URL}/`, {
+      method: "POST",
         body: formData,
       });
       const result = await response.json()
-      if (!response.ok) {
-        ;
-        throw new HttpException(result.status, result.message);
-    }
+
+
     return result.data;
   }
 

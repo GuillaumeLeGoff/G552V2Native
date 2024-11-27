@@ -29,15 +29,18 @@ export const useFolder = () => {
     [setFolder]
   );
   const createFolder = useCallback(
+    
     async (folderName: string, parent_id: number | null) => {
+       console.log("newFolder", folder?.path);
       const [error, newFolder] = await catchError(
         FolderService.createFolder(folderName, parent_id)
       );
+      console.log("newFolder", newFolder);
       if (error) {
       } else if (folder && newFolder) {
         const updatedSubFolders = [...(folder.subFolders || []), newFolder];
-        setFolder({ ...folder, subFolders: updatedSubFolders });
-        console.log("newFolder", { ...folder, subFolders: updatedSubFolders });
+        setFolder({ ...folder, subFolders: updatedSubFolders , path: folder.path });
+        console.log("newFolder", folder.path);
       }
     },
     

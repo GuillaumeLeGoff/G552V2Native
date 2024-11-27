@@ -1,34 +1,75 @@
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import ScrollPicker from "react-native-wheel-scrollview-picker";
+import { WheelPicker } from "react-native-infinite-wheel-picker";
+
 import {
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
-  DrawerTitle,
+  DrawerTitle
 } from "~/components/drawer";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
-
+import { usePlaylistsMedias } from "~/hooks/usePlaylistsMedias";
 export default function ChangePlaylistMediasTime({
   isOpen,
   setIsOpen,
+  selectedPlaylistMedia,
 }: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  selectedPlaylistMedia: any;
 }) {
-  const [duration, setDuration] = React.useState(0);
+    const { updatePlaylistMediaTime } = usePlaylistsMedias();
+    const [selectedTime, setSelectedTime] = useState(selectedPlaylistMedia?.media_dur_in_playlist || 0);
+  const dataSource = Array.from({ length: 100 }, (_, i) => i.toString());
 
-  const handleSave = () => {
-    /*    onChangeDuration(duration);
-    onClose(); */
-  };
+
 
   return (
     <DrawerContent>
-      <View className="p-4 px-8"></View>
+      <DrawerHeader>
+        <DrawerTitle>Change playlist medias time</DrawerTitle>
+      </DrawerHeader>
+      <View className="p-4 px-8" style={{ flexGrow: 1 }}>
+        <View className="flex-row justify-center items-center">
+        <WheelPicker
+      initialSelectedIndex={selectedTime}
+      selectedIndex={selectedTime}
+      data={dataSource}
+      onChangeValue={ (index) => setSelectedTime(index) }
+      containerStyle={{ width: 60  }}
+      selectedLayoutStyle={{
+        backgroundColor: "#E9CCCB",
+        borderWidth: 2,
+        borderRadius: 10,
+        borderColor: "#D06C6C",
+      }}
+      infiniteScroll={false}
+      elementHeight={60}
+      elementTextStyle={{
+        fontSize: 20,
+        color: "#D06C6C",
+       
+      }}
+      restElements={2}
+    />
+          <Text className="text-center ml-4 text-xl font-avenir-heavy text-secondary-foreground">
+            Seconde
+          </Text>
+        </View>
+        <View className="flex-row justify-end">
+          <Button
+            className="mt-4 bg-secondary"
+             onPress={() => {
+              console.log(selectedTime);
+              updatePlaylistMediaTime(selectedPlaylistMedia, selectedTime);
+              setIsOpen(false);
+          }}
+          >
+            <Text className="text-secondary-foreground">Save</Text>
+          </Button>
+        </View>
+      </View>
     </DrawerContent>
   );
 }

@@ -18,6 +18,7 @@ import { X } from "~/lib/icons/X";
 import { Folder } from "~/types/Folder";
 import { Media } from "~/types/Media";
 import CreateMediasAndFolderDrawer from "./drawer/@createMediasAndFolder";
+import { ChevronRight } from "~/lib/icons/ChevronRight";
 
 function MediasScreen() {
   const {
@@ -277,15 +278,15 @@ function HeaderAction() {
           onIconPress={handleBack} // Utilisation de handleBackPress
         />
       )}
-      <View className="flex-1 flex-row items-center gap-2">
+      <View className="flex-row items-center gap-2 py-4">
         <TouchableOpacity
           onPress={handleBack}
           style={{ opacity: folder?.parent_id ? 1 : 0 }}
         >
           <ArrowLeft size={24} className="text-primary mr-2" />
         </TouchableOpacity>
-        <Text className="text-primary">{folder.path}</Text>
-        {/*  {folder?.path?.split("/").map((part: string, index: number) => (
+        {/* <Text className="text-primary">{folder?.path}</Text> */}
+         {folder?.path?.split("/").map((part: string, index: number) => (
           <React.Fragment key={index}>
             <Text
               className={
@@ -301,7 +302,7 @@ function HeaderAction() {
                 <ChevronRight size={20} className="mx-1 text-primary" />
               )}
           </React.Fragment>
-        ))} */}
+        ))}
       </View>
     </>
   );
