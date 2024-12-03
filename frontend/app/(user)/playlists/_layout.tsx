@@ -1,14 +1,15 @@
-import { Stack } from "expo-router"
-
+import { Stack } from "expo-router";
 
 const layout = () => {
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+    <>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
 
-      <Stack.Screen name="[playlistId]" options={{ headerShown: false }} />
-    </Stack>
-  )
-}
+        <Stack.Screen name="[playlistId]" options={{ headerShown: false }} />
+      </Stack>
+    </>
+  );
+};
 
-export default layout
+export default layout;

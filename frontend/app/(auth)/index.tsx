@@ -34,7 +34,7 @@ export default function Login() {
     setUserSelected,
     password,
     setPassword,
-    authError, 
+    authError,
     shakeKey,
     usernameError,
     setUsernameError,
@@ -50,11 +50,9 @@ export default function Login() {
     setForgotPasswordIsOpen,
   } = useAuth();
 
-
-
-
   const selectShakeAnimation = useSharedValue(0);
   const inputShakeAnimation = useSharedValue(0);
+  const errorAnimation = useSharedValue(0);
 
   const selectAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: selectShakeAnimation.value }],
@@ -62,6 +60,11 @@ export default function Login() {
 
   const inputAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: inputShakeAnimation.value }],
+  }));
+
+  const errorAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: errorAnimation.value,
+    transform: [{ translateY: errorAnimation.value * 10 }],
   }));
 
   const triggerShake = React.useCallback(
@@ -94,7 +97,13 @@ export default function Login() {
     inputShakeAnimation,
   ]);
 
-
+  React.useEffect(() => {
+    if (authError) {
+      errorAnimation.value = withTiming(1, { duration: 300 });
+    } else {
+      errorAnimation.value = withTiming(0, { duration: 300 });
+    }
+  }, [authError, errorAnimation]);
 
   return (
     <View className="flex items-center justify-center h-full bg-background">
@@ -116,7 +125,9 @@ export default function Login() {
               >
                 <SelectTrigger error={usernameError}>
                   <SelectValue
-                    className="text-foreground opacity-50 text-lg bg-background"
+                    className={`text-foreground opacity-50 text-lg bg-background font-avenir-book ${
+                      userSelected ? "text-primary" : "text-primary-foreground"
+                    }`}
                     placeholder="Select user"
                   />
                 </SelectTrigger>
@@ -127,6 +138,9 @@ export default function Login() {
                         key={user.id}
                         label={user.username}
                         value={user.username}
+                        className={`
+                            text-primary font-avenir-book
+                            `}
                       >
                         {user.username}
                       </SelectItem>
@@ -142,7 +156,7 @@ export default function Login() {
             </Text>
             <Animated.View style={inputAnimatedStyle}>
               <Input
-                className="text-foreground bg-background flex-1 text-lg"
+                className="text-foreground bg-background flex-1"
                 placeholder=""
                 value={password || ""}
                 secureTextEntry={!showPassword}
@@ -163,22 +177,33 @@ export default function Login() {
                 </TouchableOpacity>
               </Input>
             </Animated.View>
-            <Button variant="link" size="sm" onPress={() => setForgotPasswordIsOpen(true)}>
-              <Text className=" text-foreground text-sm">Lost password</Text>
-            </Button>
-          </View>
-
-          <View className="h-6 justify-center pb-2">
-            <Text className="text-red-500 text-sm text-center">
-              {authError ? authError : ""}
-            </Text>
+            <View className="">
+              <Button
+                variant="link"
+                size="sm"
+                onPress={() => setForgotPasswordIsOpen(true)}
+              >
+                <Text className=" text-foreground text-sm">Lost password</Text>
+              </Button>
+              {authError ? (
+                <Animated.View>
+                  <Text className="text-red-500 text-sm text-center font-avenir-book">
+                    {authError}
+                  </Text>
+                </Animated.View>
+              ) : null}
+            </View>
           </View>
         </CardContent>
-        <CardFooter className="flex justify-center items-center">
-          <Button variant="secondary" onPress={handleLogin} disabled={isLoading}>
+        <CardFooter className="flex justify-center items-center pt-8">
+          <Button
+            variant="secondary"
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
             <View className="flex flex-row items-center">
               {isLoading ? (
-                <ActivityIndicator size="small" color="#000000" />
+                <ActivityIndicator size="small" color="#D06C6C" />
               ) : (
                 <Lock
                   size={16}
@@ -193,7 +218,10 @@ export default function Login() {
           </Button>
         </CardFooter>
       </Card>
-      <Drawer isOpen={forgotPasswordIsOpen} onClose={() => setForgotPasswordIsOpen(false)}>
+      <Drawer
+        isOpen={forgotPasswordIsOpen}
+        onClose={() => setForgotPasswordIsOpen(false)}
+      >
         <ForgotPassword />
       </Drawer>
       <AlreadyConnected

@@ -4,6 +4,7 @@ import { PlaylistMediaService } from "~/services/playlistMedia.service";
 import { usePlaylistStore } from "~/store/playlistStore";
 import { Playlist } from "~/types/Playlist";
 import { useFolder } from "./useFolder";
+import { catchError } from "~/utils/catchError";
 
 export const usePlaylists = () => {
   const {
@@ -32,10 +33,17 @@ export const usePlaylists = () => {
       console.error("Failed to create playlist", error);
     }
   };
-  const deletePlaylists = async (selectedPlaylist: Playlist[]) => {
-    await PlaylistService.deletePlaylists(selectedPlaylist.map((p) => p.id));
-    setPlaylists(playlists.filter((p) => !selectedPlaylist.includes(p)));
-    setSelectPlaylist([]);
+  const deletePlaylists = async (playlistsToDelete: Playlist[]) => {
+    const [error] = await catchError(
+      PlaylistService.deletePlaylists(playlistsToDelete.map((p) => p.id))
+    );
+    if (error) {
+      console.error("Failed to delete playlists", error);
+    } else {
+      setPlaylists(playlists.filter((p) => !playlistsToDelete.some((toDelete) => toDelete.id === p.id)));
+      setPlaylist(null);
+      setSelectPlaylist([]);
+    }
   };
 
   const handlePressPlaylist = async (playlist: Playlist) => {

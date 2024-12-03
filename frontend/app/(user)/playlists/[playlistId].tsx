@@ -1,13 +1,6 @@
 import { router } from "expo-router";
-import { debounce } from "lodash";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Animated, BackHandler, FlatList, Modal, View } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { Animated, BackHandler, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { runOnJS, useAnimatedReaction } from "react-native-reanimated";
 import ActionHeader from "~/components/ActionHeader";
@@ -17,18 +10,18 @@ import { Drawer } from "~/components/drawer";
 import FloatingActionMenu from "~/components/floatingMenu/FloatingActionMenu";
 import { usePlaylistsMedias } from "~/hooks/usePlaylistsMedias";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
+import { EllipsisVertical } from "~/lib/icons/EllipsisVertical";
+import { Pencil } from "~/lib/icons/Pencil";
 import { Trash } from "~/lib/icons/Trash";
 import { X } from "~/lib/icons/X";
-import { PlaylistMediaService } from "~/services/playlistMedia.service";
 import { useItemStore } from "~/store/item";
 import { usePlaylistStore } from "~/store/playlistStore";
 import { PlaylistMedia } from "~/types/PlaylistMedia";
 import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
 import ChangePlaylistMediasTime from "./drawer/@changePlaylistMediasTime";
-
+import { usePlaylists } from "~/hooks/usePlaylists";
 
 function PlaylistModify() {
-
   const { playlist } = usePlaylistStore();
   const { setDragOffset, dragy, draggingItem } = useItemStore();
   const {
@@ -45,7 +38,7 @@ function PlaylistModify() {
     flatListRef,
     selectedPlaylistMedia,
     setSelectedPlaylistMedia,
-  } = usePlaylistsMedias(); 
+  } = usePlaylistsMedias();
 
   useAnimatedReaction(
     () => ({
@@ -110,57 +103,54 @@ function PlaylistModify() {
   }, []);
 
   return (
-    <Modal>
-      <View className="h-full bg-background px-8">
-      
-        <GestureHandlerRootView className="h-full " style={{ flex: 1 }}>
-          <HeaderAction
-            selectedPlaylistMedias={selectedPlaylistMedias}
-            setSelectedPlaylistMedias={setSelectedPlaylistMedias}
-            deleteSelectedPlaylistMedias={deleteSelectedPlaylistMedias}
-            playlistName={playlist?.name || ""}
-          />
+    <View className="h-full bg-background px-8">
+      <GestureHandlerRootView className="h-full " style={{ flex: 1 }}>
+        <HeaderAction
+          selectedPlaylistMedias={selectedPlaylistMedias}
+          setSelectedPlaylistMedias={setSelectedPlaylistMedias}
+          deleteSelectedPlaylistMedias={deleteSelectedPlaylistMedias}
+          playlistName={playlist?.name || ""}
+        />
 
-          <DragArea updateItemPosition={updateItemPosition}>
-            <Animated.FlatList
-              ref={flatListRef}
-              onScroll={(e) => {
-                setDragOffset(e.nativeEvent.contentOffset.y);
-              }}
-              scrollEventThrottle={16}
-              data={playlist?.medias || []}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderItem}
-              getItemLayout={getItemLayout}
-              initialNumToRender={10}
-              windowSize={21}
-              removeClippedSubviews={true}
-              contentContainerStyle={{ height: contentHeight + ItemHeight }}
-            />
-          </DragArea>
-        </GestureHandlerRootView>
-        <FloatingActionMenu secondaryButtons={secondaryButtons} />
-        <Drawer
+        <DragArea updateItemPosition={updateItemPosition}>
+          <Animated.FlatList
+            ref={flatListRef}
+            onScroll={(e) => {
+              setDragOffset(e.nativeEvent.contentOffset.y);
+            }}
+            scrollEventThrottle={16}
+            data={playlist?.medias || []}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            getItemLayout={getItemLayout}
+            initialNumToRender={10}
+            windowSize={21}
+            removeClippedSubviews={true}
+            contentContainerStyle={{ height: contentHeight + ItemHeight }}
+          />
+        </DragArea>
+      </GestureHandlerRootView>
+      <FloatingActionMenu secondaryButtons={secondaryButtons} />
+      <Drawer
+        isOpen={isOpenChangePlaylistMediasTime}
+        onClose={() => setIsOpenChangePlaylistMediasTime(false)}
+      >
+        <ChangePlaylistMediasTime
           isOpen={isOpenChangePlaylistMediasTime}
-          onClose={() => setIsOpenChangePlaylistMediasTime(false)}
-        >
-          <ChangePlaylistMediasTime
-            isOpen={isOpenChangePlaylistMediasTime}
-            setIsOpen={setIsOpenChangePlaylistMediasTime}
-            selectedPlaylistMedia={selectedPlaylistMedia}           
-          />
-        </Drawer>
-        <Drawer
+          setIsOpen={setIsOpenChangePlaylistMediasTime}
+          selectedPlaylistMedia={selectedPlaylistMedia}
+        />
+      </Drawer>
+      <Drawer
+        isOpen={isOpenAddMediasToPlaylist}
+        onClose={() => setIsOpenAddMediasToPlaylist(false)}
+      >
+        <AddMediasToPlaylist
           isOpen={isOpenAddMediasToPlaylist}
-          onClose={() => setIsOpenAddMediasToPlaylist(false)}
-        >
-          <AddMediasToPlaylist
-            isOpen={isOpenAddMediasToPlaylist}
-            setIsOpen={setIsOpenAddMediasToPlaylist}
-          />
-        </Drawer>
-      </View>
-    </Modal>
+          setIsOpen={setIsOpenAddMediasToPlaylist}
+        />
+      </Drawer>
+    </View>
   );
 }
 
@@ -175,6 +165,8 @@ function HeaderAction({
   deleteSelectedPlaylistMedias: () => void;
   playlistName: string;
 }) {
+  const { deletePlaylists } = usePlaylists();
+  const { playlist } = usePlaylistStore();
   return (
     <>
       {selectedPlaylistMedias && selectedPlaylistMedias.length > 0 ? (
@@ -205,6 +197,30 @@ function HeaderAction({
               icon: ArrowLeft,
               onPress: () => router.back(),
               size: 24,
+            },
+          ]}
+          actionsAfterText={[
+            {
+              icon: EllipsisVertical,
+              onPress: () => {},
+              size: 24,
+              dropDown: [
+                {
+                  name: "Rename",
+                  onPress: () => {},
+                  icon: Pencil,
+                },
+                {
+                  name: "Delete",
+                  onPress: () => {
+                    if (playlist) {
+                      deletePlaylists([playlist]);
+                      router.back();
+                    }
+                  },
+                  icon: Trash,
+                },
+              ],
             },
           ]}
         />

@@ -1,4 +1,3 @@
-import { PortalHost } from '@rn-primitives/portal';
 import { Stack } from "expo-router";
 
 export default function AuthLayout() {
@@ -9,7 +8,6 @@ export default function AuthLayout() {
         headerShown: false,
       }}
       />
-      <PortalHost />
     </>
   );
 }

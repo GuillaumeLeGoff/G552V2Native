@@ -100,6 +100,7 @@ export class PlaylistMediaController {
     res: Response,
     next: NextFunction
   ) => {
+    console.log("deletePlaylistMedia");
     try {
       const playlistMediaIds: number[] = req.body.ids;
       const deletedPlaylistMedia: boolean =

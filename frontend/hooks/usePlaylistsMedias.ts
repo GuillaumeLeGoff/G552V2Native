@@ -9,13 +9,16 @@ import { PlaylistMedia } from "~/types/PlaylistMedia";
 import { catchError } from "~/utils/catchError";
 
 export const usePlaylistsMedias = () => {
-  const [selectedPlaylistMedias, setSelectedPlaylistMedias] = useState<PlaylistMedia[]>([]);
+  const [selectedPlaylistMedias, setSelectedPlaylistMedias] = useState<
+    PlaylistMedia[]
+  >([]);
   const [selectedPlaylistMedia, setSelectedPlaylistMedia] = useState<any>(null);
-  const [isOpenAddMediasToPlaylist, setIsOpenAddMediasToPlaylist] = useState(false);
-  const [isOpenChangePlaylistMediasTime, setIsOpenChangePlaylistMediasTime] = useState(false);
-  const { playlist, setPlaylist } = usePlaylistStore();
+  const [isOpenAddMediasToPlaylist, setIsOpenAddMediasToPlaylist] =
+    useState(false);
+  const [isOpenChangePlaylistMediasTime, setIsOpenChangePlaylistMediasTime] =
+    useState(false);
+  const { playlist, setPlaylist, playlists, setPlaylists } = usePlaylistStore();
   const { dragOffset, draggingItem } = useItemStore();
-
 
   function handlePressPlaylistMedia(item: PlaylistMedia) {
     if (selectedPlaylistMedias.some((media) => media.id === item.id)) {
@@ -54,10 +57,9 @@ export const usePlaylistsMedias = () => {
     return map;
   }, [playlist?.medias]);
 
-
   const flatListRef = useRef<FlatList>(null);
   const scrollThreshold = 50;
-  const scrollAmount = 10;  
+  const scrollAmount = 10;
   // Fonction débouncée pour mettre à jour les items
   const debouncedSetItems = useRef(
     debounce((newMedias: PlaylistMedia[]) => {
@@ -121,18 +123,28 @@ export const usePlaylistsMedias = () => {
     }
   };
 
-  const updatePlaylistMediaTime = async (media: PlaylistMedia, time: number) => {
+  const updatePlaylistMediaTime = async (
+    media: PlaylistMedia,
+    time: number
+  ) => {
     const updatedMedia = { ...media, media_dur_in_playlist: time };
     if (playlist?.id !== undefined) {
-      setPlaylist({...playlist, medias: [...playlist.medias.map(m => m.id === media.id ? updatedMedia : m)]});
-       const [error, data] = await catchError( PlaylistMediaService.updatePlaylistMedia(updatedMedia));
-       
-       if (error) {
-        console.log(error);
-       }
-    }
+      setPlaylist({
+        ...playlist,
+        medias: [
+          ...playlist.medias.map((m) => (m.id === media.id ? updatedMedia : m)),
+        ],
+      });
+      const [error, data] = await catchError(
+        PlaylistMediaService.updatePlaylistMedia(updatedMedia)
+      );
 
+      if (error) {
+        console.log(error);
+      }
+    }
   };
+
 
 
   return {
@@ -152,7 +164,5 @@ export const usePlaylistsMedias = () => {
     selectedPlaylistMedia,
     setSelectedPlaylistMedia,
     updatePlaylistMediaTime,
-
-
   };
 };

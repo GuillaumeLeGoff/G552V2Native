@@ -5,7 +5,7 @@ interface PlaylistStore {
   playlist: Playlist | null;
   playlists: Playlist[];
   selectedPlaylist: Playlist[] | null;
-  setPlaylist: (playlist: Playlist) => void;
+  setPlaylist: (playlist: Playlist | null) => void;
   setPlaylists: (playlists: Playlist[]) => void;
   setSelectPlaylist: (playlists: Playlist[]) => void;
 }
@@ -14,7 +14,7 @@ export const usePlaylistStore = create<PlaylistStore>((set) => ({
   playlist: null,
   playlists: [],
   selectedPlaylist: null,
-  setPlaylist: (playlist: Playlist) => set({ playlist: playlist }),
+  setPlaylist: (playlist: Playlist | null) => set({ playlist: playlist }),
   setPlaylists: (playlists: Playlist[]) => set({ playlists: playlists }), // Ajout du type Playlist[]
   setSelectPlaylist: (playlists: Playlist[]) =>
     set({ selectedPlaylist: playlists }),
