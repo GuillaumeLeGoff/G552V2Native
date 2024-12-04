@@ -13,17 +13,20 @@ export const usePlaylists = () => {
     setPlaylist,
     playlists,
     setPlaylists,
-    setSelectPlaylist,
     selectedPlaylist,
+    setSelectPlaylist,
+    sortBy,
+    setSortBy,
   } = usePlaylistStore();
   const { selectedFolder, setSelectFolder } = useFolder();
 
   const [isOpenRenamePlaylist, setIsOpenRenamePlaylist] = useState(false);
-
+  const[isOpenSortBy, setIsOpenSortBy] = useState(false);
   const getPlaylists = async () => {
     try {
       const data = await PlaylistService.getPlaylists();
-      setPlaylists(data);
+      const sortedPlaylists = await sortPlaylists(sortBy,data);
+      setPlaylists(sortedPlaylists);
     } catch (error) {
       console.error("Failed to fetch playlists", error);
     }
@@ -31,14 +34,11 @@ export const usePlaylists = () => {
   const createPlaylist = async (name: string) => {
     try {
       const newPlaylist = await PlaylistService.createPlaylist(name);
-      setPlaylists([...playlists, newPlaylist]);
+      const sortedPlaylists = await sortPlaylists(sortBy,[...playlists, newPlaylist]);
+      setPlaylists(sortedPlaylists);
     } catch (error) {
       console.error("Failed to create playlist", error);
     }
-  };
-  const updatePlaylist = async (playlist: Playlist) => {
-    const updatedPlaylist = await PlaylistService.updatePlaylist(playlist);
-    setPlaylist(updatedPlaylist);
   };
   const deletePlaylists = async (playlistsToDelete: Playlist[]) => {
     const [error] = await catchError(
@@ -47,7 +47,8 @@ export const usePlaylists = () => {
     if (error) {
       console.error("Failed to delete playlists", error);
     } else {
-      setPlaylists(playlists.filter((p) => !playlistsToDelete.some((toDelete) => toDelete.id === p.id)));
+      const sortedPlaylists = await sortPlaylists(sortBy,playlists.filter((p) => !playlistsToDelete.some((toDelete) => toDelete.id === p.id)));
+      setPlaylists(sortedPlaylists);
       setPlaylist(null);
       setSelectPlaylist([]);
     }
@@ -98,7 +99,35 @@ export const usePlaylists = () => {
       name,
     });
     setPlaylist({ ...playlist, name });
-    setPlaylists(playlists.map((p) => (p.id === playlist.id ? updatedPlaylist : p)));
+    
+    const sortedPlaylists = await sortPlaylists(sortBy,playlists.map((p) => (p.id === playlist.id ? updatedPlaylist : p)) as Playlist[]);
+    setPlaylists(sortedPlaylists);
+  };
+  const sortPlaylists = async (sort: "aToZ" | "zToA" | "dateNew" | "dateOld" , playlists: Playlist[]) => {
+    
+   playlists.sort((a, b) => {
+      switch (sort) {
+        case "aToZ":
+          return a.name.localeCompare(b.name);
+        case "zToA":
+          return b.name.localeCompare(a.name);
+        case "dateNew":
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case "dateOld":
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        default:
+          return 0;
+      }
+    });
+    return playlists;
+  };
+
+
+  const handleSortPlaylist = async (sort: "aToZ" | "zToA" | "dateNew" | "dateOld") => {
+    setSortBy(sort);
+    const sortedPlaylists = await sortPlaylists(sort, playlists);
+    
+    setPlaylists(sortedPlaylists);
   };
 
   return {
@@ -114,5 +143,9 @@ export const usePlaylists = () => {
     handleRenamePlaylist,
     isOpenRenamePlaylist,
     setIsOpenRenamePlaylist,
+    sortBy,
+    handleSortPlaylist,
+    isOpenSortBy,
+    setIsOpenSortBy,
   };
 };

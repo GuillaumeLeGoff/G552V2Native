@@ -25,6 +25,7 @@ interface ActionHeaderProps {
     onPress: () => void;
     size?: number;
     strokeWidth?: number;
+    text?: string;
     className?: string;
     dropDown?: Array<{
       name: string;
@@ -43,7 +44,7 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
 }) => {
   return (
     <View
-      className={`flex flex-row items-start justify-between z-50 pt-8 ${className}`}
+      className={`flex flex-row  justify-between items-center z-50 pt-8 ${className}`}
     >
       {actionsBeforeText.map((action, index) => (
         <TouchableOpacity
@@ -81,16 +82,23 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
                 }`}
                 onPress={action.onPress}
               >
-                <action.icon
-                  size={action.size || 24}
-                  strokeWidth={action.strokeWidth || 3}
-                  className={action.className || "text-primary"}
-                />
+                <View className="flex-row items-center">
+                  {action.text ? (
+                    <Text className=" font-avenir-heavy text-primary">
+                      {action.text}
+                    </Text>
+                  ) : null}
+                  <action.icon
+                    size={action.size || 24}
+                    strokeWidth={action.strokeWidth || 3}
+                    className={action.className || "text-primary"}
+                  />
+                </View>
               </TouchableOpacity>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-32">
               {action.dropDown?.map((item, index) => (
-                <DropdownMenuItem onPress={item.onPress}>
+                <DropdownMenuItem key={index} onPress={item.onPress}>
                   <Text>{item.name}</Text>
                   <DropdownMenuShortcut>
                     <item.icon
@@ -108,9 +116,14 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
             key={index}
             className={`pt-1  ${
               index !== actionsAfterText.length - 1 ? "pl-2" : ""
-            }`}
+            } flex-row items-center`}
             onPress={action.onPress}
           >
+            {action.text ? (
+              <Text className=" font-avenir-heavy text-primary">
+                {action.text}
+              </Text>
+            ) : null}
             <action.icon
               size={action.size || 24}
               strokeWidth={action.strokeWidth || 3}

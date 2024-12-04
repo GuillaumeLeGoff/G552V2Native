@@ -33,6 +33,8 @@ model Playlist {
   medias  PlaylistMedia[]
   macros  Macro[]
   modes   Mode[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Macro {
@@ -63,6 +65,7 @@ model Folder {
   subFolders Folder[] @relation("FolderToSubFolder")
   updated_at DateTime @updatedAt
   path       String?
+  created_at DateTime @default(now())
 }
 
 model Media {
@@ -82,6 +85,7 @@ model Media {
   user               User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
   Playlist_media     PlaylistMedia[]
   folder             Folder?         @relation(fields: [folder_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
 }
 
 model Mode {

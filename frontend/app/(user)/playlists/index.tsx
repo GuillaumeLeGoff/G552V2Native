@@ -1,4 +1,4 @@
-import { EllipsisVertical, Plus, Trash, X } from "lucide-react-native";
+import {Plus, Trash, X } from "lucide-react-native";
 import React, { useEffect } from "react";
 import { FlatList } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -10,9 +10,12 @@ import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists";
 import { Playlist } from "~/types/Playlist";
 import CreatePlaylist from "./drawer/@createPlaylist";
-import { Pencil } from "lucide-react-native";
-function HeaderAction() {
-  const { selectedPlaylist, setSelectPlaylist, deletePlaylists } =
+import { ArrowDown } from "~/lib/icons/ArrowDown";
+import { ArrowUp } from "~/lib/icons/ArrowUp";
+import SortPlaylist from "./drawer/@sortPlaylist";
+
+function HeaderAction({ setIsOpenSortBy }: { setIsOpenSortBy: React.Dispatch<React.SetStateAction<boolean>> }) {
+  const { selectedPlaylist, setSelectPlaylist, deletePlaylists, sortBy } =
     usePlaylists();
 
   return (
@@ -38,10 +41,16 @@ function HeaderAction() {
       ) : (
         <ActionHeader title="Playlists"   actionsAfterText={[
             {
-              icon: EllipsisVertical,
-              onPress: () => {},
-              size: 24,
-              dropDown: [
+              icon: sortBy === "aToZ" ? ArrowUp :
+                    sortBy === "zToA" ?  ArrowDown :
+                    sortBy === "dateNew" ?ArrowUp :    
+                    sortBy === "dateOld" ? ArrowDown :
+                     ArrowUp,
+      
+              onPress: () => setIsOpenSortBy(true) ,
+              size: 20,
+              text: sortBy === "aToZ" || sortBy === "zToA" ? "name" : "date",
+              /* dropDown: [
                 {
                   name: "Rename",
                   onPress: () => {},
@@ -54,7 +63,7 @@ function HeaderAction() {
                   },
                   icon: Trash,
                 },
-              ],
+              ], */
             },
           ]}/>
         
@@ -74,6 +83,8 @@ function PlaylistsList() {
     handleSelectPlaylist,
     getPlaylists,
     setSelectPlaylist,
+    isOpenSortBy,
+    setIsOpenSortBy,
   } = usePlaylists();
 
   useEffect(() => {
@@ -106,7 +117,7 @@ function PlaylistsList() {
   return (
     <>
       <FlatList
-        ListHeaderComponent={<HeaderAction />}
+        ListHeaderComponent={<HeaderAction setIsOpenSortBy={setIsOpenSortBy} />}
         data={playlists}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
@@ -117,9 +128,10 @@ function PlaylistsList() {
         <FloatingActionMenu secondaryButtons={secondaryButtons} />
       )}
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        
-          <CreatePlaylist />
-       
+        <CreatePlaylist />
+      </Drawer>
+      <Drawer isOpen={isOpenSortBy} onClose={() => setIsOpenSortBy(false)}>
+        <SortPlaylist />
       </Drawer>
     </>
   );
