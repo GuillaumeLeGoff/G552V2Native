@@ -19,6 +19,10 @@ import { Folder } from "~/types/Folder";
 import { Media } from "~/types/Media";
 import CreateMediasAndFolderDrawer from "./drawer/@createMediasAndFolder";
 import { ChevronRight } from "~/lib/icons/ChevronRight";
+import { ArrowUp } from "~/lib/icons/ArrowUp";
+import { ArrowDown } from "~/lib/icons/ArrowDown";
+import { EllipsisVertical } from "~/lib/icons/EllipsisVertical";
+import { Pencil } from "~/lib/icons/Pencil";
 
 function MediasScreen() {
   const {
@@ -249,7 +253,7 @@ function MediasScreen() {
 }
 
 function HeaderAction() {
-  const { selectedFolder, setSelectFolder, deleteItems, handleBack, folder } =
+  const { selectedFolder, setSelectFolder, deleteItems, handleBack, folder, sortFolder, setSortFolder } =
     useFolder();
 
   return (
@@ -274,9 +278,57 @@ function HeaderAction() {
           ]}
         />
       ) : (
-        <Header
-          title={`Medias`}
-          onIconPress={handleBack} // Utilisation de handleBackPress
+        <ActionHeader
+          title="Medias"
+          actionsAfterText={[
+            {
+              icon:
+                sortFolder === "aToZ"
+                  ? ArrowUp
+                  : sortFolder === "zToA"
+                  ? ArrowDown
+                  : sortFolder === "dateNew"
+                  ? ArrowUp
+                  : sortFolder === "dateOld"
+                  ? ArrowDown
+                  : ArrowUp,
+
+              onPress: () => {},
+              size: 20,
+              text: sortFolder === "aToZ" || sortFolder === "zToA" ? "name" : "date",
+              /* dropDown: [
+                {
+                  name: "Rename",
+                  onPress: () => {},
+                  icon: Pencil,
+                },
+                {
+                  name: "Delete",
+                  onPress: () => {
+                   
+                  },
+                  icon: Trash,
+                },
+              ], */
+            },
+            {
+              icon: EllipsisVertical,
+              onPress: () => {},
+              size: 24,
+              dropDown: [
+                {
+                  name: "Select",
+                  onPress: () => {},
+                  icon: Pencil,
+                },
+                {
+                  name: "Delete",
+                  onPress: () => {},
+                  icon: Trash,
+                },
+              ],
+            },
+          ]}
         />
       )}
       <View className="flex-row items-center gap-2 py-4">
@@ -287,7 +339,7 @@ function HeaderAction() {
           <ArrowLeft size={24} className="text-primary mr-2" />
         </TouchableOpacity>
         {/* <Text className="text-primary">{folder?.path}</Text> */}
-         {folder?.path?.split("/").map((part: string, index: number) => (
+        {folder?.path?.split("/").map((part: string, index: number) => (
           <React.Fragment key={index}>
             <Text
               className={

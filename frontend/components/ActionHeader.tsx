@@ -44,12 +44,13 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
 }) => {
   return (
     <View
-      className={`flex flex-row  justify-between items-center z-50 pt-8 ${className}`}
+      style={{ paddingBottom: title ? 0 : 8 }}
+      className={`flex flex-row justify-between items-center z-50 pt-8 ${className}`}
     >
       {actionsBeforeText.map((action, index) => (
         <TouchableOpacity
           key={index}
-          className={`pt-1 ${
+          className={` ${
             index !== actionsBeforeText.length - 1 ? "pr-4" : ""
           }`}
           onPress={action.onPress}
@@ -63,21 +64,21 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
       ))}
       <View className="flex-1">
         <Text
-          className={`font-avenir-heavy text-primary font-bold pl-2 ${
-            title ? "text-4xl" : "text-2xl"
+          
+          className={`font-avenir-heavy text-primary font-bold text-4xl ${
+            title ? "" : "text-2xl "
           }`}
-          style={{ width: 200 }}
         >
           {title || text}
         </Text>
       </View>
       {actionsAfterText.map((action, index) =>
         action.dropDown ? (
-          <DropdownMenu>
+          <DropdownMenu key={index}>
             <DropdownMenuTrigger asChild>
               <TouchableOpacity
-                key={index}
-                className={`pt-1  ${
+               
+                className={`  ${
                   index !== actionsAfterText.length - 1 ? "pl-2" : ""
                 }`}
                 onPress={action.onPress}
@@ -114,7 +115,7 @@ const ActionHeader: React.FC<ActionHeaderProps> = ({
         ) : (
           <TouchableOpacity
             key={index}
-            className={`pt-1  ${
+            className={` ${
               index !== actionsAfterText.length - 1 ? "pl-2" : ""
             } flex-row items-center`}
             onPress={action.onPress}

@@ -7,7 +7,7 @@ import { Media } from "~/types/Media";
 import { catchError } from "~/utils/catchError";
 
 export const useFolder = () => {
-  const { folder, setFolder, selectedFolder, setSelectFolder } =
+  const { folder, setFolder, selectedFolder, setSelectFolder, sortFolder, setSortFolder } =
     useFolderStore();
   const getRootFolder = async () => {
     const [error, rootFolder] = await catchError(FolderService.getRoot());
@@ -137,5 +137,7 @@ export const useFolder = () => {
     deleteItems,
     handleBack,
     getRootFolder,
+    sortFolder,
+    setSortFolder,
   };
 };

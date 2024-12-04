@@ -1,4 +1,4 @@
-import {Plus, Trash, X } from "lucide-react-native";
+import {EllipsisVertical, Pencil, Plus, Trash, X } from "lucide-react-native";
 import React, { useEffect } from "react";
 import { FlatList } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -65,6 +65,25 @@ function HeaderAction({ setIsOpenSortBy }: { setIsOpenSortBy: React.Dispatch<Rea
                 },
               ], */
             },
+             {
+              icon: EllipsisVertical,
+              onPress: () => {},
+              size: 24,
+              dropDown: [
+                {
+                  name: "Select",
+                  onPress: () => {},
+                  icon: Pencil,
+                },
+                {
+                  name: "Delete",
+                  onPress: () => {
+                   
+                  },
+                  icon: Trash,
+                },
+              ],
+            },
           ]}/>
         
       )}
@@ -111,6 +130,7 @@ function PlaylistsList() {
       }}
       onLongPress={() => handleSelectPlaylist(item)}
       isSelected={selectedPlaylist?.some((p) => p.id === item.id)}
+      isSelectMode={selectedPlaylist && selectedPlaylist.length > 0 ? true : false}
     />
   );
 
