@@ -1,16 +1,16 @@
-import { Plus, Trash, X } from "lucide-react-native";
+import { EllipsisVertical, Plus, Trash, X } from "lucide-react-native";
 import React, { useEffect } from "react";
 import { FlatList } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import ActionHeader from "~/components/ActionHeader";
-import { Drawer } from "~/components/drawer";
+import { Drawer, DrawerContent } from "~/components/drawer";
 import FloatingActionMenu from "~/components/floatingMenu/FloatingActionMenu";
 import { ItemPlaylist } from "~/components/ItemPlaylist";
 import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists";
 import { Playlist } from "~/types/Playlist";
 import CreatePlaylist from "./drawer/@createPlaylist";
-
+import { Pencil } from "lucide-react-native";
 function HeaderAction() {
   const { selectedPlaylist, setSelectPlaylist, deletePlaylists } =
     usePlaylists();
@@ -36,12 +36,28 @@ function HeaderAction() {
           ]}
         />
       ) : (
-        <Header
-          title="Playlists"
-          onIconPress={() => {
-            console.log("ChevronDown pressed");
-          }}
-        />
+        <ActionHeader title="Playlists"   actionsAfterText={[
+            {
+              icon: EllipsisVertical,
+              onPress: () => {},
+              size: 24,
+              dropDown: [
+                {
+                  name: "Rename",
+                  onPress: () => {},
+                  icon: Pencil,
+                },
+                {
+                  name: "Delete",
+                  onPress: () => {
+                   
+                  },
+                  icon: Trash,
+                },
+              ],
+            },
+          ]}/>
+        
       )}
     </>
   );
@@ -97,9 +113,13 @@ function PlaylistsList() {
         showsVerticalScrollIndicator={false}
         className="px-8 pb-8"
       />
-      <FloatingActionMenu secondaryButtons={secondaryButtons} />
+      {selectedPlaylist && selectedPlaylist.length <= 0 && (
+        <FloatingActionMenu secondaryButtons={secondaryButtons} />
+      )}
       <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <CreatePlaylist />
+        
+          <CreatePlaylist />
+       
       </Drawer>
     </>
   );

@@ -235,8 +235,9 @@ function MediasScreen() {
           </View>
         )}
       />
-
-      <FloatingActionMenu ref={menuRef} secondaryButtons={secondaryButtons} />
+      {selectedFolder && selectedFolder.length <= 0 && (
+        <FloatingActionMenu ref={menuRef} secondaryButtons={secondaryButtons} />
+      )}
       <CreateMediasAndFolderDrawer
         isOpen={isOpen}
         onClose={() => {

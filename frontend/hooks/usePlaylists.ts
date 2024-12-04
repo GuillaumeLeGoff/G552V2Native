@@ -5,6 +5,7 @@ import { usePlaylistStore } from "~/store/playlistStore";
 import { Playlist } from "~/types/Playlist";
 import { useFolder } from "./useFolder";
 import { catchError } from "~/utils/catchError";
+import { useState } from "react";
 
 export const usePlaylists = () => {
   const {
@@ -16,6 +17,8 @@ export const usePlaylists = () => {
     selectedPlaylist,
   } = usePlaylistStore();
   const { selectedFolder, setSelectFolder } = useFolder();
+
+  const [isOpenRenamePlaylist, setIsOpenRenamePlaylist] = useState(false);
 
   const getPlaylists = async () => {
     try {
@@ -32,6 +35,10 @@ export const usePlaylists = () => {
     } catch (error) {
       console.error("Failed to create playlist", error);
     }
+  };
+  const updatePlaylist = async (playlist: Playlist) => {
+    const updatedPlaylist = await PlaylistService.updatePlaylist(playlist);
+    setPlaylist(updatedPlaylist);
   };
   const deletePlaylists = async (playlistsToDelete: Playlist[]) => {
     const [error] = await catchError(
@@ -85,6 +92,14 @@ export const usePlaylists = () => {
       setSelectPlaylist([...(selectedPlaylist || []), item]);
     }
   };
+  const handleRenamePlaylist = async (playlist: Playlist, name: string) => {
+    const updatedPlaylist = await PlaylistService.updatePlaylist({
+      ...playlist,
+      name,
+    });
+    setPlaylist({ ...playlist, name });
+    setPlaylists(playlists.map((p) => (p.id === playlist.id ? updatedPlaylist : p)));
+  };
 
   return {
     playlists,
@@ -96,5 +111,8 @@ export const usePlaylists = () => {
     createPlaylist,
     handleSelectPlaylist,
     getPlaylists,
+    handleRenamePlaylist,
+    isOpenRenamePlaylist,
+    setIsOpenRenamePlaylist,
   };
 };

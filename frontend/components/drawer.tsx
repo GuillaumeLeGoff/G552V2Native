@@ -25,7 +25,6 @@ import { TextRef, ViewRef } from "@rn-primitives/types";
 import { createContext, useContext } from "react";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
-const DRAWER_HEIGHT = SCREEN_HEIGHT * 0.8;
 
 interface DrawerProps extends React.ComponentPropsWithoutRef<typeof View> {
   isOpen: boolean;
@@ -35,6 +34,8 @@ interface DrawerProps extends React.ComponentPropsWithoutRef<typeof View> {
 interface DrawerContextType {
   isOpen: boolean;
   onClose: () => void;
+  drawerHeight: number;
+  setDrawerHeight: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const DrawerContext = createContext<DrawerContextType | undefined>(undefined);
@@ -49,7 +50,8 @@ export const useDrawer = () => {
 
 const Drawer = React.forwardRef<View, DrawerProps>(
   ({ isOpen, onClose, children, style, ...props }, ref) => {
-    const translateY = useSharedValue(DRAWER_HEIGHT);
+    const [drawerHeight, setDrawerHeight] = React.useState<number>(0);
+    const translateY = useSharedValue(drawerHeight);
 
     React.useEffect(() => {
       if (isOpen) {
@@ -58,16 +60,16 @@ const Drawer = React.forwardRef<View, DrawerProps>(
           easing: Easing.out(Easing.cubic),
         });
       } else {
-        translateY.value = withTiming(DRAWER_HEIGHT, {
+        translateY.value = withTiming(drawerHeight, {
           duration: 300,
           easing: Easing.in(Easing.cubic),
         });
       }
-    }, [isOpen, translateY]);
+    }, [isOpen, translateY, drawerHeight]);
 
     const handleClose = React.useCallback(() => {
       translateY.value = withTiming(
-        DRAWER_HEIGHT,
+        drawerHeight,
         {
           duration: 300,
           easing: Easing.in(Easing.cubic),
@@ -76,7 +78,7 @@ const Drawer = React.forwardRef<View, DrawerProps>(
           runOnJS(onClose)();
         }
       );
-    }, [onClose, translateY]);
+    }, [onClose, translateY, drawerHeight]);
 
     const rStyle = useAnimatedStyle(() => {
       return {
@@ -100,7 +102,7 @@ const Drawer = React.forwardRef<View, DrawerProps>(
     }, [isOpen, handleClose]);
 
     return (
-      <DrawerContext.Provider value={{ isOpen, onClose }}>
+      <DrawerContext.Provider value={{ isOpen, onClose, drawerHeight, setDrawerHeight }}>
         <Modal
           visible={isOpen}
           transparent
@@ -115,7 +117,10 @@ const Drawer = React.forwardRef<View, DrawerProps>(
                 onPress={handleClose}
               />
 
-              <Animated.View style={[rStyle, style]} {...props} ref={ref}>
+              <Animated.View style={[rStyle, style]} {...props} ref={ref} onLayout={(event) => {
+                const { height } = event.nativeEvent.layout;
+                setDrawerHeight(height);
+              }}>
                 {children}
               </Animated.View>
             </View>
@@ -141,9 +146,9 @@ const DrawerContent = React.forwardRef<
   Animated.View,
   Omit<DrawerContentProps, "isOpen" | "onClose">
 >(({ className, style, children, ...props }, ref) => {
-  const { isOpen, onClose } = useDrawer();
+  const { isOpen, onClose, drawerHeight } = useDrawer();
 
-  const translateY = useSharedValue(DRAWER_HEIGHT);
+  const translateY = useSharedValue(drawerHeight);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -152,25 +157,25 @@ const DrawerContent = React.forwardRef<
         easing: Easing.out(Easing.cubic),
       });
     } else {
-      translateY.value = withTiming(DRAWER_HEIGHT, {
+      translateY.value = withTiming(drawerHeight, {
         duration: 300,
         easing: Easing.in(Easing.cubic),
       });
     }
-  }, [isOpen, translateY]);
+  }, [isOpen, translateY, drawerHeight]);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
       const newTranslateY = Math.max(
         0,
-        Math.min(event.translationY, DRAWER_HEIGHT)
+        Math.min(event.translationY, drawerHeight)
       );
       translateY.value = newTranslateY;
     })
     .onEnd(() => {
-      if (translateY.value > DRAWER_HEIGHT / 2) {
+      if (translateY.value > drawerHeight / 2) {
         translateY.value = withTiming(
-          DRAWER_HEIGHT,
+          drawerHeight,
           {
             duration: 300,
             easing: Easing.in(Easing.cubic),

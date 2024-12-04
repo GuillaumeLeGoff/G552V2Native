@@ -28,6 +28,21 @@ export class PlaylistService {
     return result.data;
   }
 
+  static async updatePlaylist(playlist: Playlist): Promise<Playlist> {
+    const response = await fetchWithAuth(`${this.API_URL}/${playlist.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(playlist),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new HttpException(result.status, result.message);
+    }
+    return result.data;
+  }
+
   static async createPlaylist(name: string): Promise<Playlist> {
     const response = await fetchWithAuth(this.API_URL, {
       method: "POST",

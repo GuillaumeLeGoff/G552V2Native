@@ -20,6 +20,7 @@ import { PlaylistMedia } from "~/types/PlaylistMedia";
 import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
 import ChangePlaylistMediasTime from "./drawer/@changePlaylistMediasTime";
 import { usePlaylists } from "~/hooks/usePlaylists";
+import RenamePlaylist from "./drawer/@renamePlaylist";
 
 function PlaylistModify() {
   const { playlist } = usePlaylistStore();
@@ -39,6 +40,8 @@ function PlaylistModify() {
     selectedPlaylistMedia,
     setSelectedPlaylistMedia,
   } = usePlaylistsMedias();
+
+  const { isOpenRenamePlaylist, setIsOpenRenamePlaylist } = usePlaylists();
 
   useAnimatedReaction(
     () => ({
@@ -110,6 +113,7 @@ function PlaylistModify() {
           setSelectedPlaylistMedias={setSelectedPlaylistMedias}
           deleteSelectedPlaylistMedias={deleteSelectedPlaylistMedias}
           playlistName={playlist?.name || ""}
+          setIsOpenRenamePlaylist={setIsOpenRenamePlaylist}
         />
 
         <DragArea updateItemPosition={updateItemPosition}>
@@ -150,6 +154,12 @@ function PlaylistModify() {
           setIsOpen={setIsOpenAddMediasToPlaylist}
         />
       </Drawer>
+      <Drawer
+        isOpen={isOpenRenamePlaylist}
+        onClose={() => setIsOpenRenamePlaylist(false)}
+      >
+        <RenamePlaylist />
+      </Drawer>
     </View>
   );
 }
@@ -159,11 +169,13 @@ function HeaderAction({
   setSelectedPlaylistMedias,
   deleteSelectedPlaylistMedias,
   playlistName,
+  setIsOpenRenamePlaylist,
 }: {
   selectedPlaylistMedias: PlaylistMedia[];
   setSelectedPlaylistMedias: (medias: PlaylistMedia[]) => void;
   deleteSelectedPlaylistMedias: () => void;
   playlistName: string;
+  setIsOpenRenamePlaylist: (isOpen: boolean) => void;
 }) {
   const { deletePlaylists } = usePlaylists();
   const { playlist } = usePlaylistStore();
@@ -207,7 +219,7 @@ function HeaderAction({
               dropDown: [
                 {
                   name: "Rename",
-                  onPress: () => {},
+                  onPress: () => setIsOpenRenamePlaylist(true),
                   icon: Pencil,
                 },
                 {
