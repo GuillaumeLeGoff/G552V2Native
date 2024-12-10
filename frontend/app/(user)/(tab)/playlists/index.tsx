@@ -1,19 +1,17 @@
-import { EllipsisVertical, Pencil, Plus, Trash, X } from "lucide-react-native";
+import { Plus, Trash, X } from "lucide-react-native";
 import React, { useEffect } from "react";
 import { FlatList } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import ActionHeader from "~/components/ActionHeader";
-import { Drawer, DrawerContent } from "~/components/drawer";
+import { Drawer } from "~/components/drawer";
 import FloatingActionMenu from "~/components/floatingMenu/FloatingActionMenu";
 import { ItemPlaylist } from "~/components/ItemPlaylist";
-import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists";
-import { Playlist } from "~/types/Playlist";
-import CreatePlaylist from "./drawer/@createPlaylist";
 import { ArrowDown } from "~/lib/icons/ArrowDown";
 import { ArrowUp } from "~/lib/icons/ArrowUp";
+import { Playlist } from "~/types/Playlist";
+import CreatePlaylist from "./drawer/@createPlaylist";
 import SortPlaylist from "./drawer/@sortPlaylist";
-import { router } from "expo-router";
 
 function HeaderAction({
   setIsOpenSortBy,
@@ -72,7 +70,6 @@ function HeaderAction({
 
 function PlaylistsList() {
   const [isOpen, setIsOpen] = React.useState(false);
-  const isExpanded = useSharedValue(false);
 
   const {
     playlists,
@@ -96,10 +93,6 @@ function PlaylistsList() {
       onPress: () => setIsOpen(true),
     },
   ];
-
-  function openModalTest(item: Playlist) {
-    router.push(`../../modal`);
-  }
 
   const renderItem = ({ item, index }: { item: Playlist; index: number }) => (
     <ItemPlaylist

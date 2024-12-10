@@ -12,4 +12,5 @@ export interface Folder {
   subFolders?: Folder[] | null;
   path: string | null;
   updated_at: Date;
+  created_at: Date;
 }

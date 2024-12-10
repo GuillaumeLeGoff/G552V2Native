@@ -11,6 +11,7 @@ export class FolderService {
       where: { user_id, parent_id: null, name: "root" },
       include: { media: true, subFolders: true },
     });
+    console.log("folders", folders);
     return folders;
   }
 
@@ -82,7 +83,7 @@ export class FolderService {
       where: { folder_id: { in: folderIds } },
     });
     return medias;
-  } 
+  }
   async findAllNestedFolders(folderIds: number[]): Promise<Folder[]> {
     let allFolders: Folder[] = [];
     let currentLevelFolders = await prisma.folder.findMany({

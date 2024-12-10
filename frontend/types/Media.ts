@@ -8,7 +8,7 @@ export interface Media {
   file_name: string;
   path: string;
   format: string;
-  type: "media"; // Doit être strictement 'media'
+  type: "media";
   thumbnail_path: string | null;
   thumbnail_name: string | null;
   size: number;
@@ -19,4 +19,6 @@ export interface Media {
   user?: User;
   Playlist_media?: PlaylistMedia[];
   folder?: Folder | null;
+  updated_at: Date;
+  created_at: Date;
 }

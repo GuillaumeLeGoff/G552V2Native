@@ -1,16 +1,32 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FolderService } from "~/services/folder.service";
 import { MediaService } from "~/services/media.service";
 import { useFolderStore } from "~/store/folderStore";
 import { Folder } from "~/types/Folder";
 import { Media } from "~/types/Media";
 import { catchError } from "~/utils/catchError";
+import { useMedia } from "./useMedia";
 
 export const useFolder = () => {
-  const { folder, setFolder, selectedFolder, setSelectFolder, sortFolder, setSortFolder } =
-    useFolderStore();
+  const {
+    folder,
+    setFolder,
+    selectedFolder,
+    setSelectFolder,
+    sortFolder,
+    setSortFolder,
+  } = useFolderStore();
+
+  const { sortMedia } = useMedia();
+
+  const [isOpenSortFolder, setIsOpenSortFolder] = useState(false);
+
   const getRootFolder = async () => {
     const [error, rootFolder] = await catchError(FolderService.getRoot());
+    const sortedFolders = await sortFolders(
+      sortFolder,
+      rootFolder?.subFolders || []
+    );
     if (error) {
     } else if (rootFolder) {
       setFolder(rootFolder);
@@ -21,6 +37,10 @@ export const useFolder = () => {
       const [error, folder] = await catchError(
         FolderService.getFolderById(folderId)
       );
+      const sortedFolders = await sortFolders(
+        sortFolder,
+        folder?.subFolders || []
+      );
       if (error) {
       } else if (folder) {
         setFolder(folder);
@@ -29,9 +49,8 @@ export const useFolder = () => {
     [setFolder]
   );
   const createFolder = useCallback(
-    
     async (folderName: string, parent_id: number | null) => {
-       console.log("newFolder", folder?.path);
+      console.log("newFolder", folder?.path);
       const [error, newFolder] = await catchError(
         FolderService.createFolder(folderName, parent_id)
       );
@@ -39,14 +58,18 @@ export const useFolder = () => {
       if (error) {
       } else if (folder && newFolder) {
         const updatedSubFolders = [...(folder.subFolders || []), newFolder];
-        setFolder({ ...folder, subFolders: updatedSubFolders , path: folder.path });
+        const sortedFolders = await sortFolders(sortFolder, updatedSubFolders);
+        setFolder({
+          ...folder,
+          subFolders: sortedFolders,
+          path: folder.path,
+        });
         console.log("newFolder", folder.path);
       }
     },
-    
+
     [folder, setFolder]
   );
-
 
   // Delete items (folder or media)
   const deleteItems = async (selectedItems: (Folder | Media)[]) => {
@@ -84,10 +107,7 @@ export const useFolder = () => {
       const updatedMedia =
         folder.media?.filter(
           (media: Media) =>
-            !selectedItems.some(
-              (item: Folder | Media) =>
-                item.id === media.id
-            )
+            !selectedItems.some((item: Folder | Media) => item.id === media.id)
         ) || [];
 
       setFolder({
@@ -101,9 +121,7 @@ export const useFolder = () => {
   };
 
   // Handle the press on a media
-  const handleMediaPress = (item: Media) => {
-  
-  };
+  const handleMediaPress = (item: Media) => {};
 
   // Select folder and media
   const handleSelect = (item: Folder | Media) => {
@@ -114,6 +132,43 @@ export const useFolder = () => {
     } else {
       setSelectFolder([...selectedFolder, item]);
     }
+  };
+
+  const sortFolders = async (
+    sort: "aToZ" | "zToA" | "dateNew" | "dateOld",
+    subFolders: any[]
+  ) => {
+    return subFolders.sort((a, b) => {
+      switch (sort) {
+        case "aToZ":
+          return a.name.localeCompare(b.name);
+        case "zToA":
+          return b.name.localeCompare(a.name);
+        case "dateNew":
+          return (
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+        case "dateOld":
+          return (
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const handleSortFolder = async (
+    sort: "aToZ" | "zToA" | "dateNew" | "dateOld"
+  ) => {
+    setSortFolder(sort);
+    const sortedFolders = await sortFolders(sort, folder?.subFolders || []);
+    const sortedMedia = await sortMedia(sort, folder?.media || []);
+    setFolder({
+      ...folder,
+      subFolders: sortedFolders,
+      media: sortedMedia,
+    });
   };
 
   // Handle the back button
@@ -139,5 +194,8 @@ export const useFolder = () => {
     getRootFolder,
     sortFolder,
     setSortFolder,
+    isOpenSortFolder,
+    setIsOpenSortFolder,
+    handleSortFolder,
   };
 };

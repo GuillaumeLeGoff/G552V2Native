@@ -16,7 +16,8 @@ export const useFolderStore = create<FolderStore>((set) => ({
   selectedFolder: [],
   sortFolder: "aToZ",
   setFolder: (folders: Folder) => set({ folder: folders }),
-  setSelectFolder: (items: (Folder | Media)[]) => set({ selectedFolder: items }),
+  setSelectFolder: (items: (Folder | Media)[]) =>
+    set({ selectedFolder: items }),
   setSortFolder: (sort: "aToZ" | "zToA" | "dateNew" | "dateOld") =>
     set({ sortFolder: sort }),
 }));
