@@ -102,7 +102,9 @@ const Drawer = React.forwardRef<View, DrawerProps>(
     }, [isOpen, handleClose]);
 
     return (
-      <DrawerContext.Provider value={{ isOpen, onClose, drawerHeight, setDrawerHeight }}>
+      <DrawerContext.Provider
+        value={{ isOpen, onClose, drawerHeight, setDrawerHeight }}
+      >
         <Modal
           visible={isOpen}
           transparent
@@ -117,10 +119,15 @@ const Drawer = React.forwardRef<View, DrawerProps>(
                 onPress={handleClose}
               />
 
-              <Animated.View style={[rStyle, style]} {...props} ref={ref} onLayout={(event) => {
-                const { height } = event.nativeEvent.layout;
-                setDrawerHeight(height);
-              }}>
+              <Animated.View
+                style={[rStyle, style]}
+                {...props}
+                ref={ref}
+                onLayout={(event) => {
+                  const { height } = event.nativeEvent.layout;
+                  setDrawerHeight(height);
+                }}
+              >
                 {children}
               </Animated.View>
             </View>

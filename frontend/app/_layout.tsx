@@ -18,7 +18,7 @@ const RootLayout: React.FC = () => {
       {token === undefined || token === null ? (
         <Redirect href="/(auth)" />
       ) : (
-        <Redirect href="/(user)/playlists" />
+        <Redirect href="/(user)/(tab)/playlists" />
       )}
     </SafeAreaView>
   );

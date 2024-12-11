@@ -23,6 +23,8 @@ import { ArrowUp } from "~/lib/icons/ArrowUp";
 import { ArrowDown } from "~/lib/icons/ArrowDown";
 import { EllipsisVertical } from "~/lib/icons/EllipsisVertical";
 import { Pencil } from "~/lib/icons/Pencil";
+import SortMedias from "./drawer/@sortMedia";
+import { Drawer } from "~/components/drawer";
 
 function MediasScreen() {
   const {
@@ -31,6 +33,8 @@ function MediasScreen() {
     selectedFolder,
     getFolderById,
     handleMediaPress,
+    isOpenSortFolder,
+    setIsOpenSortFolder,
   } = useFolder();
   const [isOpen, setIsOpen] = React.useState(false);
   const { uploadMedia } = useMedia();
@@ -190,7 +194,9 @@ function MediasScreen() {
         keyExtractor={(item, index) =>
           (item[0]?.id || item[1]?.id).toString() + index
         }
-        ListHeaderComponent={<HeaderAction />}
+        ListHeaderComponent={
+          <HeaderAction setIsOpenSortFolder={setIsOpenSortFolder} />
+        }
         renderItem={({ item }) => (
           <View
             style={{
@@ -248,13 +254,31 @@ function MediasScreen() {
           setIsOpen(false);
         }}
       />
+      <Drawer
+        isOpen={isOpenSortFolder}
+        onClose={() => {
+          setIsOpenSortFolder(false);
+        }}
+      >
+        <SortMedias />
+      </Drawer>
     </>
   );
 }
 
-function HeaderAction() {
-  const { selectedFolder, setSelectFolder, deleteItems, handleBack, folder, sortFolder, setSortFolder } =
-    useFolder();
+function HeaderAction({
+  setIsOpenSortFolder,
+}: {
+  setIsOpenSortFolder: (value: boolean) => void;
+}) {
+  const {
+    selectedFolder,
+    setSelectFolder,
+    deleteItems,
+    handleBack,
+    folder,
+    sortFolder,
+  } = useFolder();
 
   return (
     <>
@@ -293,9 +317,14 @@ function HeaderAction() {
                   ? ArrowDown
                   : ArrowUp,
 
-              onPress: () => {},
+              onPress: () => {
+                setIsOpenSortFolder(true);
+              },
               size: 20,
-              text: sortFolder === "aToZ" || sortFolder === "zToA" ? "name" : "date",
+              text:
+                sortFolder === "aToZ" || sortFolder === "zToA"
+                  ? "name"
+                  : "date",
               /* dropDown: [
                 {
                   name: "Rename",

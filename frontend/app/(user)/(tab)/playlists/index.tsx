@@ -1,20 +1,23 @@
-import {EllipsisVertical, Pencil, Plus, Trash, X } from "lucide-react-native";
+import { Plus, Trash, X } from "lucide-react-native";
 import React, { useEffect } from "react";
 import { FlatList } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import ActionHeader from "~/components/ActionHeader";
-import { Drawer, DrawerContent } from "~/components/drawer";
+import { Drawer } from "~/components/drawer";
 import FloatingActionMenu from "~/components/floatingMenu/FloatingActionMenu";
 import { ItemPlaylist } from "~/components/ItemPlaylist";
-import { Header } from "~/components/ui/header";
 import { usePlaylists } from "~/hooks/usePlaylists";
-import { Playlist } from "~/types/Playlist";
-import CreatePlaylist from "./drawer/@createPlaylist";
 import { ArrowDown } from "~/lib/icons/ArrowDown";
 import { ArrowUp } from "~/lib/icons/ArrowUp";
+import { Playlist } from "~/types/Playlist";
+import CreatePlaylist from "./drawer/@createPlaylist";
 import SortPlaylist from "./drawer/@sortPlaylist";
 
-function HeaderAction({ setIsOpenSortBy }: { setIsOpenSortBy: React.Dispatch<React.SetStateAction<boolean>> }) {
+function HeaderAction({
+  setIsOpenSortBy,
+}: {
+  setIsOpenSortBy: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { selectedPlaylist, setSelectPlaylist, deletePlaylists, sortBy } =
     usePlaylists();
 
@@ -39,53 +42,27 @@ function HeaderAction({ setIsOpenSortBy }: { setIsOpenSortBy: React.Dispatch<Rea
           ]}
         />
       ) : (
-        <ActionHeader title="Playlists"   actionsAfterText={[
+        <ActionHeader
+          title="Playlists"
+          actionsAfterText={[
             {
-              icon: sortBy === "aToZ" ? ArrowUp :
-                    sortBy === "zToA" ?  ArrowDown :
-                    sortBy === "dateNew" ?ArrowUp :    
-                    sortBy === "dateOld" ? ArrowDown :
-                     ArrowUp,
-      
-              onPress: () => setIsOpenSortBy(true) ,
+              icon:
+                sortBy === "aToZ"
+                  ? ArrowUp
+                  : sortBy === "zToA"
+                  ? ArrowDown
+                  : sortBy === "dateNew"
+                  ? ArrowUp
+                  : sortBy === "dateOld"
+                  ? ArrowDown
+                  : ArrowUp,
+
+              onPress: () => setIsOpenSortBy(true),
               size: 20,
               text: sortBy === "aToZ" || sortBy === "zToA" ? "name" : "date",
-              /* dropDown: [
-                {
-                  name: "Rename",
-                  onPress: () => {},
-                  icon: Pencil,
-                },
-                {
-                  name: "Delete",
-                  onPress: () => {
-                   
-                  },
-                  icon: Trash,
-                },
-              ], */
             },
-             {
-              icon: EllipsisVertical,
-              onPress: () => {},
-              size: 24,
-              dropDown: [
-                {
-                  name: "Select",
-                  onPress: () => {},
-                  icon: Pencil,
-                },
-                {
-                  name: "Delete",
-                  onPress: () => {
-                   
-                  },
-                  icon: Trash,
-                },
-              ],
-            },
-          ]}/>
-        
+          ]}
+        />
       )}
     </>
   );
@@ -93,7 +70,6 @@ function HeaderAction({ setIsOpenSortBy }: { setIsOpenSortBy: React.Dispatch<Rea
 
 function PlaylistsList() {
   const [isOpen, setIsOpen] = React.useState(false);
-  const isExpanded = useSharedValue(false);
 
   const {
     playlists,
@@ -118,7 +94,6 @@ function PlaylistsList() {
     },
   ];
 
-
   const renderItem = ({ item, index }: { item: Playlist; index: number }) => (
     <ItemPlaylist
       key={item.id}
@@ -130,7 +105,9 @@ function PlaylistsList() {
       }}
       onLongPress={() => handleSelectPlaylist(item)}
       isSelected={selectedPlaylist?.some((p) => p.id === item.id)}
-      isSelectMode={selectedPlaylist && selectedPlaylist.length > 0 ? true : false}
+      isSelectMode={
+        selectedPlaylist && selectedPlaylist.length > 0 ? true : false
+      }
     />
   );
 

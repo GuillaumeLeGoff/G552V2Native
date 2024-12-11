@@ -17,10 +17,10 @@ import { X } from "~/lib/icons/X";
 import { useItemStore } from "~/store/item";
 import { usePlaylistStore } from "~/store/playlistStore";
 import { PlaylistMedia } from "~/types/PlaylistMedia";
-import AddMediasToPlaylist from "./drawer/@addMediasToPlaylist";
-import ChangePlaylistMediasTime from "./drawer/@changePlaylistMediasTime";
+import AddMediasToPlaylist from "./(tab)/playlists/drawer/@addMediasToPlaylist";
+import ChangePlaylistMediasTime from "./(tab)/playlists/drawer/@changePlaylistMediasTime";
 import { usePlaylists } from "~/hooks/usePlaylists";
-import RenamePlaylist from "./drawer/@renamePlaylist";
+import RenamePlaylist from "./(tab)/playlists/drawer/@renamePlaylist";
 
 function PlaylistModify() {
   const { playlist } = usePlaylistStore();

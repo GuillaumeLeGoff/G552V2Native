@@ -21,11 +21,11 @@ export const usePlaylists = () => {
   const { selectedFolder, setSelectFolder } = useFolder();
 
   const [isOpenRenamePlaylist, setIsOpenRenamePlaylist] = useState(false);
-  const[isOpenSortBy, setIsOpenSortBy] = useState(false);
+  const [isOpenSortBy, setIsOpenSortBy] = useState(false);
   const getPlaylists = async () => {
     try {
       const data = await PlaylistService.getPlaylists();
-      const sortedPlaylists = await sortPlaylists(sortBy,data);
+      const sortedPlaylists = await sortPlaylists(sortBy, data);
       setPlaylists(sortedPlaylists);
     } catch (error) {
       console.error("Failed to fetch playlists", error);
@@ -34,7 +34,10 @@ export const usePlaylists = () => {
   const createPlaylist = async (name: string) => {
     try {
       const newPlaylist = await PlaylistService.createPlaylist(name);
-      const sortedPlaylists = await sortPlaylists(sortBy,[...playlists, newPlaylist]);
+      const sortedPlaylists = await sortPlaylists(sortBy, [
+        ...playlists,
+        newPlaylist,
+      ]);
       setPlaylists(sortedPlaylists);
     } catch (error) {
       console.error("Failed to create playlist", error);
@@ -47,7 +50,12 @@ export const usePlaylists = () => {
     if (error) {
       console.error("Failed to delete playlists", error);
     } else {
-      const sortedPlaylists = await sortPlaylists(sortBy,playlists.filter((p) => !playlistsToDelete.some((toDelete) => toDelete.id === p.id)));
+      const sortedPlaylists = await sortPlaylists(
+        sortBy,
+        playlists.filter(
+          (p) => !playlistsToDelete.some((toDelete) => toDelete.id === p.id)
+        )
+      );
       setPlaylists(sortedPlaylists);
       setPlaylist(null);
       setSelectPlaylist([]);
@@ -57,7 +65,7 @@ export const usePlaylists = () => {
   const handlePressPlaylist = async (playlist: Playlist) => {
     const data = await PlaylistService.getPlaylist(playlist.id);
     setPlaylist(data);
-    router.push(`/playlists/${playlist.id}`);
+    router.push(`../../${playlist.id}`);
   };
   const addMediasToPlaylist = async () => {
     const newPlaylistMedias = selectedFolder.map((item, index) => ({
@@ -99,22 +107,33 @@ export const usePlaylists = () => {
       name,
     });
     setPlaylist({ ...playlist, name });
-    
-    const sortedPlaylists = await sortPlaylists(sortBy,playlists.map((p) => (p.id === playlist.id ? updatedPlaylist : p)) as Playlist[]);
+
+    const sortedPlaylists = await sortPlaylists(
+      sortBy,
+      playlists.map((p) =>
+        p.id === playlist.id ? updatedPlaylist : p
+      ) as Playlist[]
+    );
     setPlaylists(sortedPlaylists);
   };
-  const sortPlaylists = async (sort: "aToZ" | "zToA" | "dateNew" | "dateOld" , playlists: Playlist[]) => {
-    
-   playlists.sort((a, b) => {
+  const sortPlaylists = async (
+    sort: "aToZ" | "zToA" | "dateNew" | "dateOld",
+    playlists: Playlist[]
+  ) => {
+    playlists.sort((a, b) => {
       switch (sort) {
         case "aToZ":
           return a.name.localeCompare(b.name);
         case "zToA":
           return b.name.localeCompare(a.name);
         case "dateNew":
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          return (
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
         case "dateOld":
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          return (
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
         default:
           return 0;
       }
@@ -122,11 +141,12 @@ export const usePlaylists = () => {
     return playlists;
   };
 
-
-  const handleSortPlaylist = async (sort: "aToZ" | "zToA" | "dateNew" | "dateOld") => {
+  const handleSortPlaylist = async (
+    sort: "aToZ" | "zToA" | "dateNew" | "dateOld"
+  ) => {
     setSortBy(sort);
     const sortedPlaylists = await sortPlaylists(sort, playlists);
-    
+
     setPlaylists(sortedPlaylists);
   };
 
